@@ -1,6 +1,6 @@
 # Fayette County Habitat for Humanity Digital Platform
 
-This repository contains the approved foundation for a greenfield public website and administrative platform for Fayette County Habitat for Humanity. It is intentionally in the decision-runway phase: documentation and migration evidence exist, but no application has been scaffolded.
+This repository contains the approved foundation for a greenfield public website and administrative platform for Fayette County Habitat for Humanity. The decision runway and Communications Domain Product & Architecture Review are complete: implementation-ready documentation and migration evidence exist, but no application has been scaffolded.
 
 ## Product direction
 
@@ -18,7 +18,7 @@ The current Wix site is migration evidence, not a product blueprint. It may supp
 
 - [Product vision](docs/product/vision.md), [specification](docs/product/specification.md), and [conceptual information architecture](docs/product/information-architecture.md)
 - [Communications review runway](docs/product/communications-review-runway.md) and [content verification backlog](docs/product/content-verification.md)
-- [Architecture](docs/architecture/architecture.md), [domain model](docs/architecture/domain-model.md), [data ownership](docs/architecture/data-ownership.md), and [permissions](docs/architecture/permissions.md)
+- [Architecture](docs/architecture/architecture.md), [Communications architecture](docs/architecture/communications.md), [domain model](docs/architecture/domain-model.md), [data ownership](docs/architecture/data-ownership.md), and [permissions](docs/architecture/permissions.md)
 - [Design principles](docs/design/principles.md), [content design](docs/design/content-design.md), and [accessibility](docs/design/accessibility.md)
 - [DonorView](docs/integrations/donorview.md), [Stripe](docs/integrations/stripe.md), and [Google](docs/integrations/google.md) boundaries
 - [Threat model](docs/security/threat-model.md) and [data classification/retention](docs/privacy/data-classification-retention.md)
@@ -28,9 +28,9 @@ The current Wix site is migration evidence, not a product blueprint. It may supp
 
 ## Current phase boundary
 
-The next assignment is a **Communications Domain Product & Architecture Review** covering Stories/Journal, News, Featured News, the Communications Dashboard, homepage curation, the publication queue, editorial workflow and scheduling, Newsletter, media relationships, classification, related-domain content, and possible communications packages.
+Gate C, the **Communications Domain Product & Architecture Review**, is complete. Its typed models, lifecycle invariants, publication workflow, curated placements, administrative work surfaces, privacy boundaries, and V1/later split are recorded in the [accepted Communications architecture](docs/architecture/communications.md).
 
-Do not begin Slice 1 or add a package manifest, framework files, dependency lockfile, Prisma schema, migrations, application routes, or components until Sven explicitly authorizes implementation.
+The recommended next assignment is **Slice 1 — Application Foundation and Scaffold**. Do not begin it or add a package manifest, framework files, dependency lockfile, Prisma schema, migrations, application routes, or components until Sven explicitly authorizes that implementation assignment.
 
 ## Working in this repository
 

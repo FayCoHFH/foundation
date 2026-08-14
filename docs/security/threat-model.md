@@ -76,7 +76,7 @@ Security objectives, in order:
 
 **Threats:** self-approval; edit after approval; scheduler publishes wrong revision; draft leaks through cache/search/API; permanent `isFeatured` bypasses eligibility; concurrent edits overwrite work.
 
-**Controls:** immutable revisions; approval bound to canonical revision hash; any material edit invalidates approval; immutable snapshot activated atomically; public queries read active eligible snapshot only; optimistic concurrency; idempotent scheduler; FeaturePlacement service checks subject type, publication state, active window, and capability; withdrawal/expiration preserves history.
+**Controls:** immutable revisions; approval bound to canonical revision hash; any material edit invalidates approval; immutable snapshot activated atomically; public queries read active eligible snapshot only; optimistic concurrency; idempotent scheduler; Content Placement service checks definition, typed target, publication eligibility, active window, overlap, and capability; withdrawal, expiration, and archive preserve history.
 
 **Verification:** state-transition/property tests, concurrency tests, scheduled boundary/time-zone tests, cache/search leakage tests, and E2E self-approval denial.
 
@@ -92,7 +92,7 @@ Security objectives, in order:
 
 **Threats:** executable/polyglot upload, MIME spoofing, decompression/image bomb, malware, filename/path traversal, overwrite, public URL for private data, EXIF leakage, unauthorized download, stale consent.
 
-**Controls:** authenticated/capability-gated upload grants; server-generated opaque immutable keys; size/type/dimension/duration allowlists; inspect magic bytes and decode/re-encode supported images; strip unnecessary metadata; quarantine until scan/validation complete; checksum; separate public/private stores; private downloads through fresh authorization and safe response headers; no SVG/PDF inline by default; short-lived scoped upload/download grants; immutable versions; consent/license/publication eligibility in DB metadata; never trust original filename for path or content type.
+**Controls:** staff uploads require authenticated, capability-gated grants. An anonymous public Story Submission upload, if enabled, receives only a short-lived, non-enumerable, single-submission-scoped grant after origin/CSRF, rate-limit, abuse-challenge, declared-size, and declared-type checks; it can write only to private quarantine and cannot read, list, overwrite, promote, or publish objects. All paths use server-generated opaque immutable keys; size/type/dimension/duration allowlists; magic-byte inspection and decode/re-encode for supported images; unnecessary-metadata stripping; quarantine until scan/validation completes; checksums; separate public/private stores; fresh authorization and safe response headers for private downloads; no SVG/PDF inline by default; immutable versions; consent/license/publication-eligibility metadata; and no trust in an original filename for a path or content type.
 
 **Verification:** OWASP upload corpus, oversize/bomb/polyglot tests, private URL tests, object inventory scan, and media withdrawal/consent tests. Select malware and media-processing services before those upload types launch.
 
@@ -132,7 +132,7 @@ Security objectives, in order:
 
 **Threats:** public invocation of publish job, duplicate runs, incorrect local time/DST, publish-before-approval, expiration deletes history.
 
-**Controls:** authenticated scheduler endpoint/service principal; UTC persistence with explicit editorial display timezone; idempotent compare-and-transition command; exact approved hash; database transaction/advisory lock where needed; expiration changes eligibility and archives, never deletes; audit actor identifies scheduler.
+**Controls:** authenticated scheduler endpoint/service principal; UTC persistence with explicit editorial display timezone; idempotent compare-and-transition command; exact approved hash; database transaction/advisory lock where needed; expiration derives News ineligibility without archiving or deleting; audit actor identifies scheduler.
 
 **Verification:** DST/boundary/duplicate/concurrency tests and manual recovery procedure.
 

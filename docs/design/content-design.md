@@ -54,7 +54,10 @@ Tone may become more concise for News and operational guidance, more reflective 
 | Donation destination | Approved provider-neutral hosted page, embed, or later flow where a gift is completed | Implying Campaign presentation owns the gift record |
 | Featured | A deliberate content placement for a context and period | Synonyms such as latest, urgent, or permanently important |
 | Expired News | No longer current under an editorial rule but retained according to archive policy | Deleted, inaccurate, or necessarily withdrawn |
+| Archived News | Historical News intentionally retained and directly addressable | Current News or withdrawn content |
 | Withdrawn | Removed from normal public availability by a deliberate editorial action | Expired or archived |
+| Site Notice | Short, time-bounded operational information in a designated banner/area | A permanent policy, canonical operations page, or full News item by default |
+| Story submission | Private public intake that can be reviewed and later converted to a Story Draft | A public post, an editorial draft, or an admin account |
 | Public Grant Impact | Approved acknowledgment and evidence selected for public use | A view of the private grant record |
 | Applicant / participant / homeowner | Use only when accurate, necessary, and approved for context | “Recipient” or labels that imply a private case relationship |
 | ReStore | Use the verified local public name and capitalization | Treating ReStore as unrelated retail or a footer utility |
@@ -78,6 +81,8 @@ A Story should ordinarily establish:
 
 Pull quotes must repeat text already available in the reading order or be introduced as new quoted content with appropriate attribution. Galleries need meaningful sequence, alt text or decorative treatment, and captions/credits where context or rights require them.
 
+Use the V1 structured toolkit deliberately: paragraphs, headings, lists, blockquotes, attributed pull quotes, images, galleries, captions, contextual CTA, and divider. Related-content cards are rendered from typed relations outside the body document. Write content so it remains meaningful if optional media does not load. Do not use arbitrary HTML, layout-control blocks, unapproved embeds, or a visual page-builder to tell a Story. Callouts, statistics, and approved-provider video embeds are V1.1, after accessible rendering and validation are established.
+
 ### News
 
 Promise: a timely, authoritative update that lets readers understand what changed and whether action is needed.
@@ -93,6 +98,22 @@ A News item should ordinarily include:
 - a clear correction, expiration, archive, cancellation, or withdrawal treatment when circumstances change.
 
 Do not imply that Featured News is latest, urgent, or permanent. Do not use a temporary News item as the only maintained source for canonical Program rules, ReStore hours, or Event details.
+
+When relevance ends, label an item plainly as no longer current and keep its original publication context visible. Archive is for intentional historical retention; withdrawal is for removal from public availability. A correction should identify the correction where reader understanding requires it; never silently rewrite material facts merely for polish.
+
+### Site Notices
+
+Use a Site Notice for a short, urgent-to-operational message such as a same-day closure, build cancellation, or office instruction when a full News article is disproportionate. State the affected area, absolute dates/times, time zone where ambiguity is plausible, next action, and end time. Severity communicates operational importance (`INFO`, `IMPORTANT`, `URGENT`); it must not manufacture drama. A Notice expires automatically and should link to the canonical record when one exists.
+
+### Public Story submissions
+
+The public contribution experience should invite a proposed story, not promise publication. Explain that staff may contact the submitter, edit accepted material, select a different public byline, or decline/archive the submission. Ask only for the minimum identity/contact, relationship/context, proposed title/story, contact consent, privacy acknowledgement, and publication-consent status. Launch text-only if the approved private-upload safeguards are not ready; request optional photos with a rights affirmation only after validation, quarantine/scan, private delivery, deletion, consent, and abuse controls are implemented. Do not invite private case, eligibility, financial, medical, exact-location, or minor information. Do not create a public News contribution path.
+
+For participant and minor material, collect no more than the intake needs and do not state or imply it is ready for publication. Staff must obtain/verify the required consent and choose an appropriate public identity before conversion to an editorial draft.
+
+### Newsletter Editions
+
+An Edition adds a concise editor note and purposeful order/context to references to canonical Stories, News, Projects, Events, Campaigns, ReStore content, and calls to action. Do not paste full canonical articles into an Edition merely for convenience. Subscriber consent, membership, suppression, and delivery remain in the approved provider; content should describe the signup handoff accurately and never imply that Fayette Habitat stores a local subscriber list.
 
 ### Programs
 
@@ -202,6 +223,8 @@ Every media asset needs, as applicable:
 
 Alt text should communicate the image’s purpose in context, not duplicate the caption or infer sensitive characteristics. Do not start automatically with “Image of.” For linked images, the accessible name should communicate the link action or destination.
 
+Media readiness is a publication requirement: no asset or usage reaches a public snapshot until it is READY, rights/consent-cleared, and has a contextual alternative or recorded decorative treatment. A filename is not alt text; a single asset-level phrase is not automatically valid in every Story, News, or Newsletter context. Keep asset facts (source, rights, restriction) separate from usage facts (crop, role, caption, credit, contextual alternative).
+
 ## Search and SEO content
 
 - Write unique, accurate titles and descriptions for people first.
@@ -210,6 +233,7 @@ Alt text should communicate the image’s purpose in context, not duplicate the 
 - Preserve valuable legacy traffic through redirect decisions, not by copying Wix titles or URL structure into the new architecture.
 - Use structured data only when visible content supports it and the type is accurate.
 - Archived News and past Events must not masquerade as current in search snippets.
+- Use `Article` markup for Story and `NewsArticle` only for timely News where visible content supports it. An approved public Author Profile may use `ProfilePage` with a `Person` or `Organization` `mainEntity` only when that entity is genuinely profiled in the visible page; use `BreadcrumbList` only for a visible hierarchy. Never add structured data for drafts, previews, submissions, or withdrawn content.
 
 ## Administrative microcopy
 
@@ -218,6 +242,7 @@ Administrative content should explain consequence and recovery:
 - Name actions precisely: Submit for review, Approve this revision, Schedule publication, Withdraw from public view.
 - Show which revision, date/time, placement, and destination an action affects.
 - Explain why publication is blocked and how to resolve it.
+- Separate blockers (for example, stale approval, missing required consent, unsafe relation, or uncleared media) from warnings (for example, placement ending soon) and informational notices.
 - Distinguish validation, warning, permission denial, provider failure, and system failure.
 - For destructive or difficult-to-reverse actions, state the exact target and retained history before confirmation.
 - Do not expose capabilities, private review notes, or content a staff member lacks authority to see merely to explain a denial.
@@ -251,5 +276,7 @@ Before publication, confirm:
 - SEO/share metadata is truthful and not sensational;
 - the exact revision has the required approval; and
 - expiration, archive, correction, and placement behavior is understood.
+
+For a Site Notice, also confirm target area, absolute timing, severity, and automatic expiry. For a public Story submission, confirm that raw intake remains private until accepted and converted into the normal editorial workflow.
 
 Legacy content must pass this checklist and receive an explicit migration disposition. Its existence on Wix is not approval.

@@ -21,6 +21,22 @@ Use Tiptap as the initial editor toolkit and canonical ProseMirror-style JSON as
 
 Legacy HTML is sanitized, parsed into the allowed schema, and human-reviewed during migration. Unsupported markup becomes an explicit migration issue rather than a raw-HTML escape hatch.
 
+## Communications-review refinements
+
+The accepted decision is refined with small, per-type V1 profiles. A publication's headline, deck/summary, authors, hero media, SEO, categories, and typed domain relationships remain structured fields/joins rather than free-form document nodes.
+
+| Document owner | V1 allowlist | Explicitly deferred |
+| --- | --- | --- |
+| Story revision | Paragraph; heading levels 2–3; ordered/bulleted lists; block quote; attributed pull quote; strong/emphasis/link marks; contextual image; gallery; divider; bounded CTA | Callout, statistic, related-content card, embedded video, arbitrary layout columns, raw HTML |
+| News revision | Paragraph; heading level 2; ordered/bulleted lists; block quote; strong/emphasis/link marks; contextual image; divider; bounded CTA | Galleries, pull quotes, callouts, statistics, related-content cards, embedded video, arbitrary layout/columns |
+| Newsletter custom-text block | Paragraph; heading level 2; ordered/bulleted lists; strong/emphasis/link marks; contextual image; divider; bounded CTA | Story/News reference cards encoded as rich text, raw HTML, video embeds, arbitrary layout |
+
+- Media nodes contain stable `MediaUsage`/asset references, not storage URLs, captions, alt text, or crop values copied into arbitrary attributes. Usage-specific text and presentation data is separately validated and frozen into the snapshot.
+- `Contextual image` names a node type, not a one-image-per-document limit. V1 may repeat image nodes subject to document-size and editorial-quality limits; each image node references exactly one eligible `MediaUsage`. Galleries remain Story-only.
+- CTA nodes contain a validated local CTA reference or an allowlisted URL with accessible label; link protocols and external hosts are allowlisted. Video/third-party embeds, if later justified, require an approved-provider node with a privacy, fallback, caption/transcript, and accessible-player policy.
+- The renderer enforces semantic heading order, text alternatives for meaningful media, decorative-media rules, accessible link naming, and a non-visual fallback for each custom node. A missing rights/consent or contextual-alt requirement is a publication blocker where the media is used.
+- Unknown nodes, unsupported attributes, and documents valid for a different owner profile are rejected at save/submit/approve/publish. Profile/schema changes use the existing explicit version migration path.
+
 ## Consequences
 
 - Structured documents are queryable, validateable, renderable across channels, and safer than arbitrary HTML.
@@ -39,7 +55,7 @@ Legacy HTML is sanitized, parsed into the allowed schema, and human-reviewed dur
 
 ## Validation
 
-The Communications design review must approve the smallest node set. The implementation must test malformed/unknown nodes, dangerous link protocols, hostile pasted HTML, accessibility semantics/keyboard behavior, deterministic rendering/hash, old-schema migrations, snapshot stability, and editor/renderer parity. No raw-HTML node ships.
+The Communications design review has selected the smallest V1 profiles above. The implementation must test malformed/unknown nodes, cross-profile node rejection, dangerous link protocols, hostile pasted HTML, contextual-media requirements, accessibility semantics/keyboard behavior, deterministic rendering/hash, old-schema migrations, snapshot stability, and editor/renderer parity. No raw-HTML node ships.
 
 ## Primary references
 

@@ -51,7 +51,9 @@ The following map describes product ownership, not final navigation or directory
 
 Stories and News use shared revision, authorship, review, approval, scheduling, snapshot, SEO, relationship, and audit infrastructure. They retain typed records and typed validation. The design is neither a generic CMS blob nor two duplicate editorial engines.
 
-The Communications Dashboard is a read model over authoritative domain state. It may summarize drafts, reviews, approvals, scheduled and recent publications, active placements, expiring News, accessibility issues, broken links, and newsletter work. Dashboard widgets are not separate sources of truth.
+The Communications Dashboard is a read model over authoritative domain state. Its four V1 modules are **Needs Attention**, **Upcoming**, **Current Curation**, and **Recent Activity**; publication/media blockers and expiring News roll into the appropriate module instead of creating vanity tiles. Newsletter readiness appears only when Edition authoring is enabled. Dashboard widgets are not separate sources of truth.
+
+The implementation-ready Communications decisions are maintained in [Communications architecture](communications.md). That document owns detailed field, UI, V1-versus-later, workflow-policy, queue, dashboard, and public-IA descriptions; this document records the cross-platform invariants below.
 
 ### Projects and programs
 
@@ -104,14 +106,25 @@ Every publishable Story or News item has a typed aggregate and participates in s
 3. Approval records the exact revision identifier and a canonical hash covering the structured document, publication metadata, authors, relationships, SEO, and referenced media.
 4. Scheduling references the approved hash. Any material change invalidates approval and returns the work to the appropriate review state.
 5. Publishing creates an immutable publication snapshot and atomically makes it the active public snapshot.
-6. Public reads resolve only an active snapshot that satisfies the shared scheduled-publication invariant and any typed eligibility rule, including an approved News expiration/archive policy.
-7. Withdrawal, expiration, archival, or superseding publication preserves history and audit records; it never silently deletes the item.
+6. Public reads resolve only an active snapshot that satisfies the shared scheduled-publication invariant and typed eligibility rules. They never fall back to a working record or a later mutable revision.
+7. Withdrawal, News expiration, shared archive disposition, or a superseding release preserves history and audit records; it never silently deletes the item.
 
-News adds typed optional expiration/archive behavior and placement eligibility. Gate C decides whether urgency, pinning, or priority exists and what it means. Story adds typed narrative and long-form presentation concerns. A future publication type must adopt the shared contract and add its own invariants rather than expanding a universal content record indefinitely.
+The publishing model has four deliberately separate dimensions. The candidate-revision workflow is `DRAFT` -> `IN_REVIEW` -> `CHANGES_REQUESTED` or `PENDING_APPROVAL` -> `APPROVED`; submitting is a transition/event that selects the exact candidate, not a durable workflow state. The release/snapshot lifecycle schedules an approved hash and creates a `PUBLISHED` snapshot. A published snapshot can later be `WITHDRAWN` or `SUPERSEDED` in public-release history without changing the candidate workflow. Story and News share the `ACTIVE`/`ARCHIVED` discovery disposition, while News alone derives `CURRENT`/`EXPIRED` availability from its optional relevance end. A material successor revision after submission or approval invalidates that approval and must complete the workflow again, while an active snapshot may coexist with the later draft.
 
-`FeaturePlacement` is preserved as the direction for homepage Featured Story, Featured News, Campaign, Project, Event, ReStore, Shop, and future slots. A placement names a controlled slot, points to an eligible typed subject, and may have an active window and ordering. A permanent `isFeatured` flag on every domain record is rejected. The first implementation should add only placements required by an approved design.
+Story and News share an authorized, reversible discovery disposition of `ACTIVE` or `ARCHIVED`; archive removes ordinary discovery/placement while preserving direct historical snapshot behavior. News alone adds an optional relevance end time and availability of `CURRENT` or derived `EXPIRED`. Reaching the end time derives `EXPIRED`, makes News ineligible for current/featured placements, and gives public presentation an explicit “no longer current” treatment; it does not archive, withdraw, or remove snapshots/audit history. Withdrawal removes a public release promptly and needs a reason. Story adds typed narrative and long-form presentation concerns and has no expiration semantics. Urgency, pinning, and editorial priority are not V1 fields; latest is a derived date order and featured is a placement. A future publication type must adopt the shared contract and add its own invariants rather than expanding a universal content record indefinitely.
 
-Shared scheduled-publication metadata and typed News expiration data should remain queryable for a future Communications Calendar. No calendar-specific table is required now. Cross-domain relationships should allow a future Communications or Story Package without selecting its name or aggregate during foundation work.
+Curated content uses `PlacementDefinition` plus `ContentPlacement`. A definition owns a stable slot key, cardinality/window rules, fallback, and the closed set of target types it permits. A placement owns its optional active interval, actor/audit history, and one typed target link selected from that definition’s allowed set, rather than an unconstrained `target_type`/`target_id` pair. V1 definitions are singletons with no priority or ordering. Placement validation checks both the definition and the target’s current public eligibility. A permanent `isFeatured` flag on domain records is rejected. The first implementation creates the six approved homepage/News slots, not a page builder.
+
+Shared scheduled-publication metadata, News relevance end times, and Newsletter planned/send times remain queryable for a future Communications Calendar. That calendar is a derived view of authoritative dates, not a second scheduler; drag-to-reschedule and a calendar aggregate are deferred. Typed relationships to Projects, Programs, Campaigns, Events, Grants, Partners, and People supply the grouping needed now. A Communications Package is deferred until a distinct cross-anchor grouping workflow is demonstrated.
+
+## Communications supporting boundaries
+
+- `AuthorProfile` is a Communications-owned public byline profile. It may optionally link to a public `Person` and/or `AdminUser`, but neither link is required or grants access. It supports organizational and limited-identity bylines, preserves historic credit, and lets contributors exist without administrative accounts.
+- `EditorialCategory` is a controlled, flat, Communications-owned vocabulary. Categories declare the publication kinds they may classify, have lifecycle/merge-retire governance, and use an explicit revision/snapshot join. Generic tags are not a V1 capability; typed domain relationships answer most “about this Project/Program/etc.” needs.
+- `SiteNotice` is a small Communications aggregate for time-bounded operational notices, not a News shortcut: title, short accessible message, severity, target surface, optional CTA, active window, and audit. It automatically ceases public presentation at its end time and never becomes a generic alert feed.
+- Raw `PublicStorySubmission` intake is isolated from `Story` drafts. It has its own restricted inbox, anti-abuse/consent/retention rules, and private submission media. An editor explicitly accepts/converts it into a new Story draft; reject/archive does not create public or editorial content. Public News submission is out of scope for V1.
+- `NewsletterEdition` and ordered typed `NewsletterBlock` records own issue-specific introduction, curation, and planned timing. Blocks reference canonical approved/published domain material where possible rather than duplicate it. Subscriber membership, consent, and suppression remain in DonorView; delivery is behind a provider-neutral adapter and no sending provider, delivery execution, or web archive is selected by this decision.
+- `MediaAsset` owns immutable asset, provenance, rights/consent, scan/processing, and access-class facts. `MediaUsage` owns contextual role, order/crop, caption, and alternative text. Only ready, cleared assets with contextually complete public usage can enter a snapshot; snapshotting freezes the asset/usage version actually approved.
 
 ## Public, administrative, and private read paths
 
@@ -160,7 +173,7 @@ Published media bytes live in a public store only after validation and publicati
 - No microservices, event bus, headless-CMS product, or separate CMS per publication type.
 - No donor, volunteer, payment-card, accounting, or email-marketing reimplementation.
 - No applicant intake or private grant-management implementation.
-- No final public navigation, homepage composition, newsletter delivery configuration, editorial calendar, or Communications Package model.
+- No generic tags, public News tips, generic page builder, calendar aggregate/drag-rescheduling, newsletter subscriber database, newsletter-delivery provider commitment, or Communications Package model.
 - No legacy Wix-derived domain or URL architecture.
 
 ## Deferred checks that do not block architecture

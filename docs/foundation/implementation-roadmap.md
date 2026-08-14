@@ -5,14 +5,14 @@ Last reviewed: 2026-08-14
 
 This roadmap organizes independently testable outcomes. It is not a promise that conceptual product groups become routes or code directories. Every slice must preserve the data-ownership, security, privacy, accessibility, and legacy-independence rules in this foundation.
 
-## Gate C — Communications Domain Product & Architecture Review
+## Gate C — Communications Domain Product & Architecture Review — completed
 
-This is the next assignment and occurs before Slice 1. It is a planning gate, not an implementation slice.
+Gate C is resolved by the [accepted Communications architecture](../architecture/communications.md) and its synchronized product, IA, design, domain, permissions, ownership, and ADR refinements. It was a planning gate, not an implementation slice.
 
 - **Scope:** Stories/Journal; News; Featured News and other curated placements; Communications Dashboard; publication queue; workflow, approvals, scheduling, and expiration; homepage curation; Newsletter; authors/categories/tags; media and related-domain content; editorial calendar direction; possible Story/Communications Packages.
 - **Output:** agreed vocabulary, lifecycle invariants, main staff journeys, dashboard decisions, MVP versus later scope, relationship rules, and refinements to the publication/placement ADRs.
 - **Non-goal:** no application scaffold, schema, migration, route, or component.
-- **Acceptance:** remaining Communications choices are precise enough that Slice 2 does not have to invent product policy.
+- **Acceptance:** met. Story/News semantics, lifecycle axes, workflow/approval, Dashboard/Queue, six placements, homepage hybrid, authors/categories/media, Notices, submissions, Newsletter boundary, discovery, and V1/later scope are precise enough that implementation does not have to invent product policy.
 - **Principal risk:** prematurely generalizing a universal CMS or, conversely, duplicating publishing engines.
 
 ## Slice 0 — Decision runway
@@ -23,19 +23,23 @@ This is the next assignment and occurs before Slice 1. It is a planning gate, no
 - **Model/parallelism:** Sol for consequential synthesis/final review; Terra for bounded documentation; route/vendor inventories may proceed in parallel under exclusive ownership.
 - **Principal risk:** treating an undocumented vendor capability or legacy convention as a product fact.
 
-## Slice 1 — Platform shell
+### Communications delivery overlay
+
+The detailed C1–C8 acceptance criteria remain in the Communications architecture. They map onto the platform sequence as follows: C1 publishing kernel and C2 authoring/media safety begin in Slices 2–3; C3 Stories, C4 News/placements, and C5 Queue/Dashboard form the core of Slice 4; C6 Notices/submissions follows only when its collection controls are approved; C7 Newsletter Edition is V1.1 unless explicitly pulled forward; C8 derived calendar and evaluated extensions remains later work. One coordinator owns shared migrations.
+
+## Slice 1 — Application Foundation and Scaffold
 
 - **Scope:** supported Node/Next.js/TypeScript baseline, dependency locking, environment validation, Tailwind and accessible UI primitives, public/admin shells, error and not-found handling, metadata/robots baseline, CI, preview deployment, and Playwright smoke coverage.
-- **Dependencies:** Slice 0 and Gate C; exact supported package versions selected at execution time; infrastructure/environment ownership identified.
+- **Dependencies:** completed Slice 0 and Gate C; exact supported package versions selected at execution time; infrastructure/environment ownership identified.
 - **Acceptance:** reproducible install; build, type, lint, unit, and smoke tests pass; keyboard-visible shells work at mobile/desktop zoom; previews cannot reach production data or secrets; no domain behavior is faked.
 - **Model/parallelism:** Terra leads; CI/test and visual/accessibility shell work can run in parallel after configuration ownership is assigned.
 - **Principal risk:** dependency or component-library sprawl before the product system exists.
 
 ## Slice 2 — Persistence and publishing kernel
 
-- **Scope:** PostgreSQL/Prisma migration discipline, modular data-access boundaries, audit primitives, outbox/inbox primitives where justified, typed authoring revisions, exact-hash approvals, immutable publication snapshots, idempotent scheduling/withdrawal/rollback, and the minimum placement foundation approved by Gate C.
+- **Scope:** PostgreSQL/Prisma migration discipline, modular data-access boundaries, audit primitives, outbox/inbox primitives where justified, typed authoring revisions, exact-hash approvals, immutable publication snapshots, internal publication responsibility, idempotent scheduling/withdrawal/supersession, shared Story/News archive disposition with restore-through-approved-successor, and the minimum placement foundation approved by Gate C.
 - **Dependencies:** Slice 1 and Gate C workflow invariants.
-- **Acceptance:** fresh and upgrade migrations pass against real PostgreSQL; draft edits never appear through public queries; changed content invalidates approval; publish/schedule/withdraw/rollback operations are concurrent-safe and idempotent; public snapshots validate against versioned schemas.
+- **Acceptance:** fresh and upgrade migrations pass against real PostgreSQL; draft edits never appear through public queries; changed content invalidates approval; publish/schedule/withdraw/supersession/archive/restore operations are concurrent-safe and idempotent; archived content obeys its direct-versus-ordinary-discovery contract; restore creates an approved successor rather than reactivating an old snapshot; own/any scope follows internal editorial ownership; public snapshots validate against versioned schemas.
 - **Model/parallelism:** Sol coordinates schema and concurrency; one migration owner; domain reviewers and test authors may work in parallel without editing the schema simultaneously.
 - **Principal risk:** a generic content abstraction erasing Story/News rules or public queries falling back to mutable rows.
 
@@ -49,9 +53,9 @@ This is the next assignment and occurs before Slice 1. It is a planning gate, no
 
 ## Slice 4 — Communications MVP
 
-- **Scope:** public Stories and News experiences; authoring revisions; authors/categories; media relationships; submit/review/approve/schedule/publish/expire/archive/withdraw behaviors selected at Gate C; Featured Story/News placement; publication queue; useful first Communications Dashboard; preview and SEO.
-- **Dependencies:** Slices 2–3; approved editorial roles, vocabulary, placement scope, and dashboard MVP.
-- **Acceptance:** Stories and News have typed validation/presentation while sharing the kernel; a published version can coexist with a later draft; normal authors cannot self-approve; scheduled and expiring News recover after a missed job; featured placements are permissioned and audited; media rights and contextual alt text gate publication; public and admin journeys pass Playwright and accessibility review.
+- **Scope:** C3–C5 from the accepted Communications architecture: public Stories and News; typed authoring and relationships; approved V1 rich text/media; five homepage placements plus `NEWS_FEATURED`; submit/review/approve; separate schedule/release, shared Story/News discovery-disposition, and News-availability behavior; Publication Queue; four-module Dashboard; preview, search, and SEO. Site Notices and public Story Submission may follow in C6 when their launch controls are satisfied.
+- **Dependencies:** Slices 2–3 and the accepted Gate C contract; verified content is not required to implement approved structures.
+- **Acceptance:** Stories and News have typed validation/presentation while sharing the kernel; a published version can coexist with a later draft; normal authors cannot self-approve; archived Stories and News leave ordinary discovery without silent deletion and restore only through an approved successor; scheduled and expiring News recover after a missed job; featured placements are permissioned and audited; media rights and contextual alt text gate publication; public and admin journeys pass Playwright and accessibility review.
 - **Model/parallelism:** Terra leads bounded domain/UI work; Sol reviews workflow, scheduling, and placement concurrency; public Story, public News, and admin UI can proceed in parallel after contracts freeze.
 - **Principal risk:** duplicated editorial logic, stale approvals, accidental draft exposure, or an overbuilt page-builder/calendar/package system.
 

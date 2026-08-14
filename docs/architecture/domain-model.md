@@ -34,40 +34,67 @@ Last reviewed: 2026-08-14
 
 The relational direction uses a narrow shared publication spine plus typed domain records:
 
-- `Publication`: identity, kind, canonical slug, workflow status, current working revision, approved revision/hash, active snapshot, shared scheduling reference/invariants, withdrawal state, and optimistic concurrency version. Gate C and schema design decide exact temporal fields; a shared scheduling contract does not give Stories a generic expiration window.
+- `Publication`: identity, closed `kind`, canonical slug, candidate workflow state, current working revision, approved revision/hash, active snapshot, shared release/scheduling history, shared `ACTIVE`/`ARCHIVED` discovery disposition, and optimistic concurrency version. Candidate workflow, release history, and discovery disposition are intentionally separate so an active snapshot may coexist with a later draft.
+- `PublicationResponsibility`: internal mutable assignment with required editorial-owner AdminUser and optional assigned reviewer/approver AdminUsers. Owner defaults to the creator unless an authorized any-scope command assigns another active user; reassignment is audited. It scopes `*.read/edit.own` but does not grant capabilities, represent public authorship, alter the content hash, or enter public snapshots.
 - `PublicationRevision`: immutable numbered revision metadata, schema-versioned rich-text JSON, normalized title/summary/SEO fields, creator, creation time, and canonical content hash.
-- `PublicationAuthor`: ordered link from a revision or snapshot to a public `Person`/author profile; authorship at publication time is preserved.
+- `PublicationAuthor`: ordered link from a revision or snapshot to `AuthorProfile`; authorship at publication time is preserved.
 - `PublicationApproval`: reviewer/approver, exact revision and canonical hash, decision, reason, and timestamp.
 - `PublicationSnapshot`: immutable public payload derived from one approved revision, including frozen authors, relations, media references, SEO, structured document, and renderer/schema version.
 - `PublicationRelation`: typed link from a revision/snapshot to an eligible Project, Program, Campaign, Event, Grant, Partner, Person, Product, or other approved subject.
-- `Category` and `PublicationCategory`: Communications-owned classification where a type permits it. Categories and tags are not assumed interchangeable.
+- `EditorialCategory` and `PublicationCategory`: flat, Communications-owned, controlled classification where a publication kind permits it. Categories have an explicit merge/retire path. Generic tags are not a V1 concept.
 - `PublicationQualityIssue`: derived or recorded accessibility/link/validation problem used by the Publication Queue and Communications Dashboard; it does not replace validation.
+- `PublicationLifecycleTransition`: append-only lifecycle event with an explicit candidate-workflow, release/snapshot, shared discovery-disposition, or derived News-availability dimension; action and from/to state where applicable; subject revision/hash/snapshot/schedule; actor or service principal; reason where required; and correlation/idempotency/audit reference. `SUBMITTED` is an action selecting a candidate, not a workflow state, and expiry is an idempotent derived observation rather than mutable availability truth. The record is authoritative history while current aggregate state and immutable snapshots remain the operational sources used by Queue/Dashboard projections.
+- `PublicationRequirement`: an evaluated, typed approval/publication requirement for an exact revision (for example, standard independent approval, consent clearance, second approval, or legal review). It is a small extensibility seam, not a general BPM engine.
 
 `Publication.kind` is a discriminator with a closed set. Each kind must have exactly one typed detail record and typed validation. This shared spine is intentionally narrower than a generic `Content` table.
 
+The candidate-revision workflow is `DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `PENDING_APPROVAL`, and `APPROVED`; requested changes return responsibility to the author/editor, and `SUBMITTED` is the event that moves the selected candidate into review. `SCHEDULED` and `PUBLISHED` belong to the approved release/snapshot lifecycle, not this workflow. Publishing activates a snapshot and does not destroy the candidate; later activation can mark a prior public release `SUPERSEDED`, while `WITHDRAWN` records its deliberate removal. A material edit produces a successor revision and invalidates exact-revision approvals as determined by the revision-diff policy.
+
 ### Aggregate: Story
 
-- `Story`: one-to-one typed detail for a `Publication` of kind `STORY`; contains story-specific presentation and narrative invariants.
-- Long-form body, pull quotes, galleries, contextual calls to action, and rich relations are represented as allowlisted structured nodes and typed relationships, not arbitrary embedded HTML.
+- `Story`: typed root and one-to-one detail for a `Publication` of kind `STORY`; it owns narrative/evergreen invariants and the minimum anatomy of headline, deck, excerpt, optional hero usage, and structured body. Canonical slug, SEO, authors, approved relationships, and workflow remain in the shared spine.
+- Long-form body, pull quotes, galleries, contextual calls to action, and rich relations are represented as allowlisted structured nodes and typed relationships, not arbitrary embedded HTML. First-release relations are selected by real editorial need and validate the target's public eligibility.
 - Stories are generally evergreen and never inherit News expiration semantics by default.
+- An archived Story leaves ordinary collection/related/placement discovery but retains its direct historical snapshot; restoration or withdrawal recovery uses a successor revision and normal approval.
 
 ### Aggregate: News
 
-- `News`: one-to-one typed detail for a `Publication` of kind `NEWS`; supports concise announcement semantics and typed optional expiration/archive behavior. Gate C decides whether urgency, pinning, or priority has a real workflow meaning; no such field is committed here.
-- Conceptual lifecycle states include draft, review, approved, scheduled, published, expired, archived, and withdrawn. Exact enum names are selected with the first implementation.
-- Expiration changes public eligibility or archive presentation but does not delete the item or its snapshots.
+- `News`: typed root and one-to-one detail for a `Publication` of kind `NEWS`; it owns concise-announcement anatomy, optional relevance end time, and derived availability. It is not a shorter Story; it uses the shared archival discovery disposition.
+- News availability is `CURRENT` until the optional relevance end time, then derives `EXPIRED`; expired News is no longer eligible for current/latest/featured placement and is presented as no longer current where it remains directly addressable. Expiry does not change the shared `ACTIVE`/`ARCHIVED` disposition. The system preserves snapshots and audit records. Withdrawal removes a public release and requires a reason.
+- Urgency, pinning, and priority are not V1 fields. “Latest” is derived from publication time and “featured” is a managed placement.
 - Relations to Project, Program, Campaign, Event, Grant, Partner, and media are optional and independently validated.
 
-### Aggregate: FeaturePlacement
+### Aggregate: PlacementDefinition and ContentPlacement
 
-- `FeaturePlacement`: curated slot identifier, eligible subject type/id, optional active interval, order/priority, and publication state.
-- It supports Featured Story, Featured News, Campaign, Project, Event, ReStore, Shop, and future slots without scattering permanent Boolean flags.
-- Only placements approved by the homepage/Communications design are created in Slice work. This direction does not imply a universal page builder.
+- `PlacementDefinition`: code-owned slot definition with a stable key, permitted target kinds, cardinality, overlap/window rules, fallback policy, and public surface. V1 has six singleton definitions and no ordering mode; definitions are not administrator-created page-builder data.
+- `ContentPlacement`: a placement instance for one definition, with optional active interval, lifecycle/audit fields, and exactly one typed target join. V1 definitions are singletons with no priority or ordering; a later multi-item definition must state its ordering rule explicitly. Typed joins point from placement to their normal domain root; arbitrary polymorphic `target_type`/`target_id` storage is rejected. The definition validates which typed joins can exist.
+- A target must remain public and otherwise eligible for the entire active window. Ineligible, expired, archived, withdrawn, or missing targets deactivate/fail placement validation and invoke the definition's fallback behavior. Only placements approved by the homepage/Communications design are created in Slice work.
+
+### Aggregate: AuthorProfile and editorial taxonomy
+
+- `AuthorProfile`: Communications-owned public byline profile with display name, optional title/bio/portrait, organization/limited-identity setting, visibility and archival state. It may reference at most one public `Person` and/or `AdminUser`, while either upstream record may support multiple distinct byline profiles; these links are neither required nor authorization grants. An archived profile remains available to frozen historical snapshots.
+- `EditorialCategory`: flat controlled vocabulary with display name, slug, description, permitted publication kinds, display order, and active/retired/merged lifecycle. V1 enforces zero or one primary category on a Story/News revision. Category changes do not mutate prior snapshots. Category creation, merge, and retirement require governed capabilities.
+
+### Aggregate: SiteNotice
+
+- `SiteNotice`: a small, separately typed Communications aggregate for operational notices: title, short accessible message, severity (`INFO`, `IMPORTANT`, `URGENT`), target surface, required active window, optional CTA, and `DRAFT`/`PUBLISHED`/`WITHDRAWN` lifecycle with derived upcoming/active/ended presentation.
+- Notices automatically stop rendering after their end time, are audited, and are not indexed or modeled as News unless staff intentionally creates a separate News item.
+
+### Aggregate: PublicStorySubmission
+
+- `PublicStorySubmission`: restricted public intake, separate from `Story`, containing only justified contact/relationship/story/consent data, privacy acknowledgment, anti-abuse data, and an inbox status. It may have `SubmissionMedia` in private/quarantine storage with rights/permission affirmation.
+- An editor accepts and explicitly converts a submission into a new Story draft. The draft receives only approved/necessary material; the submitter's identity, public byline, and consent are independently selected. Rejection, withdrawal, retention, and deletion follow the intake retention policy. A public News submission aggregate is not in V1.
+
+### Aggregate: NewsletterEdition
+
+- `NewsletterEdition`: typed Communications root for an edition-specific title, introduction, planned timing, and audit. It owns curation, not subscriber data or a duplicate canonical article body. Delivery execution and web-archive eligibility are deferred until their operating/provider policy is approved.
+- `NewsletterBlock`: ordered typed block owned by an edition. Reference blocks link to canonical Story, News, Project, Event, Campaign, or ReStore material; a bounded custom-text/CTA block supplies edition-specific context. Delivery snapshots, if required by a provider, freeze the rendered edition separately.
+- The provider-neutral delivery port receives an approved delivery snapshot and aggregate result only. DonorView remains the subscriber, consent, suppression, and mailing-list authority.
 
 ### Future Communications concepts
 
-- Newsletter content should reuse suitable authorship, media, review, and scheduling services but remains a typed capability.
-- A Communications Calendar can query publication and newsletter schedules; no foundation-only calendar entity is required.
+- Newsletter editions reuse suitable media, review, scheduling, and audit services but remain typed content.
+- A Communications Calendar derives rows from Story/News/Newsletter publication schedules and other domain dates; no calendar entity or independent rescheduling system is required.
 - A future Communications/Story Package may group typed publications and domain records around an initiative. Its name, ownership, and lifecycle remain deliberately undecided.
 
 ## People, leadership, and governance
@@ -163,7 +190,8 @@ Stripe owns card/payment method data and processor transaction detail. Product a
 
 ### Aggregate: MediaAsset
 
-- `MediaAsset`: metadata and lifecycle for an immutable object: classification, storage key/store, checksum, MIME type determined server-side, byte size, dimensions/duration, source description, credits, consent/license basis, upload actor/time, scan state, and publication eligibility. Context-specific relationships and snapshots carry the actual alt text/decorative treatment and caption used in that presentation.
+- `MediaAsset`: metadata and lifecycle for an immutable object: classification, storage key/store, checksum, MIME type determined server-side, byte size, dimensions/duration, source description, credits, consent/license basis, upload actor/time, scan state, processing state, and publication eligibility.
+- `MediaUsage`: a typed contextual join to an eligible editorial owner (Story revision, News revision, AuthorProfile, or NewsletterBlock in approved scope) with presentation role, order, focal crop, contextual caption, contextual alternative text/decorative treatment, and use constraints. V1 placement uses the target snapshot’s approved media and cannot introduce its own media override. Raw `SubmissionMedia` is not a MediaUsage; explicit promotion after acceptance/rights review creates a normal MediaAsset and Story-revision usage. Public usage requires a ready, cleared asset and complete contextual requirements. Snapshotting freezes the approved asset and usage versions.
 - `MediaVariant`: generated rendition linked to its source and transformation version.
 - Draft/public media and private/confidential documents never share an access policy simply because both are files.
 - Replacing an asset creates a new immutable object/version; published snapshots continue to reference the version they approved.

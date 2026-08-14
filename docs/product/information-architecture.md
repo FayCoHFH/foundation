@@ -113,7 +113,7 @@ Examples:
 - public grant impact can connect an approved funder acknowledgment to supported work and evidence without exposing private grant administration; and
 - a ReStore or Artist Story can lead to canonical ReStore information or an appropriate Product.
 
-Related content should be editorially meaningful. Automatic recency alone must not create inappropriate associations. The Communications review will determine where relationships are explicit, derived, or curated.
+Related content should be editorially meaningful. Automatic recency alone must not create inappropriate associations. Communications uses explicit public-safe relations first, optional editorial curation second, and a deterministic shared-relation/category-plus-recency fallback only when needed.
 
 ## Communications public architecture
 
@@ -125,6 +125,8 @@ The conceptual experience includes:
 - Story detail with structured narrative, media, attribution, dates, and contextual actions;
 - relationships to the underlying people, work, evidence, or opportunities; and
 - purposeful discovery by topic/category only after taxonomy governance is defined.
+
+The recommended canonical space is a distinct Story collection with stable item slugs, an optional category archive, and optional Author Profile archive. The exact public collection word remains open. A published Story has a canonical URL; renamed slugs redirect; a successor draft never changes the public page. Related content begins with explicitly related public records, then a deterministic shared-relation/category fallback. It must not expose private People, grants, submissions, or media.
 
 The public name remains open. Internal administration should use task-oriented **Stories** terminology unless a later decision establishes otherwise.
 
@@ -141,6 +143,14 @@ News requires:
 - preserved archive behavior for items no longer current; and
 - optional related-domain links.
 
+The recommended canonical space is a distinct News collection with stable item slugs, a chronological index, and a historical archive. Expired News is removed from current/latest and curated placements, remains directly addressable with a clear no-longer-current label, and can remain searchable. Archived News remains historical and directly addressable; withdrawn News is unavailable publicly. An optional category archive is appropriate only after the controlled category vocabulary is populated.
+
+### Newsletter, notices, and Story contribution
+
+- A Newsletter archive/index and web edition are V1.1: they surface only approved public Edition snapshots. V1 exposes a clear subscriber-signup handoff without receiving or storing subscriber data.
+- A Site Notice appears as a time-bounded global or relevant local banner/inline notice. Its exact visual treatment and final target areas are design decisions; it is not a News replacement.
+- A public Story contribution route is an isolated form leading to a private submission inbox. It has no public status page, contributor account, or public News equivalent.
+
 Urgent or operational News must not permanently override canonical information. For example, a holiday-hours item may explain an exception while the ReStore record remains the maintained source for normal hours.
 
 ### Homepage curation
@@ -149,7 +159,7 @@ The homepage should orient people, establish trust, and expose high-priority cur
 
 Potential selection areas include hero content, Featured Story, Featured News, an active Campaign, a featured Project, upcoming Events, impact evidence, volunteer call to action, ReStore, Shop, partner recognition, and newsletter signup. These are candidates, not a frozen sequence or guarantee that every element appears simultaneously.
 
-A future curated-placement direction should support meaningful selection, timing, preview, and fallback without adding a universal page-builder model.
+V1 has six code-owned singleton placement definitions: `HOME_HERO`, `HOME_FEATURED_STORY`, `HOME_FEATURED_NEWS`, `HOME_FEATURED_PROJECT`, `HOME_FEATURED_CAMPAIGN`, and `NEWS_FEATURED`. The first five are the manual homepage slots—Hero (Story, News, Project, or Campaign), Featured Story, Featured News, Featured Project, and Featured Campaign—while `NEWS_FEATURED` serves the News experience. Each has a legal target type, optional timing, preview, audit, and code-defined fallback/omission behavior; unavailable-domain slots hide or use that fallback. Upcoming Events and latest News are derived collections; impact is a configured approved metric set; volunteer, ReStore, Shop, partners, and newsletter presentation are stable domain CTA/configuration sections in the hybrid model, not arbitrary placements. This avoids both a static homepage and a page builder.
 
 ## Administrative information architecture
 
@@ -160,13 +170,16 @@ The administration should be organized around staff tasks and domain ownership, 
 - Dashboard
 - Stories
 - News
-- Newsletter
+- Newsletter (V1.1 when Edition authoring is enabled)
 - Media
 - Authors
 - Categories
 - Publication Queue
+- Homepage / placements
+- Site Notices
+- Story Submissions
 
-Dashboard is the command center; it should summarize actionable editorial state across content types. Lists and editors remain typed to their domain even when workflow infrastructure is shared.
+Dashboard is the command center; V1 presents actionable attention items, upcoming scheduled releases/expiring content, current homepage curation, and recent meaningful activity. The Publication Queue holds cross-type Story/News candidate-workflow and release views; typed lists/editors remain the source for substantive actions. A Contributor sees their own authoring work; an Editor sees review/edit work; a Communications Manager sees curation, Notices, Authors, Categories, and submission intake; a Super Admin sees the same areas plus exceptional override pathways. Server authorization, not this navigation, remains decisive.
 
 ### Projects & Programs
 
@@ -207,9 +220,9 @@ This is conceptual. Final navigation labels, grouping depth, dashboard entry poi
 
 ## Publication finding and queue model
 
-Staff should be able to find communications by type, lifecycle state, responsible person, scheduled time, freshness risk, and publication problem. The Publication Queue should emphasize work that needs action rather than become another undifferentiated content list.
+Staff should be able to find communications by type, candidate workflow, release/public state, responsible person, scheduled time, freshness risk, and publication problem. The V1 Queue provides **My Drafts**, **Needs Review**, **Needs Approval**, **Approved**, **Scheduled**, **Recently Published**, **Expired News**, and **Archived** views plus type, candidate state, public author/editorial owner, assigned reviewer/approver, related-work, and date filters. It should emphasize work that needs action rather than become another undifferentiated content list; only safe responsibility-assignment/preview actions are inline.
 
-Future calendar compatibility should be preserved by maintaining explicit scheduling semantics. The calendar itself, cross-type drag-and-drop behavior, alerts, and newsletter scheduling are open design questions.
+Future calendar compatibility is preserved by authoritative scheduling semantics. The calendar itself, cross-type drag-and-drop behavior, event/business-date planning, and planning alerts are deferred; any future calendar is a derived view, never the scheduling authority.
 
 ## Naming and taxonomy rules
 
@@ -217,13 +230,13 @@ Future calendar compatibility should be preserved by maintaining explicit schedu
 - Use **Story** for the internal editorial object unless a later decision changes it; use **News** only for timely announcement-oriented publications.
 - Do not use **Campaign** as shorthand for a DonorView fund/appeal/destination.
 - Name a Program, Project, Event, Grant, Partner, and Product according to its domain meaning rather than treating all as pages.
-- Create categories/tags only when staff can define purpose, inclusion rules, owner, review cadence, and public value.
+- Categories are a controlled, flat editorial vocabulary with name, slug, description, display order, owner, allowed content type, and archive behavior. Generic tags are not V1.
 - Avoid duplicate labels that conceal different actions—for example, distinguish donating money, donating goods to ReStore, volunteering, applying for assistance, and buying merchandise.
 - Use dates/status language where it prevents stale information from appearing current.
 
 ## URL and routing principles
 
-The final route scheme is deferred until the content model and design review. It should:
+The final route scheme remains subject to design review. The implementation should reserve distinct canonical collection spaces for Stories, News, Newsletter web editions, Author Profiles, categories, and Story submissions, using stable readable lower-case paths. It should:
 
 - use stable, readable, lower-case paths;
 - keep canonical URLs independent from legacy Wix structures;
@@ -235,6 +248,14 @@ The final route scheme is deferred until the content model and design review. It
 - handle external handoffs through owned, maintainable references where useful without concealing the destination.
 
 The redirect ledger may map many legacy origins to one new canonical destination or to an intentional archive/retirement outcome.
+
+## Communications SEO, structured data, search, and discovery
+
+- Published Story pages use accurate Article metadata; News uses NewsArticle only when it meets that type's public meaning. Both include canonical URL, OpenGraph/social metadata, author/byline where public, publisher, `datePublished`, and meaningful `dateModified`.
+- Author profile pages may use `ProfilePage` with an approved `Person` or `Organization` as `mainEntity` only when the visible page genuinely profiles that entity. `BreadcrumbList` is used only when the visible hierarchy supports it. Newsletter web editions use `Article` metadata when published; Site Notices and intake forms do not claim article markup.
+- Canonical published, expired, and archived Communications pages may be indexed when they retain public historical value. A documented `noindex` decision removes a record from sitemap, site-search, and external-index eligibility. Withdrawn and preview pages are excluded. No rich-result outcome is promised.
+- V1 site search includes directly addressable, indexable public Story and News title, deck/summary, permitted body text, public Author name, category, and permitted related public-record names. PostgreSQL full-text search is sufficient initially. Search excludes drafts, previews, submissions, internal notes, private media, `noindex` records, and withdrawn content.
+- Category browsing and typed related-content links are primary discovery tools. External search, personalization, and algorithmic recommendations are deferred.
 
 ## Footer, utilities, and persistent actions
 
@@ -254,16 +275,16 @@ External destinations must be labeled. The interface must distinguish an externa
 
 ## Information-architecture validation before routes are frozen
 
-The Communications review and subsequent design work should validate:
+Subsequent content and design work should validate:
 
 1. the public label and role of Stories / Journal;
 2. whether News needs top-level navigation or another consistently discoverable placement;
-3. priority and fallback rules for homepage curation;
+3. the public presentation of the recorded homepage placement fallback rules;
 4. distinctions among Give, Campaigns, volunteering, event registration, ReStore donations, and Shop;
 5. pathways for residents seeking help without exposing private intake details;
 6. due-diligence journeys across leadership, governance, work, partnerships, grants, and impact;
 7. taxonomy vocabulary with staff and audience language;
-8. staff finding/queue tasks across Communications;
+8. staff finding/queue tasks against the recorded V1 views and filters;
 9. mobile navigation breadth and naming; and
 10. content depth sufficient to justify collection indexes, filters, and archives.
 

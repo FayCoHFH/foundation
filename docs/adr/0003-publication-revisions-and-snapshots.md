@@ -20,11 +20,22 @@ Use a narrow shared publication spine (`Publication`, immutable `PublicationRevi
 - Scheduling points to the approved hash.
 - Publishing atomically creates/activates an immutable snapshot. Public reads use only the active eligible snapshot.
 - Withdrawal, expiration, archival, and superseding publication preserve snapshots and audit history.
-- News may add typed optional expiration/archive behavior; Stories do not inherit those semantics by default. Gate C decides whether urgency, pinning, or priority exists and what it means, and schema design decides exact field placement.
+- News adds typed optional expiration behavior; Story and News share deliberate archival discovery behavior, while Stories do not inherit expiry. Urgency, pinning, and editorial priority are not V1 News fields: urgency belongs in a Site Notice where appropriate, recency is derived, and featured presentation is a placement.
 
-Model featured content through a managed, typed `FeaturePlacement` direction with named slots, eligible subject, optional active window, and ordering. Do not scatter permanent `isFeatured` flags. Implement only slots approved by later homepage/Communications design.
+Model featured content through `PlacementDefinition` plus `ContentPlacement`, with a named slot, closed eligible target set, optional active window, fallback, and audit. Do not scatter permanent `isFeatured` flags. V1 has six code-owned singleton definitions—five homepage slots plus `NEWS_FEATURED`—with no priority or ordering.
 
 Existing schedule fields remain queryable for a future Communications Calendar. A future publication type adopts the shared contract plus typed invariants. No calendar-only or Package model is created now.
+
+## Communications-review refinements
+
+The accepted decision is refined, not reopened, as follows:
+
+- `Publication` holds the candidate-revision workflow (`DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `PENDING_APPROVAL`, `APPROVED`) separately from public-release lifecycle/history. `SUBMITTED` is a transition/event selecting the candidate, not a workflow state. An active snapshot may coexist with a later working revision.
+- `SCHEDULED` and `PUBLISHED` describe the approved release/snapshot lifecycle, not revision workflow. `WITHDRAWN` and `SUPERSEDED` are public-release history outcomes. Withdrawal requires a reason and promptly removes public availability; superseding preserves the prior snapshot while activating a later one.
+- Story and News share a deliberate discovery disposition (`ACTIVE`/`ARCHIVED`); archive removes ordinary discovery/placement while preserving direct historical snapshot behavior. News alone owns an optional relevance end time and derived availability (`CURRENT`/`EXPIRED`). Expiration removes current/featured eligibility and adds an explicit no-longer-current public treatment without deleting a snapshot. It is not withdrawal and does not itself change archival disposition. Stories do not inherit expiry.
+- Approval requirements are evaluated against the exact revision/hash. The standard independent approval rule can be extended by bounded requirement types such as consent clearance, second approval, or legal review. This is a policy evaluator and evidence record, not a general BPM engine. An override remains an explicit, reasoned, audited Super Admin action.
+- Curated placement is `PlacementDefinition` plus `ContentPlacement`, not `FeaturePlacement` as an unconstrained relation. The definition owns a closed list of permitted target types and slot rules. Each placement uses one typed target join; arbitrary `targetType`/`targetId` storage is rejected. Target eligibility is validated on create, schedule, public read, and job recovery.
+- The initial Calendar is derived from authoritative publication/newsletter/domain dates. It creates neither an independent schedule source nor a drag-to-reschedule contract. Communications Packages remain deferred until existing typed domain anchors cannot support a demonstrated grouping workflow.
 
 ## Consequences
 
@@ -40,7 +51,9 @@ Existing schedule fields remain queryable for a future Communications Calendar. 
 - **One large generic Content table/JSON record:** weakens typed invariants and invites a page-builder CMS.
 - **Independent Story and News engines:** duplicates high-risk workflow and scheduling logic.
 - **Mutable published row:** cannot prove what was approved or prevent post-approval drift.
-- **Boolean `isFeatured` on each domain:** does not model slots, windows, competition, ordering, or future curated subjects.
+- **Boolean `isFeatured` on each domain:** does not model slots, windows, competition, ordering, fallback, or future curated subjects.
+- **Unconstrained polymorphic placement target:** permits illegal slot/target combinations and makes integrity/eligibility enforcement fragile; typed target joins guarded by definitions are safer.
+- **One state machine that conflates candidate work, release lifecycle, shared discovery disposition, and News availability:** obscures coexistence of a published snapshot and a successor draft, and the difference between expiration, withdrawal, supersession, and archive.
 - **Permanent deletion on News expiration:** destroys institutional and audit history.
 
 ## Validation

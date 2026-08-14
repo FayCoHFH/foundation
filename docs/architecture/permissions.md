@@ -26,16 +26,17 @@ Names may be mechanically refined before migrations, but separation must be pres
 ### Communications
 
 - `communications.dashboard.read`
-- `stories.read.draft`, `stories.create`, `stories.edit`, `stories.submit`, `stories.review`, `stories.approve`, `stories.publish`, `stories.schedule`, `stories.withdraw`
-- `news.read.draft`, `news.create`, `news.edit`, `news.submit`, `news.review`, `news.approve`, `news.publish`, `news.schedule`, `news.feature`, `news.archive`, `news.withdraw`
-- `newsletter.manage`
-- `media.manage`, with separate `media.private.read` and `media.private.manage` where private assets exist
+- `communications.queue.read`, `communications.calendar.read`
+- `communications.placements.manage`, `communications.notices.manage`, `communications.submissions.review`
+- `stories.create`, `stories.read.draft.own`, `stories.read.draft.any`, `stories.edit.own`, `stories.edit.any`, `stories.submit`, `stories.review`, `stories.approve`, `stories.schedule`, `stories.publish`, `stories.withdraw`, `stories.archive`
+- `news.create`, `news.read.draft.own`, `news.read.draft.any`, `news.edit.own`, `news.edit.any`, `news.submit`, `news.review`, `news.approve`, `news.schedule`, `news.publish`, `news.withdraw`, `news.archive`
+- `newsletter.create`, `newsletter.read.draft`, `newsletter.edit`, `newsletter.submit`, `newsletter.review`, `newsletter.approve`, `newsletter.schedule`, `newsletter.publish`, `newsletter.withdraw`, `newsletter.archive`
+- `media.upload`, `media.edit`, `media.rights.clear`, `media.public.use`, with separate `media.private.read` and `media.private.manage` where private assets exist
 - `communications.categories.manage`
 - `communications.authors.manage`
-- `communications.queue.read`
-- `communications.placements.manage`
+- `communications.requirements.override` for an explicit, audited exceptional publication-requirement override only
 
-Creating/editing, reviewing, approving, publishing, scheduling, and placing are deliberately independent. `news.feature` authorizes News placement eligibility/selection only through the placement service; it does not bypass publication eligibility.
+The `own` scope is evaluated only from the required internal `PublicationResponsibility.editorialOwnerAdminUserId`, never from a client-supplied author/byline, revision creator, or reviewer assignment. Creation defaults ownership to the active creator unless an authorized any-scope command assigns another active user; owner reassignment requires typed `edit.any` and audit. Reviewer/approver assignments organize Queue responsibility but grant no capability. Creating/editing, reviewing, approving, publishing, scheduling, archiving/withdrawing, media clearance, and placing are deliberately independent. Placement management acts only through `ContentPlacement`; it does not grant a permanent “featured” state or bypass target eligibility. `newsletter.publish` covers an approved public web-edition snapshot only. Newsletter delivery-provider configuration and send execution are not Communications capabilities until a provider decision establishes their security boundary.
 
 ### Projects, programs, and public impact
 
@@ -80,11 +81,13 @@ These future capabilities must not be included in broad content-admin roles by d
 - An approver cannot approve a revision they materially edited after submission without a second qualified approver.
 - Publishing requires an exact approved revision/hash; a later edit invalidates approval.
 - Placement managers cannot feature unpublished, expired, withdrawn, or otherwise ineligible content.
+- Conversion of a public submission into a Story draft requires `communications.submissions.review`; it grants no permission to publish the submitter's raw intake or private upload.
+- A clearance/second-approval/legal-review requirement is evaluated for the exact revision before approval or publishing. A normal capability grant may satisfy only the requirement it names; exceptional override is an explicit, audited policy action.
 - Commerce fulfillment cannot mark an order paid; only verified Stripe state/reconciliation may advance payment state.
 - Integration secret managers need not be content publishers or applicant/grant readers.
 - Private grant and applicant exports require narrowly granted capabilities and an audit reason.
 
-A Super Admin may perform an emergency override where the product explicitly supports one. The override requires a fresh session, explicit reason, prominent audit event, and notification/review path. “Super Admin” is implemented as a managed capability set plus override policy, not hard-coded bypasses scattered through the application.
+A Super Admin may perform an emergency override where the product and owning policy explicitly support a waivable requirement. The override requires a fresh session, explicit reason, prominent audit event, and notification/review path. It cannot bypass authorization, invalid schema/relations, exact-hash approval, unsafe media, or consent/rights evidence that policy or law makes mandatory. “Super Admin” is implemented as a managed capability set plus override policy, not hard-coded bypasses scattered through the application.
 
 ## Suggested initial role presets
 
@@ -92,17 +95,18 @@ Presets accelerate assignment; they are not code-level identities.
 
 | Preset | Typical capabilities | Deliberate exclusions |
 | --- | --- | --- |
-| Communications Author | Create/edit/submit assigned Stories and News; manage allowed media | Approve, publish, schedule, placements, users, secrets |
-| Communications Editor | Review/edit Communications, manage authors/categories/media | Final approval by default; users/secrets/private casework |
-| Communications Approver | Approve and schedule eligible content | Self-approval; integration secrets |
-| Communications Publisher | Publish/withdraw, manage placements and queue | User/security administration unless separately granted |
+| Contributor | Queue read scoped to owned work; create, read/edit own, and submit assigned Stories/News; upload allowed media | Dashboard, any-record editing, review, approval, schedule/publish, placements, submissions, users, secrets |
+| Editor | Queue/dashboard read; draft read/edit any; review and return work; manage assigned media, authors, and categories | Final approval, schedule/publish, placement management, user/security administration |
+| Publisher | Queue/dashboard read; schedule, publish, withdraw/archive approved material; manage Site Notices and placements | Editing/review/approval merely by holding this preset; users, secrets, private casework |
+| Communications Manager | Cross-type editorial work, approvals subject to separation of duties, scheduling/publishing, placements, notices, submission review, authors/categories/media, dashboard/queue | User/security administration, provider secrets, private casework unless separately granted |
+| Admin | Organization-wide operational capabilities as assigned, including Communications Manager when needed | No automatic self-approval or requirement override; secrets/private casework remain separate grants |
 | Program Manager | Programs, Projects, Events, Campaigns, public impact drafts | Communications approval; donor/gift details; secrets |
 | Commerce Manager | Catalog, orders, fulfillment | Payment-state override; donation records; secrets |
 | Grant Administrator | Private and public grant workflows as explicitly assigned | Applicant casework; user/security administration |
 | Auditor | Read audit and approved operational reports | Mutations and secret values |
-| Super Admin | All current capabilities and controlled override | No implicit access to future sensitive domains until those capabilities exist and are assigned |
+| Super Admin | Controlled, recently-authenticated override policy plus assigned current capabilities | No implicit access to future sensitive domains until those capabilities exist and are assigned |
 
-Small staffing may require one person to hold multiple presets. The self-approval and exact-revision rules still apply unless a logged Super Admin override is necessary.
+Small staffing may require one person to hold multiple presets. The self-approval, exact-revision, and applicable-requirement rules still apply unless a logged Super Admin override is necessary. These presets describe defaults, not immutable role strings or authorization checks.
 
 ## Enforcement locations
 
@@ -130,8 +134,9 @@ At minimum audit:
 - invitation creation/cancellation/acceptance;
 - login success/failure category, logout, session revocation, suspension/restoration;
 - role/capability assignment and removal;
-- draft submission, review, approval/rejection, scheduling, publishing, withdrawal, archive, expiration override, and placement changes;
-- media upload/classification/publication/deletion;
+- draft submission, review, changes requested, approval/rejection, requirement satisfaction/override, scheduling, publishing, withdrawal, archive, expiration override, and placement changes;
+- Site Notice and Newsletter scheduling/publication/withdrawal/archive changes; public-submission acceptance/conversion/rejection/retention actions;
+- media upload/classification/rights clearance/publication/deletion;
 - integration configuration, secret rotation (never the secret value), sync/reconciliation;
 - product/order/refund/fulfillment changes;
 - public grant projection and all future private grant/applicant reads, exports, document access, and destructive actions.

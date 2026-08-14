@@ -11,11 +11,14 @@ Every important datum has one authoritative owner. The platform may store a refe
 
 | Data | Authoritative owner | Local representation | Write path and conflict rule |
 | --- | --- | --- | --- |
-| Public Stories and News | Habitat platform | Typed aggregates, revisions, approvals, snapshots | Edited only in Communications; published snapshot wins public reads |
-| Newsletter authored content | Habitat platform | Typed newsletter/publication records when implemented | Communications workflow owns content |
+| Public Stories and News | Habitat platform | Typed roots, revisions, approvals, immutable snapshots, typed relationships | Edited only in Communications; the active eligible snapshot wins public reads and never falls back to a draft |
+| Newsletter authored content | Habitat platform | NewsletterEdition, ordered typed blocks, approved delivery/web snapshots when required | Communications workflow owns curation and edition text; reference blocks do not become duplicate canonical Story/News records |
 | Newsletter subscribers, consent, suppression, and mailing-list membership | DonorView under the accepted current boundary | Minimal DonorView destination/reference and aggregate delivery status if required | Correct in DonorView; never create a second editable subscriber list. A different system of record requires an explicit replacement decision |
-| Authors, categories, publication workflow, Publication Queue, Communications Dashboard | Habitat platform | Local domain/read models | Local only |
-| Featured News and other curated placements | Habitat platform | Managed FeaturePlacement records | Authorized placement managers only |
+| Newsletter delivery execution/provider credentials | Provider selected later | Provider-neutral port, minimum redacted delivery result if required | No provider commitment or credential storage until an approved integration decision; provider does not own Habitat editorial records |
+| Author profiles, editorial categories, publication workflow, Publication Queue, Communications Dashboard | Habitat platform | Local typed aggregates and derived read models | Local only; Queue/Dashboard do not become workflow truth |
+| Site Notices | Habitat platform | Small typed operational-notice aggregate | Local authorized workflow; end time removes presentation without rewriting audit history |
+| Featured News and other curated placements | Habitat platform | PlacementDefinition and ContentPlacement with typed target joins | Authorized placement managers only; a placement never grants ownership of its target |
+| Public Story Submissions and submission media | Habitat platform, restricted intake boundary | Private/quarantined submission record and media, separate from Story drafts | Collect/use/retain only under the approved intake/privacy policy; an editor explicitly converts accepted material into a Story draft |
 | Programs, Projects, public partners and attributable impact | Habitat platform | Local structured records | Local workflows with verification/provenance |
 | Public event marketing | Habitat platform | Event and EventEdition | Local public facts; registration state is external |
 | Habitat Campaign narrative, goal, updates, and public impact | Habitat platform | Campaign aggregate | Local; never equate automatically with a DonorView campaign/fund/appeal |
@@ -37,9 +40,13 @@ Every important datum has one authoritative owner. The platform may store a refe
 
 ## Communications ownership
 
-Fayette County Habitat owns Stories, News, Newsletter content, editorial revisions, publication state, approval evidence, authorship, related-domain selections, and curated placements. None of these belongs to DonorView.
+Fayette County Habitat owns Stories, News, Newsletter content, editorial revisions, internal publication responsibility assignments, publication state, approval evidence, public authorship, related-domain selections, and curated placements. None of these belongs to DonorView. Internal editorial owner/reviewer/approver AdminUser assignments are authorization/work-management facts and never become public AuthorProfile/byline data.
 
-Public publication is a snapshot. An author's current profile, a media asset's later caption, or a related Project's later edit must not retroactively change what was approved. An explicit republication produces a new snapshot.
+Public publication is a snapshot. An author's current profile, an EditorialCategory rename, a media asset's later caption, a MediaUsage edit, or a related Project's later edit must not retroactively change what was approved. An explicit republication produces a new snapshot.
+
+Raw Public Story Submission data is intake data, not a public Story, author profile, or editorial draft. It is deliberately isolated from the normal public projection and rich-text authoring paths. Its contact details, consent assertions, source files, moderation/rejection reasons, and retention handling are restricted; only deliberately accepted material may be copied to a new Story draft. A submitter is not thereby an administrator or a public byline.
+
+Media ownership is split intentionally: `MediaAsset` owns immutable byte/provenance/rights/consent/scan facts, while a contextual `MediaUsage` owns the applicable alternative text, caption, crop, order, and presentation role. A snapshot freezes both versions used. Private/quarantined submission uploads cannot enter public storage merely because a later Story refers to them.
 
 ## DonorView boundary
 

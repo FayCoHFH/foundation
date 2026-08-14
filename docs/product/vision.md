@@ -144,6 +144,6 @@ The foundation does not commit to:
 - fixing the final public name of Stories / Journal, the final navbar, or production URL scheme before product design; or
 - scaffolding the application during the Decision Runway.
 
-## Immediate decision runway
+## Immediate delivery runway
 
-The next planning session is the **Communications Domain Product & Architecture Review**. It will refine Stories / Journal, News, Featured News, Communications Dashboard, homepage curation, publication queue, workflow, future calendar compatibility, Newsletter, Media relationships, categories/tags, cross-domain relations, and possible Communications Packages. Application scaffolding follows that review rather than this foundation work.
+The **Communications Domain Product & Architecture Review** is complete. Its accepted contract covers Stories, News, the four-module Communications Dashboard, six curated placements, homepage curation, Publication Queue, workflow, future calendar compatibility, Newsletter boundary, Media usage, controlled categories, typed relations, Site Notices, public Story intake, and the decision not to create a Communications Package now. The recommended next assignment is **Slice 1 — Application Foundation and Scaffold**, beginning only when Sven explicitly authorizes implementation.

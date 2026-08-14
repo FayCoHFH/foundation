@@ -20,7 +20,7 @@ The legacy site does **not** define navigation, information architecture, taxono
 
 ## Current phase guardrail
 
-At the foundation revision, do not scaffold or implement the application. In particular, do not add `package.json`, Next.js files, a Prisma schema, database migrations, production dependencies, application routes, or components until Sven issues the Slice 1 implementation assignment. The intervening planning assignment is the Communications Domain Product & Architecture Review described in the README.
+The foundation and Gate C Communications review are complete, but application implementation is not yet authorized. Do not add `package.json`, Next.js files, a Prisma schema, database migrations, production dependencies, application routes, or components until Sven explicitly issues **Slice 1 — Application Foundation and Scaffold**. Treat [the Communications architecture](docs/architecture/communications.md) as the accepted domain contract; change its durable publication, privacy, provider, storage, or authorization boundaries only through the repository's decision discipline.
 
 ## Architecture guardrails
 
@@ -31,6 +31,7 @@ At the foundation revision, do not scaffold or implement the application. In par
 - Do not let illustrative domain groupings or directories freeze the public navigation or implementation layout before the relevant design review.
 - Prefer relational domain semantics. Polymorphic references are acceptable only in well-bounded infrastructure such as publication snapshots, audit, integration crosswalks, and curated placements.
 - Keep homepage curation and future placement management possible without prematurely implementing a universal page builder.
+- Implement only the six accepted code-owned singleton placement definitions and their typed eligibility/fallback rules until a later accepted design adds another placement.
 - Use versioned, validated structured rich text. Do not store arbitrary executable HTML.
 
 ## External-system and payment boundaries
