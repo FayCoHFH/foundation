@@ -1,0 +1,10 @@
+.next
+coverage
+docs
+docs/migration/*.csv
+node_modules
+output
+playwright-report
+src/generated
+test-results
+tmp

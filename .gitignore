@@ -1,0 +1,26 @@
+# Dependencies and package-manager state
+node_modules/
+.pnpm-store/
+
+# Next.js and test artifacts
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+output/playwright/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Generated and temporary files
+src/generated/prisma/
+tmp/
+*.tsbuildinfo
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/

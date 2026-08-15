@@ -1,0 +1,321 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AdminUserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+}
+
+enum ExternalIdentityProvider {
+  GOOGLE
+}
+
+enum AuditOutcome {
+  SUCCEEDED
+  DENIED
+  FAILED
+}
+
+enum AuditActorKind {
+  ADMIN_USER
+  SYSTEM
+}
+
+// Better Auth core model. The application never treats this identity record
+// alone as an administrative principal.
+model User {
+  id              String   @id
+  name            String
+  email           String   @unique
+  emailVerified   Boolean  @default(false)
+  image           String?
+  workspaceDomain String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  adminUser        AdminUser?
+  externalIdentity ExternalIdentity? @relation("ExternalIdentityAuthUser")
+
+  @@map("user")
+}
+
+// Better Auth core model. Cookie caching is disabled; this row is the source
+// of truth on every protected request.
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("session")
+}
+
+// Better Auth core model. OAuth token-shaped columns remain for adapter
+// compatibility, but application hooks and database checks require them to be
+// null. Google `sub` is stored as accountId.
+model Account {
+  id                    String            @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalIdentity      ExternalIdentity? @relation("ExternalIdentityAuthAccount")
+
+  @@unique([providerId, accountId])
+  @@unique([userId, providerId])
+  @@index([userId])
+  @@map("account")
+}
+
+// Better Auth core model. Retained for OAuth state and verification storage.
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@index([expiresAt])
+  @@map("verification")
+}
+
+// Better Auth database-backed rate limiting works across serverless instances.
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@map("rateLimit")
+}
+
+model AdminUser {
+  id              String          @id @default(uuid()) @db.Uuid
+  authUserId      String          @unique
+  status          AdminUserStatus @default(INVITED)
+  statusChangedAt DateTime        @default(now())
+  suspendedAt     DateTime?
+  revokedAt       DateTime?
+  version         Int             @default(1)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  authUser        User            @relation(fields: [authUserId], references: [id], onDelete: Restrict)
+
+  externalIdentities       ExternalIdentity[]
+  roleAssignments          UserRole[]
+  createdInvitations       AdminInvitation[]  @relation("InvitationCreator")
+  acceptedInvitations      AdminInvitation[]  @relation("InvitationAcceptor")
+  revokedInvitations       AdminInvitation[]  @relation("InvitationRevoker")
+  grantedRoleAssignments   UserRole[]         @relation("RoleGrantor")
+  revokedRoleAssignments   UserRole[]         @relation("RoleRevoker")
+  auditEvents              AuditEvent[]       @relation("AuditActor")
+  superAdminGrant          SuperAdminGrant?   @relation("SuperAdminHolder")
+  grantedSuperAdminRecords SuperAdminGrant[]  @relation("SuperAdminGrantor")
+
+  @@index([status])
+  @@map("admin_user")
+}
+
+model ExternalIdentity {
+  id                  String                   @id @default(uuid()) @db.Uuid
+  adminUserId         String                   @db.Uuid
+  authUserId          String                   @unique
+  authAccountId       String                   @unique
+  provider            ExternalIdentityProvider
+  subject             String
+  email               String
+  emailVerified       Boolean
+  hostedDomain        String
+  linkedAt            DateTime                 @default(now())
+  lastAuthenticatedAt DateTime                 @default(now())
+  adminUser           AdminUser                @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+  authUser            User                     @relation("ExternalIdentityAuthUser", fields: [authUserId], references: [id], onDelete: Restrict)
+  authAccount         Account                  @relation("ExternalIdentityAuthAccount", fields: [authAccountId], references: [id], onDelete: Restrict)
+
+  @@unique([provider, subject])
+  @@unique([adminUserId, provider])
+  @@index([adminUserId])
+  @@index([authUserId])
+  @@index([authAccountId])
+  @@index([email])
+  @@map("external_identity")
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  name        String
+  description String
+  isSystem    Boolean  @default(true)
+  isActive    Boolean  @default(true)
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions     RolePermission[]
+  assignments     UserRole[]
+  invitationRoles AdminInvitationRole[]
+
+  @@map("role")
+}
+
+model Permission {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles RolePermission[]
+
+  @@map("permission")
+}
+
+model RolePermission {
+  roleId       String     @db.Uuid
+  permissionId String     @db.Uuid
+  createdAt    DateTime   @default(now())
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permission")
+}
+
+model UserRole {
+  id                 String           @id @default(uuid()) @db.Uuid
+  adminUserId        String           @db.Uuid
+  roleId             String           @db.Uuid
+  grantedById        String?          @db.Uuid
+  grantedAt          DateTime         @default(now())
+  revokedById        String?          @db.Uuid
+  sourceInvitationId String?          @db.Uuid
+  revokedAt          DateTime?
+  assignmentReason   String?
+  revocationReason   String?
+  adminUser          AdminUser        @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+  role               Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  grantedBy          AdminUser?       @relation("RoleGrantor", fields: [grantedById], references: [id], onDelete: SetNull)
+  revokedBy          AdminUser?       @relation("RoleRevoker", fields: [revokedById], references: [id], onDelete: SetNull)
+  sourceInvitation   AdminInvitation? @relation(fields: [sourceInvitationId], references: [id], onDelete: SetNull)
+
+  @@index([adminUserId, roleId])
+  @@index([roleId])
+  @@index([grantedById])
+  @@index([revokedById])
+  @@index([sourceInvitationId])
+  @@index([adminUserId, revokedAt])
+  @@map("user_role")
+}
+
+model AdminInvitation {
+  id                    String           @id @default(uuid()) @db.Uuid
+  email                 String
+  tokenDigest           String           @unique @db.Char(64)
+  hostedDomain          String
+  status                InvitationStatus @default(PENDING)
+  expiresAt             DateTime
+  acceptedAt            DateTime?
+  acceptedById          String?          @db.Uuid
+  revokedAt             DateTime?
+  revokedById           String?          @db.Uuid
+  createdById           String?          @db.Uuid
+  isSuperAdminBootstrap Boolean          @default(false)
+  version               Int              @default(1)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  createdBy             AdminUser?       @relation("InvitationCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  acceptedBy            AdminUser?       @relation("InvitationAcceptor", fields: [acceptedById], references: [id], onDelete: SetNull)
+  revokedBy             AdminUser?       @relation("InvitationRevoker", fields: [revokedById], references: [id], onDelete: SetNull)
+
+  intendedRoles            AdminInvitationRole[]
+  activatedRoleAssignments UserRole[]
+
+  @@index([email, status])
+  @@index([expiresAt])
+  @@index([createdById])
+  @@index([acceptedById])
+  @@index([revokedById])
+  @@map("admin_invitation")
+}
+
+model AdminInvitationRole {
+  invitationId String          @db.Uuid
+  roleId       String          @db.Uuid
+  invitation   AdminInvitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  role         Role            @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@id([invitationId, roleId])
+  @@index([roleId])
+  @@map("admin_invitation_role")
+}
+
+model SuperAdminGrant {
+  id          String     @id @default(uuid()) @db.Uuid
+  adminUserId  String     @unique @db.Uuid
+  grantedById  String?    @db.Uuid
+  grantedAt    DateTime   @default(now())
+  reason       String
+  adminUser    AdminUser  @relation("SuperAdminHolder", fields: [adminUserId], references: [id], onDelete: Restrict)
+  grantedBy    AdminUser? @relation("SuperAdminGrantor", fields: [grantedById], references: [id], onDelete: SetNull)
+
+  @@index([grantedById])
+  @@map("super_admin_grant")
+}
+
+model AuditEvent {
+  id               String         @id @default(uuid()) @db.Uuid
+  occurredAt       DateTime       @default(now())
+  actorAdminUserId String?        @db.Uuid
+  actorKind        AuditActorKind
+  action           String
+  targetType       String
+  targetId         String?
+  outcome          AuditOutcome
+  correlationId    String         @db.Uuid
+  summary          Json
+  actorAdminUser   AdminUser?     @relation("AuditActor", fields: [actorAdminUserId], references: [id], onDelete: SetNull)
+
+  @@index([occurredAt])
+  @@index([actorAdminUserId, occurredAt])
+  @@index([action, occurredAt])
+  @@index([targetType, targetId])
+  @@index([correlationId])
+  @@map("audit_event")
+}

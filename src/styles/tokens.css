@@ -1,0 +1,70 @@
+/*
+ * Slice 1 foundation tokens. These are deliberately semantic rather than a
+ * final brand palette, so components can retain their intent as visual
+ * direction matures.
+ */
+:root {
+  --background: #f7f5f0;
+  --foreground: #17211d;
+  --surface: #ffffff;
+  --surface-subtle: #eceae4;
+  --card: #ffffff;
+  --card-foreground: #17211d;
+  --popover: #ffffff;
+  --popover-foreground: #17211d;
+  --border: #c9c8c1;
+  --input: #c9c8c1;
+  --muted: #eae8e2;
+  --muted-foreground: #58615d;
+  --primary: #1f5c4a;
+  --primary-foreground: #ffffff;
+  --secondary: #e3ece6;
+  --secondary-foreground: #193b30;
+  --accent: #166b7a;
+  --accent-foreground: #ffffff;
+  --destructive: #a63d2d;
+  --destructive-foreground: #ffffff;
+  --ring: #166b7a;
+  --success: #1f5c4a;
+  --warning: #825d12;
+
+  --habitat-font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --habitat-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+
+  --radius: 0.5rem;
+  --radius-control: 0.25rem;
+  --radius-surface: 0.5rem;
+  --shadow-subtle: 0 1px 2px rgb(23 33 29 / 8%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: var(--habitat-font-sans);
+  --font-serif: var(--habitat-font-serif);
+  --radius-sm: var(--radius-control);
+  --radius-md: var(--radius-surface);
+}
