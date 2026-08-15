@@ -78,6 +78,9 @@ test("@smoke Story draft workflow crosses contributor, reviewer, and approver bo
   await expect(
     publicReader.getByRole("link", { name: "Share this Story" }),
   ).toHaveAttribute("href", /mailto:/);
+  expect(
+    (await new AxeBuilder({ page: publicReader }).analyze()).violations,
+  ).toEqual([]);
 
   await contributorContext.close();
   await reviewerContext.close();

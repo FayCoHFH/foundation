@@ -46,7 +46,7 @@ export default async function PublicStoryPage({
           <header className="border-border bg-editorial-sky/45 border-b">
             <div className="editorial-arrival mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12">
               <div className="max-w-4xl">
-                <p className="text-primary text-sm font-bold tracking-[0.16em] uppercase">
+                <p className="text-editorial-pecan text-sm font-bold tracking-[0.16em] uppercase">
                   A Fayette County Habitat Story
                 </p>
                 <h1 className="text-editorial-pecan mt-5 font-serif text-5xl leading-[0.98] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
@@ -57,7 +57,7 @@ export default async function PublicStoryPage({
                     {story.deck}
                   </p>
                 ) : null}
-                <div className="text-muted-foreground mt-10 flex items-center gap-3 text-sm font-semibold">
+                <div className="text-editorial-pecan mt-10 flex items-center gap-3 text-sm font-semibold">
                   <span
                     className="bg-editorial-paintbrush h-px w-9"
                     aria-hidden="true"
