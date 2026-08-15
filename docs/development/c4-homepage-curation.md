@@ -16,6 +16,14 @@ Cancelled future assignments retain their original scheduled window and record
 resolution. PostgreSQL coverage lives in
 `tests/integration/content-placement.test.ts`.
 
+C4.2A-1 completes PostgreSQL coverage for all eight Story/News target-kind
+combinations, unreleased/withdrawn/archived/expired new-assignment rejection,
+post-assignment expiry and withdrawal/archive ineligibility, retained placement
+history, empty effective resolution, and continued resolution for eligible
+released content. Effective public resolution returns only safe placement
+metadata and `PublicStoryProjection`/`PublicNewsProjection` DTO fields; it does
+not expose authoring, workflow, approval, audit, or internal ownership data.
+
 The homepage is code-composed: optional Hero, Featured Story, Featured News,
 derived Latest News, and the established participation invitation. It has no
 page builder, arbitrary placement keys, Project/Campaign placeholders, or

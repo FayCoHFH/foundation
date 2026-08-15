@@ -266,12 +266,43 @@ export async function getEffectivePlacement(
   });
   if (!row) return null;
   const publication = row.publication,
+    story = publication.publicProjection,
     news = publication.publicNewsProjection;
   if (
     publication.releaseState !== "PUBLISHED" ||
     publication.discoveryDisposition !== "ACTIVE" ||
+    (!story && !news) ||
+    (publication.kind === "STORY" ? !story : !news) ||
     (news?.expiresAt && news.expiresAt <= now)
   )
     return null;
-  return { placement: row, story: publication.publicProjection, news };
+  return {
+    placement: {
+      id: row.id,
+      key: row.key,
+      publicationId: row.publicationId,
+      startsAt: row.startsAt,
+      endsAt: row.endsAt,
+    },
+    story: story
+      ? {
+          slug: story.slug,
+          headline: story.headline,
+          deck: story.deck,
+          excerpt: story.excerpt,
+          body: story.body,
+          publishedAt: story.publishedAt,
+        }
+      : null,
+    news: news
+      ? {
+          slug: news.slug,
+          headline: news.headline,
+          summary: news.summary,
+          body: news.body,
+          publishedAt: news.publishedAt,
+          expiresAt: news.expiresAt,
+        }
+      : null,
+  };
 }
