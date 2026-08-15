@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { AdminShell } from "@/components/admin-shell";
 import {
   PLACEMENT_KEYS,
-  getEffectivePlacement,
+  getPlacementState,
 } from "@/modules/communications/placements";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
@@ -22,7 +22,7 @@ export default async function HomepageCuration({
     "communications.placements.manage",
   );
   const [placements, stories, news, params] = await Promise.all([
-    Promise.all(keys.map((key) => getEffectivePlacement(prisma, key))),
+    Promise.all(keys.map((key) => getPlacementState(prisma, key))),
     prisma.publicStoryProjection.findMany({
       where: {
         publication: {
@@ -72,7 +72,8 @@ export default async function HomepageCuration({
       ) : null}
       <div className="mt-8 space-y-8">
         {keys.map((key, index) => {
-          const current = placements[index];
+          const state = placements[index]!;
+          const current = state.current;
           const choices =
             key === "HOME_FEATURED_STORY"
               ? stories
@@ -85,10 +86,17 @@ export default async function HomepageCuration({
                 {key.replaceAll("_", " ")}
               </h2>
               <p className="text-muted-foreground mt-2">
-                {current?.story?.headline ??
-                  current?.news?.headline ??
+                {current?.publication.publicProjection?.headline ??
+                  current?.publication.publicNewsProjection?.headline ??
                   "No effective assignment"}
               </p>
+              {state.upcoming ? (
+                <p className="text-muted-foreground mt-1 text-sm">
+                  Upcoming:{" "}
+                  {state.upcoming.publication.publicProjection?.headline ??
+                    state.upcoming.publication.publicNewsProjection?.headline}
+                </p>
+              ) : null}
               {canManage ? (
                 <form
                   action={homepagePlacementForm}
@@ -116,6 +124,19 @@ export default async function HomepageCuration({
                   >
                     Assign
                   </button>
+                  <input
+                    name="startsAt"
+                    type="datetime-local"
+                    aria-label={`${key} future activation`}
+                    className="border-border min-h-10 rounded-sm border px-2"
+                  />
+                  <button
+                    name="action"
+                    value="schedule"
+                    className="border-border min-h-10 rounded-sm border px-3 font-semibold"
+                  >
+                    Schedule
+                  </button>
                   <button
                     name="action"
                     value="clear"
@@ -124,6 +145,23 @@ export default async function HomepageCuration({
                   >
                     Clear
                   </button>
+                  {state.upcoming ? (
+                    <>
+                      <input
+                        type="hidden"
+                        name="placementId"
+                        value={state.upcoming.id}
+                      />
+                      <button
+                        name="action"
+                        value="cancel"
+                        formNoValidate
+                        className="border-border min-h-10 rounded-sm border px-3 font-semibold"
+                      >
+                        Cancel upcoming
+                      </button>
+                    </>
+                  ) : null}
                 </form>
               ) : null}
             </section>

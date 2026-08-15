@@ -186,6 +186,61 @@ export async function clearPlacement(
     });
   });
 }
+export async function cancelFuturePlacement(
+  db: PrismaClient,
+  actor: Actor,
+  placementId: string,
+  expectedVersion?: number,
+) {
+  capability(actor, "communications.placements.manage");
+  const now = new Date();
+  return db.$transaction(async (tx) => {
+    const item = await tx.contentPlacement.findUnique({
+      where: { id: placementId },
+    });
+    if (!item || item.startsAt <= now)
+      throw new PreconditionError("Only a future placement can be cancelled.");
+    if (expectedVersion !== undefined && item.version !== expectedVersion)
+      throw new ConcurrencyError();
+    await tx.contentPlacement.update({
+      where: { id: item.id },
+      data: {
+        endsAt: item.startsAt,
+        updatedByAdminUserId: actor.adminUserId,
+        version: { increment: 1 },
+      },
+    });
+    await tx.auditEvent.create({
+      data: buildAuditEvent({
+        actorKind: "ADMIN_USER",
+        actorAdminUserId: actor.adminUserId,
+        action: "placement.cancelled",
+        targetType: "ContentPlacement",
+        targetId: item.id,
+        correlationId: randomUUID(),
+        summary: { placement: item.key, publicationId: item.publicationId },
+      }),
+    });
+  });
+}
+export async function getPlacementState(
+  db: PrismaClient,
+  placement: PlacementKey,
+  now = new Date(),
+) {
+  const rows = await db.contentPlacement.findMany({
+    where: { key: placement, OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+    include: {
+      publication: {
+        include: { publicProjection: true, publicNewsProjection: true },
+      },
+    },
+    orderBy: { startsAt: "asc" },
+  });
+  const current = rows.find((row) => placementIsActive(row, now)) ?? null;
+  const upcoming = rows.find((row) => row.startsAt > now) ?? null;
+  return { current, upcoming };
+}
 export async function getEffectivePlacement(
   db: PrismaClient,
   placement: PlacementKey,
