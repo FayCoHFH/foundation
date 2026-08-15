@@ -122,6 +122,7 @@ export function StoryWorkflowControls({
               type="submit"
               name="action"
               value={actionName}
+              formNoValidate
               disabled={pending}
             >
               {pending
@@ -149,6 +150,7 @@ export function StoryWorkflowControls({
               type="submit"
               name="action"
               value="release"
+              formNoValidate
               disabled={pending}
             >
               {pending ? "Releasing…" : "Release immutable public snapshot"}

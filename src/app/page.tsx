@@ -57,7 +57,7 @@ export default async function HomePage() {
             </p>
             {hero ? (
               <>
-                <p className="text-editorial-oak mt-7 text-sm font-bold tracking-[.14em] uppercase">
+                <p className="text-primary mt-7 text-sm font-bold tracking-[.14em] uppercase">
                   Featured {hero.label}
                 </p>
                 <h1 className="text-editorial-pecan mt-3 max-w-4xl font-serif text-5xl leading-[.98] tracking-[-.035em] sm:text-6xl lg:text-7xl">

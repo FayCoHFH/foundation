@@ -83,3 +83,38 @@ page builder, arbitrary placement keys, Project/Campaign placeholders, or
 automatic content fallback. `HOME_FEATURED_PROJECT` and
 `HOME_FEATURED_CAMPAIGN` remain future catalog extensions until their typed
 domains exist.
+
+## C4.3A browser, accessibility, and visual validation
+
+C4.3A browser validation is covered by
+`tests/e2e/homepage-curation.spec.ts`. The focused suite exercises configured
+and empty homepage states, all three homepage assignment targets, replacement,
+future scheduling, cancellation, clearing, unauthorized and capability-limited
+administrators, expired and withdrawn eligibility exclusion, ended placement
+resolution, stable Publication successor release, public Story and News routes,
+and the public shell. The full Playwright suite passed 14/14 tests on isolated
+`habitat_c43a_e2e_test` with `reuseExistingServer: false`, port 3100,
+`APP_ENV=test`, and test-only authentication. The retained visual-preview
+server and its databases were not used.
+
+The focused suite ran axe checks on admin, configured, scheduled, empty,
+Story, News index, and News detail states. It also checked keyboard skip-link
+operation, labeled placement controls, required schedule validation, landmark
+structure, no undefined output, and no horizontal overflow at 375x812,
+768x1024, 1440x1100, and 1920x1200. Captured screenshots were manually
+reviewed for responsive composition, readable hierarchy, footer/navigation
+continuity, and absence of an error overlay. No visual redesign was made. The
+homepage's Featured News label uses the existing primary text token so the
+configured hero remains above the WCAG AA 4.5:1 contrast threshold.
+
+The only workflow defect found was native validation on the shared Story
+workflow form: a required withdrawal reason blocked unrelated successor
+approval and release actions for an already-published Story. Non-withdrawal
+workflow submits now opt out of that field validation; withdrawal remains
+required. Homepage assignment notices are typed and allowlisted for assign,
+schedule, clear, and cancel results.
+
+The focused CSP regression remains green: development CSP includes
+`'unsafe-eval'`, production CSP excludes it, and the `APP_ENV=test` matrix
+follows `NODE_ENV` rather than APP_ENV. The existing local visual-preview
+server on port 3200 was not restarted or altered by this slice.

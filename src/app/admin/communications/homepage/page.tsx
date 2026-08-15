@@ -8,20 +8,25 @@ import {
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
 import { homepagePlacementForm } from "./actions";
+import {
+  HOMEPAGE_PLACEMENT_NOTICE_MESSAGES,
+  isHomepagePlacementNoticeCode,
+} from "./notice";
 
 const keys = PLACEMENT_KEYS.filter((key) => key !== "NEWS_FEATURED");
 export default async function HomepageCuration({
   searchParams,
 }: {
-  searchParams: Promise<{ notice?: string }>;
+  searchParams: Promise<{ notice?: string | string[] }>;
 }) {
   const access = await resolveAdminAccess();
   if (access.status !== "authorized") redirect("/admin/access-denied");
+  const notice = (await searchParams).notice;
   const canManage = hasCapability(
     access.principal,
     "communications.placements.manage",
   );
-  const [placements, stories, news, params] = await Promise.all([
+  const [placements, stories, news] = await Promise.all([
     Promise.all(keys.map((key) => getPlacementState(prisma, key))),
     prisma.publicStoryProjection.findMany({
       where: {
@@ -42,7 +47,6 @@ export default async function HomepageCuration({
       },
       orderBy: { publishedAt: "desc" },
     }),
-    searchParams,
   ]);
   return (
     <AdminShell
@@ -64,10 +68,13 @@ export default async function HomepageCuration({
         Select currently public Stories and News for the three code-owned
         homepage placements.
       </p>
-      {params.notice === "assign" || params.notice === "clear" ? (
-        <p role="status" className="mt-4 font-semibold">
-          Homepage placement{" "}
-          {params.notice === "assign" ? "updated" : "cleared"}.
+      {isHomepagePlacementNoticeCode(notice) ? (
+        <p
+          role="status"
+          data-notice-code={notice}
+          className="mt-4 font-semibold"
+        >
+          {HOMEPAGE_PLACEMENT_NOTICE_MESSAGES[notice]}
         </p>
       ) : null}
       <div className="mt-8 space-y-8">
@@ -120,6 +127,7 @@ export default async function HomepageCuration({
                   <button
                     name="action"
                     value="assign"
+                    formNoValidate
                     className="bg-primary text-primary-foreground min-h-10 rounded-sm px-3 font-semibold"
                   >
                     Assign
@@ -128,6 +136,8 @@ export default async function HomepageCuration({
                     name="startsAt"
                     type="datetime-local"
                     aria-label={`${key} future activation`}
+                    aria-describedby={`${key}-future-help`}
+                    required
                     className="border-border min-h-10 rounded-sm border px-2"
                   />
                   <button
@@ -137,6 +147,12 @@ export default async function HomepageCuration({
                   >
                     Schedule
                   </button>
+                  <p
+                    id={`${key}-future-help`}
+                    className="text-muted-foreground basis-full text-sm"
+                  >
+                    Required for scheduled assignments.
+                  </p>
                   <button
                     name="action"
                     value="clear"
