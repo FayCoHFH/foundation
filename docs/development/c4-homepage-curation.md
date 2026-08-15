@@ -35,6 +35,18 @@ mutations are audited; stale writes and already-cancelled operations fail
 without false success events. Focused coverage remains in
 `tests/integration/content-placement.test.ts`.
 
+C4.2A-3A completes PostgreSQL successor-release coverage in
+`tests/integration/content-placement-successor-release.test.ts`. Story and
+News successor revisions remain invisible to placed public output through
+draft, submission, and approval; releasing the exact approved successor
+updates every placement for the stable Publication identity without a
+placement mutation or placement audit event. The slice also verifies failed
+hash/approval releases preserve the prior output, immutable distinct release
+snapshots remain queryable, `NEWS_FEATURED` and multi-slot News resolution use
+the successor projection, and News expiration is evaluated from the successor
+projection without rewriting placement history. Resolution assertions are
+limited to the public projection DTO and safe placement window metadata.
+
 The homepage is code-composed: optional Hero, Featured Story, Featured News,
 derived Latest News, and the established participation invitation. It has no
 page builder, arbitrary placement keys, Project/Campaign placeholders, or
