@@ -29,6 +29,11 @@ The detailed C1–C8 acceptance criteria remain in the Communications architectu
 
 ## Slice 1 — Application Foundation and Scaffold
 
+Implementation status: **complete locally on 2026-08-14**. The application,
+database, identity/access, test, and documentation foundation is present. The
+provider-owned preview deployment named in the original scope remains an
+external G-05 acceptance action and was not performed without account authority.
+
 - **Scope:** supported Node/Next.js/TypeScript baseline, dependency locking, environment validation, Tailwind and accessible UI primitives, public/admin shells, error and not-found handling, metadata/robots baseline, CI, preview deployment, and Playwright smoke coverage.
 - **Dependencies:** completed Slice 0 and Gate C; exact supported package versions selected at execution time; infrastructure/environment ownership identified.
 - **Acceptance:** reproducible install; build, type, lint, unit, and smoke tests pass; keyboard-visible shells work at mobile/desktop zoom; previews cannot reach production data or secrets; no domain behavior is faked.

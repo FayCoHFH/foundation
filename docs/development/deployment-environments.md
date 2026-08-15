@@ -1,0 +1,76 @@
+# Deployment environments and Vercel readiness
+
+## Isolation contract
+
+Development, test, preview, and production are separate security boundaries.
+They must not share PostgreSQL databases, Google OAuth clients, object stores,
+Better Auth secrets, test-auth secrets, or operator bootstrap state.
+
+| Environment       | `APP_ENV`     | Google auth                         | Database/storage rule                                                      |
+| ----------------- | ------------- | ----------------------------------- | -------------------------------------------------------------------------- |
+| Local development | `development` | Optional local client               | Local-only resources                                                       |
+| CI/test           | `test`        | Disabled; guarded test session only | Disposable PostgreSQL and local adapter                                    |
+| Preview           | `preview`     | Off by default                      | Isolated preview database/store; exact stable origin if explicitly enabled |
+| Production        | `production`  | Required when deployed              | Production database, direct migration URL, durable private/public stores   |
+
+`NEXT_PUBLIC_APP_ENV` contains classification only and never a credential.
+`APP_ENV` is mandatory; a Vercel environment mismatch fails startup rather than
+falling back to development secrets, databases, or cookie policy.
+`AUTH_TRUSTED_ORIGINS` is a comma-separated set of exact origins; wildcard
+`*.vercel.app` trust is prohibited, as are credentials, non-HTTP(S) schemes,
+paths, queries, and fragments. Secret rotation may temporarily provide
+`BETTER_AUTH_PREVIOUS_SECRET` while `BETTER_AUTH_SECRET` is current.
+
+Better Auth rate limiting is explicitly enabled with database storage. IP
+resolution begins from Vercel’s platform-overwritten
+`x-vercel-forwarded-for`, but the application replaces it with a keyed
+pseudonymous address before every route or direct Better Auth API call. Better
+Auth trusts only that internal value. Other runtimes remove the internal header
+and therefore use a shared fail-closed bucket per auth path. Persisted session
+IP and user-agent fields remain null. Rate-limit rows contain the pseudonym plus
+auth path and need a defined cleanup/retention job before production because the
+table has no expiry column.
+
+## Configuration and database credentials
+
+Operator-facing Prisma, seed, bootstrap, and auth-schema commands preserve
+existing process environment values, then load `.env.local`, then `.env`.
+`DATABASE_URL` is the pooled/runtime connection. Seed and bootstrap prefer it
+and may fall back to `DIRECT_DATABASE_URL`. Prisma schema generation and
+validation do not connect and require neither database credential nor a direct
+URL. Every migration script fails closed without `DIRECT_DATABASE_URL`, which
+must be an unpooled/direct connection owned by the controlled migration
+operator.
+
+## Build and migration
+
+`vercel.json` uses frozen pnpm installation and generates the Prisma client
+before `next build`; those are the only build steps. It intentionally does not
+migrate or seed a database during a Vercel build. Apply committed migrations
+once through a separately controlled release job using the direct database URL,
+confirm `pnpm db:migrate:status`, and only then promote traffic.
+
+Production responses use host-only one-year HSTS. Do not add
+`includeSubDomains` or submit the domain for preload until G-05 confirms
+canonical DNS ownership and HTTPS coverage for every affected subdomain.
+
+The checked-in GitHub Actions workflow proves the same migration against a
+disposable PostgreSQL service after a fail-closed target check and explicit
+destructive-test opt-in. It then runs seed, static checks, unit, integration,
+production build, and browser smoke tests. Local integration and end-to-end runs
+have the same disposable-database and explicit-opt-in requirement; they must
+never target a development, preview, or production database.
+
+## Production prerequisites
+
+G-05 remains open. Before deploying, Sven or the designated owner must confirm
+GitHub/Vercel ownership, region and residency, managed PostgreSQL and object
+storage, preview isolation, DNS, secrets and rotation custody, backup/PITR,
+budget alerts, observability, incident contacts, and the migration operator.
+
+The `vercel-blob` environment value reserves the accepted adapter boundary; a
+production public/private object-store implementation and operational exercise
+remain a later storage slice. Production validation rejects the local ephemeral
+adapter.
+
+No deployment or provider-side mutation was performed in Slice 1.

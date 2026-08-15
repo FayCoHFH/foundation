@@ -1,39 +1,88 @@
 # Fayette County Habitat for Humanity Digital Platform
 
-This repository contains the approved foundation for a greenfield public website and administrative platform for Fayette County Habitat for Humanity. The decision runway and Communications Domain Product & Architecture Review are complete: implementation-ready documentation and migration evidence exist, but no application has been scaffolded.
+This repository contains the accepted product and architecture foundation plus
+the executable Slice 1 application scaffold for Fayette County Habitat for
+Humanity. The implementation is a modular Next.js application with a public
+shell, a protected administration boundary, invitation-only Google Workspace
+authentication, local capability authorization, PostgreSQL/Prisma persistence,
+an append-only audit foundation, publishing contracts, and provider-neutral
+storage ports.
 
-## Product direction
+The public shell deliberately contains no migrated or invented production
+content. It is marked `noindex` until verified content and an approved launch
+replace the scaffold.
 
-The platform will support public communication, Stories, News, programs, projects, campaigns, events, leadership and governance, ReStore, merchandise, impact, and public grant acknowledgment. A capability-secured administration experience will manage Habitat-owned content and workflows.
+## Start locally
 
-Communications is a first-class product domain. Stories and News retain distinct editorial meaning while sharing revision, approval, scheduling, publication-snapshot, authorship, SEO, and media infrastructure. The homepage is intended to be curated by authorized staff rather than assembled solely from the newest rows.
+Requirements: Node.js 22.22.3, pnpm 10.13.1, and PostgreSQL 16 or later.
 
-DonorView remains the system of record for constituents, donors, gifts, pledges, recurring giving, donation receipts, volunteer applications, registrations, attendance, and hours where its supported capabilities fit. Stripe is approved for merchandise commerce. A custom Stripe donation flow is only an optional future path and must not create a competing gift ledger.
+```bash
+cp .env.example .env.local
+pnpm install --frozen-lockfile
+pnpm db:validate
+pnpm db:generate
+pnpm db:migrate:deploy
+pnpm db:seed
+pnpm dev
+```
 
-## Legacy independence
+Set the database URLs and development-only secrets in `.env.local` before
+running migrations. Google sign-in additionally requires an approved Workspace
+domain and a Google OAuth client whose callback is
+`http://localhost:3000/api/auth/callback/google`. See the
+[local setup guide](docs/development/local-setup.md) and
+[authentication spike record](docs/development/auth-spike.md).
 
-The current Wix site is migration evidence, not a product blueprint. It may supply verified facts, selected historical content, media, and URL/SEO history. It does not define the new navigation, information architecture, taxonomy, domain model, workflows, visual design, administration, routes, or feature set.
+## Validate the foundation
+
+```bash
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test:unit
+pnpm test:integration
+pnpm build
+pnpm test:e2e
+```
+
+The integration and end-to-end suites need an isolated migrated PostgreSQL
+database whose name matches the documented disposable-test allowlist, plus the
+exact `ALLOW_DESTRUCTIVE_TEST_DATABASE=true` opt-in. The end-to-end suite uses a
+narrowly guarded test-session endpoint; that endpoint refuses to operate outside
+local/CI `APP_ENV=test` and is never a production authentication path. See
+[testing](docs/testing/README.md).
 
 ## Foundation map
 
-- [Product vision](docs/product/vision.md), [specification](docs/product/specification.md), and [conceptual information architecture](docs/product/information-architecture.md)
-- [Communications review runway](docs/product/communications-review-runway.md) and [content verification backlog](docs/product/content-verification.md)
-- [Architecture](docs/architecture/architecture.md), [Communications architecture](docs/architecture/communications.md), [domain model](docs/architecture/domain-model.md), [data ownership](docs/architecture/data-ownership.md), and [permissions](docs/architecture/permissions.md)
-- [Design principles](docs/design/principles.md), [content design](docs/design/content-design.md), and [accessibility](docs/design/accessibility.md)
-- [DonorView](docs/integrations/donorview.md), [Stripe](docs/integrations/stripe.md), and [Google](docs/integrations/google.md) boundaries
-- [Threat model](docs/security/threat-model.md) and [data classification/retention](docs/privacy/data-classification-retention.md)
+- [Slice 1 implementation record](docs/development/slice-1-foundation.md)
+- [Product vision](docs/product/vision.md),
+  [specification](docs/product/specification.md), and
+  [information architecture](docs/product/information-architecture.md)
+- [Architecture](docs/architecture/architecture.md),
+  [Communications architecture](docs/architecture/communications.md),
+  [domain model](docs/architecture/domain-model.md), and
+  [permissions](docs/architecture/permissions.md)
+- [Design principles](docs/design/principles.md),
+  [content design](docs/design/content-design.md), and
+  [accessibility standard](docs/design/accessibility.md)
+- [Threat model](docs/security/threat-model.md),
+  [Slice 1 security review](docs/security/slice-1-security-review.md), and
+  [data classification/retention](docs/privacy/data-classification-retention.md)
 - [Architecture decision records](docs/adr/README.md)
 - [Legacy migration ledgers](docs/migration/README.md)
-- [Accepted decision register](docs/foundation/decision-register.md), [delivery roadmap](docs/foundation/implementation-roadmap.md), and [open gates](docs/foundation/open-gates.md)
+- [Decision register](docs/foundation/decision-register.md),
+  [delivery roadmap](docs/foundation/implementation-roadmap.md), and
+  [open gates](docs/foundation/open-gates.md)
 
-## Current phase boundary
+## Product and integration boundaries
 
-Gate C, the **Communications Domain Product & Architecture Review**, is complete. Its typed models, lifecycle invariants, publication workflow, curated placements, administrative work surfaces, privacy boundaries, and V1/later split are recorded in the [accepted Communications architecture](docs/architecture/communications.md).
+The Wix site is migration evidence, not the new product blueprint. DonorView
+remains the system of record for donor, gift, pledge, registration, and
+volunteer records where its supported account capabilities fit. Stripe remains
+the accepted merchandise checkout provider. This slice does not introduce a
+competing donor ledger, commerce implementation, content-management feature, or
+private applicant/grants system.
 
-The recommended next assignment is **Slice 1 — Application Foundation and Scaffold**. Do not begin it or add a package manifest, framework files, dependency lockfile, Prisma schema, migrations, application routes, or components until Sven explicitly authorizes that implementation assignment.
-
-## Working in this repository
-
-Read [AGENTS.md](AGENTS.md) before making changes. ADRs record consequential technical decisions; product requirements and data-ownership boundaries live in their dedicated documents. Migration ledgers protect history and search equity but never define the new product.
-
-At this revision, repository validation is documentation-only and requires no installed application toolchain.
+Read [AGENTS.md](AGENTS.md) before changing the repository. Consequential
+technical decisions belong in ADRs, while product requirements and data
+ownership remain in their dedicated documents.
