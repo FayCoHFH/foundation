@@ -24,6 +24,19 @@ local runs, then apply migrations and seed the capability catalog again. CI gets
 a fresh `habitat_test` PostgreSQL service database for every job. Never use a
 shared, preview, staging, or production database for these suites.
 
+For an explicit migration-drift check, set `SHADOW_DATABASE_URL` to a separate
+disposable PostgreSQL database that also matches the `habitat*_test` allowlist.
+For example, use `habitat_c2_test` as the test database and
+`habitat_c2_shadow_test` as the shadow database, then run:
+
+```bash
+pnpm exec prisma migrate diff --from-migrations prisma/migrations \
+  --to-config-datasource --exit-code
+```
+
+The shadow URL is optional and is used only by Prisma migration diff; never set
+it to development, preview, staging, or production data.
+
 ## Expected local sequence
 
 ```bash

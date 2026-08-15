@@ -57,11 +57,29 @@ test("@smoke Story draft workflow crosses contributor, reviewer, and approver bo
   await approver
     .getByRole("button", { name: "Approve exact revision" })
     .click();
-  await expect(approver.getByText("APPROVED")).toBeVisible();
+  await expect(approver.getByText("APPROVED", { exact: true })).toBeVisible();
+  await approver
+    .getByLabel("Canonical URL slug")
+    .fill("a-private-story-workflow");
+  await approver
+    .getByRole("button", { name: "Release immutable public snapshot" })
+    .click();
+  await expect(approver.getByText("PUBLISHED", { exact: true })).toBeVisible();
+
+  const publicReaderContext = await browser.newContext();
+  const publicReader = await publicReaderContext.newPage();
+  await publicReader.goto("/stories/a-private-story-workflow");
+  await expect(
+    publicReader.getByRole("heading", { name: "A private Story workflow" }),
+  ).toBeVisible();
+  await expect(
+    publicReader.getByText("A private structured draft body."),
+  ).toBeVisible();
 
   await contributorContext.close();
   await reviewerContext.close();
   await approverContext.close();
+  await publicReaderContext.close();
 });
 
 test("@smoke an administrator without Story capabilities cannot create a Story", async ({

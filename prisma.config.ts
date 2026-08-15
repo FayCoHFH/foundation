@@ -7,6 +7,7 @@ loadEnvironmentFiles();
 const requireDirectDatabaseUrl =
   process.env.PRISMA_REQUIRE_DIRECT_DATABASE_URL === "true";
 const directDatabaseUrl = process.env.DIRECT_DATABASE_URL;
+const shadowDatabaseUrl = process.env.SHADOW_DATABASE_URL;
 
 if (requireDirectDatabaseUrl && !directDatabaseUrl) {
   throw new Error(
@@ -26,5 +27,6 @@ export default defineConfig({
     url:
       directDatabaseUrl ??
       "postgresql://prisma-config.invalid/habitat_generation_only",
+    ...(shadowDatabaseUrl ? { shadowDatabaseUrl } : {}),
   },
 });

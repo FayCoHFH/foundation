@@ -206,6 +206,7 @@ export async function storyWorkflowAction(
     expectedContentHash: formData.get("expectedContentHash"),
     action: formData.get("action"),
     reason: formData.get("reason"),
+    slug: formData.get("slug"),
   });
   if (!parsed.success) {
     return {

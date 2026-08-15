@@ -369,12 +369,15 @@ async function updatePublicationAtVersion(
   transaction: Transaction,
   publicationId: string,
   expectedVersion: number,
-  data: Prisma.PublicationUpdateInput,
+  data: Prisma.PublicationUpdateInput | Prisma.PublicationUncheckedUpdateInput,
 ) {
   try {
     await transaction.publication.update({
       where: { id_version: { id: publicationId, version: expectedVersion } },
-      data: { ...data, version: { increment: 1 } },
+      data: {
+        ...data,
+        version: { increment: 1 },
+      } as Prisma.PublicationUpdateInput,
     });
   } catch (error) {
     if (isPrismaConcurrencyError(error)) throw new ConcurrencyError();
@@ -869,7 +872,7 @@ export async function releaseStory(
         slug,
         releaseState: "PUBLISHED",
         discoveryDisposition: "ACTIVE",
-        activeSnapshot: { connect: { id: snapshot.id } },
+        activeSnapshotId: snapshot.id,
       },
     );
     await createLifecycleTransition(transaction, {
@@ -927,7 +930,7 @@ export async function withdrawStory(
       input.expectedVersion,
       {
         releaseState: "WITHDRAWN",
-        activeSnapshot: { disconnect: true },
+        activeSnapshotId: null,
       },
     );
     const revision = currentRevision(story);
