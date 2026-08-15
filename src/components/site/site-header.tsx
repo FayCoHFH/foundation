@@ -17,6 +17,11 @@ export function SiteHeader() {
                 Home
               </Link>
             </li>
+            <li>
+              <Link className="hover:text-primary" href="/news">
+                News
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

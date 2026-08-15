@@ -25,6 +25,11 @@ export default async function AdminHomePage() {
     hasCapability(principal, "stories.read.draft.any")
       ? [{ href: "/admin/communications/stories", label: "Story drafts" }]
       : []),
+    ...(hasCapability(principal, "news.create") ||
+    hasCapability(principal, "news.read.draft.own") ||
+    hasCapability(principal, "news.read.draft.any")
+      ? [{ href: "/admin/communications/news", label: "News" }]
+      : []),
   ];
 
   return (

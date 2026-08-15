@@ -207,6 +207,7 @@ model AdminUser {
   changedResponsibilities   PublicationResponsibility[]      @relation("PublicationResponsibilityChanger")
   publicationTransitions    PublicationLifecycleTransition[] @relation("PublicationTransitionActor")
   publicationApprovals      PublicationApproval[]            @relation("PublicationApprover")
+  changedFeaturedNewsPlacements FeaturedNewsPlacement[]       @relation("FeaturedNewsPlacementChanger")
 
   @@index([status])
   @@map("admin_user")
@@ -400,6 +401,7 @@ model Publication {
   updatedAt            DateTime                         @updatedAt
   createdBy            AdminUser                        @relation("PublicationCreator", fields: [createdById], references: [id], onDelete: Restrict)
   story                Story?
+  newsItem             NewsItem?
   responsibility       PublicationResponsibility?
   revisions            PublicationRevision[]            @relation("PublicationRevisions")
   currentRevision      PublicationRevision?             @relation("PublicationCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
@@ -409,6 +411,8 @@ model Publication {
   snapshots            PublicationSnapshot[]            @relation("PublicationSnapshots")
   activeSnapshot       PublicationSnapshot?             @relation("PublicationActiveSnapshot", fields: [activeSnapshotId], references: [id], onDelete: SetNull)
   publicProjection     PublicStoryProjection?
+  publicNewsProjection PublicNewsProjection?
+  featuredNewsPlacement FeaturedNewsPlacement?
 
   @@unique([id, version])
   @@index([kind, workflowState])
@@ -431,6 +435,7 @@ model PublicationSnapshot {
   sourceRevision    PublicationRevision      @relation(fields: [sourceRevisionId], references: [id], onDelete: Restrict)
   activeFor         Publication[]            @relation("PublicationActiveSnapshot")
   publicProjection  PublicStoryProjection?
+  publicNewsProjection PublicNewsProjection?
 
   @@index([publicationId, activatedAt])
   @@index([state])
@@ -456,6 +461,26 @@ model PublicStoryProjection {
   @@map("public_story_projection")
 }
 
+// Read model for concise, chronological public News. Like Story projections,
+// it is populated only by an approved release transaction.
+model PublicNewsProjection {
+  id            String              @id @default(uuid()) @db.Uuid
+  publicationId String              @unique @db.Uuid
+  snapshotId    String              @unique @db.Uuid
+  slug          String              @unique @db.VarChar(160)
+  headline      String
+  summary       String
+  body          Json
+  publishedAt   DateTime
+  expiresAt     DateTime?
+  updatedAt     DateTime            @updatedAt
+  publication   Publication         @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  snapshot      PublicationSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+
+  @@index([expiresAt, publishedAt])
+  @@map("public_news_projection")
+}
+
 // Typed root. It has no public fields or route in C1.
 model Story {
   id            String      @id @default(uuid()) @db.Uuid
@@ -464,6 +489,29 @@ model Story {
   publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
 
   @@map("story")
+}
+
+// Typed News root. Public content continues to live only in projections.
+model NewsItem {
+  id            String      @id @default(uuid()) @db.Uuid
+  publicationId String      @unique @db.Uuid
+  createdAt     DateTime    @default(now())
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+
+  @@map("news_item")
+}
+
+// The deliberately narrow C3 placement: one selected eligible News item.
+// Other homepage placements remain out of scope until C4.
+model FeaturedNewsPlacement {
+  id                   String      @id @default("NEWS_FEATURED")
+  publicationId        String      @unique @db.Uuid
+  changedByAdminUserId String      @db.Uuid
+  changedAt            DateTime    @default(now())
+  publication          Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  changedBy            AdminUser   @relation("FeaturedNewsPlacementChanger", fields: [changedByAdminUserId], references: [id], onDelete: Restrict)
+
+  @@map("featured_news_placement")
 }
 
 // Private work-management assignment. This never supplies a public byline.
@@ -497,6 +545,8 @@ model PublicationRevision {
   headline             String
   deck                 String?
   excerpt              String
+  newsSummary          String?
+  newsExpiresAt        DateTime?
   body                 Json
   schemaVersion        Int
   contentHash          String                           @db.Char(64)
