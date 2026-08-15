@@ -61,6 +61,22 @@ migration was added; placement-persistence failure injection remains
 intentionally unintroduced because no safe existing repository seam supports
 it without a production backdoor.
 
+C4.2B verifies the C3-to-current migration upgrade in
+`tests/migrations/c3-to-c4-featured-news-upgrade.test.ts`, with a flag-gated
+integration wrapper at `tests/integration/c3-to-c4-featured-news-upgrade.test.ts`.
+The harness creates
+fresh `habitat_c42b_upgrade_test` and `habitat_c42b_upgrade_shadow_test`
+databases, deploys only the checked-in migrations through C3, inserts valid
+News, released snapshot/projection, and legacy `FeaturedNewsPlacement` data,
+then deploys the remaining checked-in migrations through Prisma. The migration
+preserves the News publication identity, uses the legacy change timestamp as
+the immediate open-ended `NEWS_FEATURED` start, creates exactly one shared
+placement, and removes the obsolete table only after conversion. The test also
+verifies the C3 foreign-key failure boundary, migration copy-before-drop
+ordering, current migration status, public-projection-only shared placement
+resolution, and News index Featured resolution. No migration correction was
+required.
+
 The homepage is code-composed: optional Hero, Featured Story, Featured News,
 derived Latest News, and the established participation invitation. It has no
 page builder, arbitrary placement keys, Project/Campaign placeholders, or
