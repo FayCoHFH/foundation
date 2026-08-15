@@ -11,6 +11,11 @@ withdrawn content, archived content, and drafts remain historical/admin data but
 are never effective placements. `NEWS_FEATURED` was migrated from its C3 table
 without discarding configured data.
 
+Cancelled future assignments retain their original scheduled window and record
+`cancelledAt`. They are excluded from current, upcoming, public, and overlap
+resolution. PostgreSQL coverage lives in
+`tests/integration/content-placement.test.ts`.
+
 The homepage is code-composed: optional Hero, Featured Story, Featured News,
 derived Latest News, and the established participation invitation. It has no
 page builder, arbitrary placement keys, Project/Campaign placeholders, or

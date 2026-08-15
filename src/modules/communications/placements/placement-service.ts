@@ -205,7 +205,6 @@ export async function cancelFuturePlacement(
     await tx.contentPlacement.update({
       where: { id: item.id },
       data: {
-        endsAt: item.startsAt,
         cancelledAt: now,
         updatedByAdminUserId: actor.adminUserId,
         version: { increment: 1 },

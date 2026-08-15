@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import type { Capability } from "@/platform/auth/capabilities";
 import {
@@ -96,6 +96,9 @@ beforeAll(async () => {
     where: { key: "communications-manager" },
   });
 });
+beforeEach(async () => {
+  await prisma.contentPlacement.deleteMany();
+});
 describe("C4 content placements", () => {
   it("assigns, schedules, resolves, rejects stale writes, and retains cancelled history", async () => {
     const { manager, publicationId } = await releasedStory();
@@ -128,7 +131,14 @@ describe("C4 content placements", () => {
     await cancelFuturePlacement(prisma, manager, future.id, future.version);
     expect(
       await prisma.contentPlacement.findUnique({ where: { id: future.id } }),
-    ).toMatchObject({ endsAt: future.startsAt });
+    ).toMatchObject({
+      startsAt: future.startsAt,
+      endsAt: null,
+      cancelledAt: expect.any(Date),
+    });
+    expect(
+      (await getPlacementState(prisma, "HOME_FEATURED_STORY", now)).upcoming,
+    ).toBeNull();
     expect(
       await prisma.auditEvent.count({
         where: { targetType: "ContentPlacement" },
