@@ -27,6 +27,11 @@ Gate C is resolved by the [accepted Communications architecture](../architecture
 
 The detailed C1–C8 acceptance criteria remain in the Communications architecture. They map onto the platform sequence as follows: C1 publishing kernel and C2 authoring/media safety begin in Slices 2–3; C3 Stories, C4 News/placements, and C5 Queue/Dashboard form the core of Slice 4; C6 Notices/submissions follows only when its collection controls are approved; C7 Newsletter Edition is V1.1 unless explicitly pulled forward; C8 derived calendar and evaluated extensions remains later work. One coordinator owns shared migrations.
 
+C1’s private Story persistence increment is implemented locally; its delivery
+record is [C1 Story persistence](../development/c1-story-persistence.md). The
+remaining Slice 2 release, snapshot, schedule, discovery, placement, and News
+work is still open.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

@@ -15,8 +15,21 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const requestSchema = z.object({
-  fixture: z.enum(["platform-admin", "denied"]),
+  fixture: z.enum([
+    "platform-admin",
+    "story-contributor",
+    "story-editor",
+    "story-manager",
+    "denied",
+  ]),
 });
+
+const fixtureRoleKeys = {
+  "platform-admin": "platform-admin",
+  "story-contributor": "contributor",
+  "story-editor": "editor",
+  "story-manager": "communications-manager",
+} as const;
 
 function unavailable() {
   return Response.json({ error: "Not found" }, { status: 404 });
@@ -91,12 +104,12 @@ export async function POST(request: Request) {
       },
     });
 
-    if (parsed.data.fixture === "platform-admin") {
+    if (parsed.data.fixture !== "denied") {
+      const roleKey = fixtureRoleKeys[parsed.data.fixture];
       const role = await transaction.role.findUnique({
-        where: { key: "platform-admin" },
+        where: { key: roleKey },
       });
-      if (!role?.isActive)
-        throw new Error("Seeded platform-admin role missing.");
+      if (!role?.isActive) throw new Error(`Seeded ${roleKey} role missing.`);
       const adminUser = await transaction.adminUser.create({
         data: { authUserId, status: "ACTIVE" },
       });
@@ -125,7 +138,7 @@ export async function POST(request: Request) {
           action: "test_auth.fixture.create",
           targetType: "AdminUser",
           targetId: adminUser.id,
-          summary: { fixture: "platform-admin" },
+          summary: { fixture: parsed.data.fixture, roleKey },
         }),
       });
     }

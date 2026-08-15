@@ -20,6 +20,11 @@ export default async function AdminHomePage() {
     ...(hasCapability(principal, "users.invite")
       ? [{ href: "/admin/invitations/new", label: "Invite administrator" }]
       : []),
+    ...(hasCapability(principal, "stories.create") ||
+    hasCapability(principal, "stories.read.draft.own") ||
+    hasCapability(principal, "stories.read.draft.any")
+      ? [{ href: "/admin/communications/stories", label: "Story drafts" }]
+      : []),
   ];
 
   return (
@@ -40,7 +45,8 @@ export default async function AdminHomePage() {
       </h1>
       <p className="text-muted-foreground mt-5 max-w-2xl text-lg leading-8">
         This shell proves server-side identity, active-principal, and live
-        capability boundaries. Communications features arrive in later slices.
+        capability boundaries. Story drafts are internal until a later public
+        snapshot and presentation slice.
       </p>
       <dl className="border-border mt-10 grid max-w-2xl gap-6 border-t pt-6 sm:grid-cols-2">
         <div>

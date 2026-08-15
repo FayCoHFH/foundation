@@ -32,3 +32,24 @@ export class ConcurrencyError extends AppError {
     this.name = "ConcurrencyError";
   }
 }
+
+export class ValidationError extends AppError {
+  constructor(message = "The submitted data is not valid.") {
+    super("INVALID_INPUT", message, 400, true);
+    this.name = "ValidationError";
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message = "The requested record was not found.") {
+    super("NOT_FOUND", message, 404, true);
+    this.name = "NotFoundError";
+  }
+}
+
+export class PreconditionError extends AppError {
+  constructor(message = "The requested action is not valid for this record.") {
+    super("PRECONDITION_FAILED", message, 412, true);
+    this.name = "PreconditionError";
+  }
+}

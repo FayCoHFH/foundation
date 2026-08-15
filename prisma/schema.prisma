@@ -36,6 +36,37 @@ enum AuditActorKind {
   SYSTEM
 }
 
+enum PublicationKind {
+  STORY
+  NEWS
+}
+
+enum PublicationWorkflowState {
+  DRAFT
+  IN_REVIEW
+  CHANGES_REQUESTED
+  PENDING_APPROVAL
+  APPROVED
+}
+
+enum PublicationLifecycleDimension {
+  CANDIDATE_WORKFLOW
+}
+
+enum PublicationLifecycleAction {
+  DRAFT_CREATED
+  REVISION_CREATED
+  OWNER_ASSIGNED
+  SUBMITTED
+  CHANGES_REQUESTED
+  SENT_FOR_APPROVAL
+  APPROVED
+}
+
+enum PublicationApprovalDecision {
+  APPROVED
+}
+
 // Better Auth core model. The application never treats this identity record
 // alone as an administrative principal.
 model User {
@@ -136,16 +167,24 @@ model AdminUser {
   updatedAt       DateTime        @updatedAt
   authUser        User            @relation(fields: [authUserId], references: [id], onDelete: Restrict)
 
-  externalIdentities       ExternalIdentity[]
-  roleAssignments          UserRole[]
-  createdInvitations       AdminInvitation[]  @relation("InvitationCreator")
-  acceptedInvitations      AdminInvitation[]  @relation("InvitationAcceptor")
-  revokedInvitations       AdminInvitation[]  @relation("InvitationRevoker")
-  grantedRoleAssignments   UserRole[]         @relation("RoleGrantor")
-  revokedRoleAssignments   UserRole[]         @relation("RoleRevoker")
-  auditEvents              AuditEvent[]       @relation("AuditActor")
-  superAdminGrant          SuperAdminGrant?   @relation("SuperAdminHolder")
-  grantedSuperAdminRecords SuperAdminGrant[]  @relation("SuperAdminGrantor")
+  externalIdentities        ExternalIdentity[]
+  roleAssignments           UserRole[]
+  createdInvitations        AdminInvitation[]                @relation("InvitationCreator")
+  acceptedInvitations       AdminInvitation[]                @relation("InvitationAcceptor")
+  revokedInvitations        AdminInvitation[]                @relation("InvitationRevoker")
+  grantedRoleAssignments    UserRole[]                       @relation("RoleGrantor")
+  revokedRoleAssignments    UserRole[]                       @relation("RoleRevoker")
+  auditEvents               AuditEvent[]                     @relation("AuditActor")
+  superAdminGrant           SuperAdminGrant?                 @relation("SuperAdminHolder")
+  grantedSuperAdminRecords  SuperAdminGrant[]                @relation("SuperAdminGrantor")
+  createdPublications       Publication[]                    @relation("PublicationCreator")
+  createdRevisions          PublicationRevision[]            @relation("PublicationRevisionCreator")
+  editorialResponsibilities PublicationResponsibility[]      @relation("PublicationEditorialOwner")
+  reviewerResponsibilities  PublicationResponsibility[]      @relation("PublicationAssignedReviewer")
+  approverResponsibilities  PublicationResponsibility[]      @relation("PublicationAssignedApprover")
+  changedResponsibilities   PublicationResponsibility[]      @relation("PublicationResponsibilityChanger")
+  publicationTransitions    PublicationLifecycleTransition[] @relation("PublicationTransitionActor")
+  publicationApprovals      PublicationApproval[]            @relation("PublicationApprover")
 
   @@index([status])
   @@map("admin_user")
@@ -288,12 +327,12 @@ model AdminInvitationRole {
 
 model SuperAdminGrant {
   id          String     @id @default(uuid()) @db.Uuid
-  adminUserId  String     @unique @db.Uuid
-  grantedById  String?    @db.Uuid
-  grantedAt    DateTime   @default(now())
-  reason       String
-  adminUser    AdminUser  @relation("SuperAdminHolder", fields: [adminUserId], references: [id], onDelete: Restrict)
-  grantedBy    AdminUser? @relation("SuperAdminGrantor", fields: [grantedById], references: [id], onDelete: SetNull)
+  adminUserId String     @unique @db.Uuid
+  grantedById String?    @db.Uuid
+  grantedAt   DateTime   @default(now())
+  reason      String
+  adminUser   AdminUser  @relation("SuperAdminHolder", fields: [adminUserId], references: [id], onDelete: Restrict)
+  grantedBy   AdminUser? @relation("SuperAdminGrantor", fields: [grantedById], references: [id], onDelete: SetNull)
 
   @@index([grantedById])
   @@map("super_admin_grant")
@@ -318,4 +357,139 @@ model AuditEvent {
   @@index([targetType, targetId])
   @@index([correlationId])
   @@map("audit_event")
+}
+
+// The narrow shared spine for typed Communications authoring. C1 creates only
+// Story details; NEWS remains a closed discriminator reserved for a later slice.
+model Publication {
+  id                  String                           @id @default(uuid()) @db.Uuid
+  kind                PublicationKind
+  workflowState       PublicationWorkflowState         @default(DRAFT)
+  version             Int                              @default(1)
+  currentRevisionId   String?                          @unique @db.Uuid
+  approvedRevisionId  String?                          @unique @db.Uuid
+  approvedContentHash String?                          @db.Char(64)
+  createdById         String                           @db.Uuid
+  createdAt           DateTime                         @default(now())
+  updatedAt           DateTime                         @updatedAt
+  createdBy           AdminUser                        @relation("PublicationCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  story               Story?
+  responsibility      PublicationResponsibility?
+  revisions           PublicationRevision[]            @relation("PublicationRevisions")
+  currentRevision     PublicationRevision?             @relation("PublicationCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
+  approvedRevision    PublicationRevision?             @relation("PublicationApprovedRevision", fields: [approvedRevisionId], references: [id], onDelete: SetNull)
+  transitions         PublicationLifecycleTransition[]
+  approvals           PublicationApproval[]
+
+  @@unique([id, version])
+  @@index([kind, workflowState])
+  @@index([createdById])
+  @@map("publication")
+}
+
+// Typed root. It has no public fields or route in C1.
+model Story {
+  id            String      @id @default(uuid()) @db.Uuid
+  publicationId String      @unique @db.Uuid
+  createdAt     DateTime    @default(now())
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+
+  @@map("story")
+}
+
+// Private work-management assignment. This never supplies a public byline.
+model PublicationResponsibility {
+  publicationId               String      @id @db.Uuid
+  editorialOwnerAdminUserId   String      @db.Uuid
+  assignedReviewerAdminUserId String?     @db.Uuid
+  assignedApproverAdminUserId String?     @db.Uuid
+  changedByAdminUserId        String      @db.Uuid
+  reassignmentReason          String?
+  createdAt                   DateTime    @default(now())
+  updatedAt                   DateTime    @updatedAt
+  publication                 Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  editorialOwner              AdminUser   @relation("PublicationEditorialOwner", fields: [editorialOwnerAdminUserId], references: [id], onDelete: Restrict)
+  assignedReviewer            AdminUser?  @relation("PublicationAssignedReviewer", fields: [assignedReviewerAdminUserId], references: [id], onDelete: SetNull)
+  assignedApprover            AdminUser?  @relation("PublicationAssignedApprover", fields: [assignedApproverAdminUserId], references: [id], onDelete: SetNull)
+  changedBy                   AdminUser   @relation("PublicationResponsibilityChanger", fields: [changedByAdminUserId], references: [id], onDelete: Restrict)
+
+  @@index([editorialOwnerAdminUserId])
+  @@index([assignedReviewerAdminUserId])
+  @@index([assignedApproverAdminUserId])
+  @@map("publication_responsibility")
+}
+
+// Revision data is immutable. The C1 trigger rejects UPDATE and DELETE.
+model PublicationRevision {
+  id                   String                           @id @default(uuid()) @db.Uuid
+  publicationId        String                           @db.Uuid
+  number               Int
+  parentRevisionId     String?                          @db.Uuid
+  headline             String
+  deck                 String?
+  excerpt              String
+  body                 Json
+  schemaVersion        Int
+  contentHash          String                           @db.Char(64)
+  contentHashVersion   Int                              @default(1)
+  createdByAdminUserId String                           @db.Uuid
+  createdAt            DateTime                         @default(now())
+  publication          Publication                      @relation("PublicationRevisions", fields: [publicationId], references: [id], onDelete: Restrict)
+  parentRevision       PublicationRevision?             @relation("PublicationRevisionLineage", fields: [parentRevisionId], references: [id], onDelete: Restrict)
+  successorRevisions   PublicationRevision[]            @relation("PublicationRevisionLineage")
+  createdBy            AdminUser                        @relation("PublicationRevisionCreator", fields: [createdByAdminUserId], references: [id], onDelete: Restrict)
+  currentFor           Publication?                     @relation("PublicationCurrentRevision")
+  approvedFor          Publication?                     @relation("PublicationApprovedRevision")
+  lifecycleTransitions PublicationLifecycleTransition[]
+  approval             PublicationApproval?
+
+  @@unique([publicationId, number])
+  @@index([publicationId, createdAt])
+  @@index([createdByAdminUserId])
+  @@index([parentRevisionId])
+  @@map("publication_revision")
+}
+
+model PublicationLifecycleTransition {
+  id               String                        @id @default(uuid()) @db.Uuid
+  publicationId    String                        @db.Uuid
+  dimension        PublicationLifecycleDimension
+  action           PublicationLifecycleAction
+  fromState        PublicationWorkflowState?
+  toState          PublicationWorkflowState?
+  revisionId       String?                       @db.Uuid
+  contentHash      String?                       @db.Char(64)
+  actorAdminUserId String?                       @db.Uuid
+  reason           String?
+  correlationId    String                        @db.Uuid
+  occurredAt       DateTime                      @default(now())
+  publication      Publication                   @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  revision         PublicationRevision?          @relation(fields: [revisionId], references: [id], onDelete: Restrict)
+  actor            AdminUser?                    @relation("PublicationTransitionActor", fields: [actorAdminUserId], references: [id], onDelete: SetNull)
+
+  @@index([publicationId, occurredAt])
+  @@index([revisionId])
+  @@index([actorAdminUserId])
+  @@index([correlationId])
+  @@map("publication_lifecycle_transition")
+}
+
+model PublicationApproval {
+  id                    String                      @id @default(uuid()) @db.Uuid
+  publicationId         String                      @db.Uuid
+  revisionId            String                      @unique @db.Uuid
+  contentHash           String                      @db.Char(64)
+  contentHashVersion    Int                         @default(1)
+  decision              PublicationApprovalDecision @default(APPROVED)
+  policyVersion         Int                         @default(1)
+  approvedByAdminUserId String                      @db.Uuid
+  approvedAt            DateTime                    @default(now())
+  overrideReason        String?
+  publication           Publication                 @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  revision              PublicationRevision         @relation(fields: [revisionId], references: [id], onDelete: Restrict)
+  approvedBy            AdminUser                   @relation("PublicationApprover", fields: [approvedByAdminUserId], references: [id], onDelete: Restrict)
+
+  @@index([publicationId, approvedAt])
+  @@index([approvedByAdminUserId])
+  @@map("publication_approval")
 }

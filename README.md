@@ -55,6 +55,7 @@ local/CI `APP_ENV=test` and is never a production authentication path. See
 ## Foundation map
 
 - [Slice 1 implementation record](docs/development/slice-1-foundation.md)
+- [C1 Story persistence record](docs/development/c1-story-persistence.md)
 - [Product vision](docs/product/vision.md),
   [specification](docs/product/specification.md), and
   [information architecture](docs/product/information-architecture.md)
