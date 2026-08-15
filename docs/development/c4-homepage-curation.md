@@ -24,6 +24,17 @@ released content. Effective public resolution returns only safe placement
 metadata and `PublicStoryProjection`/`PublicNewsProjection` DTO fields; it does
 not expose authoring, workflow, approval, audit, or internal ownership data.
 
+C4.2A-2 completes PostgreSQL coverage for half-open immediate and future
+windows, invalid-window rejection, exclusion-constraint overlap behavior,
+adjacency, cancelled/history overlap exclusion, deterministic current/upcoming
+resolution, replacement and clear behavior, future cancellation, persisted
+optimistic concurrency, and bounded assignment/schedule/replacement/clear/
+cancellation audit evidence. Replacement versions advance from the prior row;
+cancelled rows are excluded from mutation selection; clear and cancellation
+mutations are audited; stale writes and already-cancelled operations fail
+without false success events. Focused coverage remains in
+`tests/integration/content-placement.test.ts`.
+
 The homepage is code-composed: optional Hero, Featured Story, Featured News,
 derived Latest News, and the established participation invitation. It has no
 page builder, arbitrary placement keys, Project/Campaign placeholders, or

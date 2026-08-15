@@ -107,6 +107,7 @@ export async function assignPlacement(
     const current = await tx.contentPlacement.findFirst({
       where: {
         key: input.key,
+        cancelledAt: null,
         startsAt: { lte: startsAt },
         OR: [{ endsAt: null }, { endsAt: { gt: startsAt } }],
       },
@@ -118,6 +119,14 @@ export async function assignPlacement(
       current.version !== input.expectedVersion
     )
       throw new ConcurrencyError();
+    if (!current && input.expectedVersion !== undefined) {
+      const latest = await tx.contentPlacement.findFirst({
+        where: { key: input.key },
+        orderBy: [{ startsAt: "desc" }, { createdAt: "desc" }],
+      });
+      if (latest && latest.version !== input.expectedVersion)
+        throw new ConcurrencyError();
+    }
     if (current)
       await tx.contentPlacement.update({
         where: { id: current.id },
@@ -133,6 +142,7 @@ export async function assignPlacement(
         publicationId: publication.id,
         startsAt,
         endsAt: input.endsAt ?? null,
+        version: current ? current.version + 1 : 1,
         createdByAdminUserId: actor.adminUserId,
         updatedByAdminUserId: actor.adminUserId,
       },
@@ -151,6 +161,9 @@ export async function assignPlacement(
           kind: publication.kind,
           startsAt: startsAt.toISOString(),
           endsAt: input.endsAt?.toISOString() ?? null,
+          previousPlacementId: current?.id ?? null,
+          previousStartsAt: current?.startsAt.toISOString() ?? null,
+          previousEndsAt: current?.endsAt?.toISOString() ?? null,
         },
       }),
     });
@@ -169,11 +182,23 @@ export async function clearPlacement(
     const current = await tx.contentPlacement.findFirst({
       where: {
         key: placement,
+        cancelledAt: null,
         startsAt: { lte: now },
         OR: [{ endsAt: null }, { endsAt: { gt: now } }],
       },
+      include: { publication: { select: { kind: true } } },
     });
-    if (!current) return;
+    if (!current) {
+      if (expectedVersion !== undefined) {
+        const latest = await tx.contentPlacement.findFirst({
+          where: { key: placement },
+          orderBy: [{ startsAt: "desc" }, { createdAt: "desc" }],
+        });
+        if (latest && latest.version !== expectedVersion)
+          throw new ConcurrencyError();
+      }
+      return;
+    }
     if (expectedVersion !== undefined && current.version !== expectedVersion)
       throw new ConcurrencyError();
     await tx.contentPlacement.update({
@@ -183,6 +208,24 @@ export async function clearPlacement(
         updatedByAdminUserId: actor.adminUserId,
         version: { increment: 1 },
       },
+    });
+    await tx.auditEvent.create({
+      data: buildAuditEvent({
+        actorKind: "ADMIN_USER",
+        actorAdminUserId: actor.adminUserId,
+        action: "placement.cleared",
+        targetType: "ContentPlacement",
+        targetId: current.id,
+        correlationId: randomUUID(),
+        summary: {
+          placement: current.key,
+          publicationId: current.publicationId,
+          kind: current.publication.kind,
+          startsAt: current.startsAt.toISOString(),
+          endsAt: current.endsAt?.toISOString() ?? null,
+          endedAt: now.toISOString(),
+        },
+      }),
     });
   });
 }
@@ -202,6 +245,8 @@ export async function cancelFuturePlacement(
       throw new PreconditionError("Only a future placement can be cancelled.");
     if (expectedVersion !== undefined && item.version !== expectedVersion)
       throw new ConcurrencyError();
+    if (item.cancelledAt)
+      throw new PreconditionError("This placement has already been cancelled.");
     await tx.contentPlacement.update({
       where: { id: item.id },
       data: {
@@ -218,7 +263,13 @@ export async function cancelFuturePlacement(
         targetType: "ContentPlacement",
         targetId: item.id,
         correlationId: randomUUID(),
-        summary: { placement: item.key, publicationId: item.publicationId },
+        summary: {
+          placement: item.key,
+          publicationId: item.publicationId,
+          startsAt: item.startsAt.toISOString(),
+          endsAt: item.endsAt?.toISOString() ?? null,
+          cancelledAt: now.toISOString(),
+        },
       }),
     });
   });
