@@ -206,6 +206,7 @@ export async function cancelFuturePlacement(
       where: { id: item.id },
       data: {
         endsAt: item.startsAt,
+        cancelledAt: now,
         updatedByAdminUserId: actor.adminUserId,
         version: { increment: 1 },
       },
@@ -229,7 +230,11 @@ export async function getPlacementState(
   now = new Date(),
 ) {
   const rows = await db.contentPlacement.findMany({
-    where: { key: placement, OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+    where: {
+      key: placement,
+      cancelledAt: null,
+      OR: [{ endsAt: null }, { endsAt: { gt: now } }],
+    },
     include: {
       publication: {
         include: { publicProjection: true, publicNewsProjection: true },
@@ -250,6 +255,7 @@ export async function getEffectivePlacement(
     where: {
       key: placement,
       startsAt: { lte: now },
+      cancelledAt: null,
       OR: [{ endsAt: null }, { endsAt: { gt: now } }],
     },
     include: {

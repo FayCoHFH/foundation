@@ -517,6 +517,7 @@ model ContentPlacement {
   publicationId        String       @db.Uuid
   startsAt             DateTime     @default(now())
   endsAt               DateTime?
+  cancelledAt          DateTime?
   version              Int          @default(1)
   createdByAdminUserId String       @db.Uuid
   updatedByAdminUserId String       @db.Uuid
