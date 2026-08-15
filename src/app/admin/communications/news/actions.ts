@@ -20,6 +20,7 @@ import {
   AuthorizationError,
   ValidationError,
 } from "@/platform/errors/app-error";
+import { NEWS_WORKFLOW_NOTICE_CODES } from "./workflow-notice";
 const form = z.object({
   headline: z.string().trim().min(1).max(180),
   summary: z.string().trim().min(1).max(600),
@@ -72,19 +73,7 @@ export async function newsWorkflowForm(data: FormData) {
       .optional()
       .parse(data.get("reason") || undefined),
   };
-  const action = z
-    .enum([
-      "submit",
-      "changes",
-      "approval",
-      "approve",
-      "release",
-      "withdraw",
-      "archive",
-      "feature",
-      "clear-feature",
-    ])
-    .parse(data.get("action"));
+  const action = z.enum(NEWS_WORKFLOW_NOTICE_CODES).parse(data.get("action"));
   const principal = await actor();
   if (action === "submit") await submitNews(prisma, principal, input);
   else if (action === "changes")
@@ -111,5 +100,5 @@ export async function newsWorkflowForm(data: FormData) {
   else if (action === "feature")
     await setFeaturedNews(prisma, principal, input.newsId);
   else await setFeaturedNews(prisma, principal, null);
-  redirect(`/admin/communications/news/${input.newsId}`);
+  redirect(`/admin/communications/news/${input.newsId}?notice=${action}`);
 }

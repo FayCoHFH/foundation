@@ -20,6 +20,9 @@ const requestSchema = z.object({
     "story-contributor",
     "story-editor",
     "story-manager",
+    "news-contributor",
+    "news-editor",
+    "news-manager",
     "denied",
   ]),
 });
@@ -29,6 +32,9 @@ const fixtureRoleKeys = {
   "story-contributor": "contributor",
   "story-editor": "editor",
   "story-manager": "communications-manager",
+  "news-contributor": "contributor",
+  "news-editor": "editor",
+  "news-manager": "communications-manager",
 } as const;
 
 function unavailable() {

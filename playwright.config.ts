@@ -6,7 +6,7 @@ import { assertDestructiveTestDatabaseSafety } from "./tests/support/destructive
 
 assertDestructiveTestDatabaseSafety();
 
-const baseURL = "http://127.0.0.1:3000";
+const baseURL = "http://127.0.0.1:3100";
 export const testAuthSecret =
   process.env.TEST_AUTH_SECRET ?? randomBytes(32).toString("base64url");
 process.env.TEST_AUTH_SECRET = testAuthSecret;
@@ -16,7 +16,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
-  ...(process.env.CI ? { workers: 1 } : {}),
+  workers: 1,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL,
@@ -31,9 +31,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "pnpm exec next start --hostname 127.0.0.1 --port 3000",
+    command: "pnpm exec next start --hostname 127.0.0.1 --port 3100",
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
     env: {
       ...process.env,

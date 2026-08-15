@@ -24,6 +24,13 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
     }),
   ).toBeVisible();
   await expect(page.getByRole("contentinfo")).toBeVisible();
+  await expect
+    .poll(() =>
+      page
+        .locator(".editorial-arrival")
+        .evaluate((element) => getComputedStyle(element).opacity),
+    )
+    .toBe("1");
 
   const skipLink = page.getByRole("link", { name: "Skip to main content" });
   await skipLink.focus();

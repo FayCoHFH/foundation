@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { NewsArticleJsonLd } from "@/components/editorial/news-article-json-ld";
 import { StoryBody } from "@/components/editorial/story-body";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
@@ -40,6 +41,7 @@ export default async function NewsDetail({
   }).format(news.publishedAt);
   return (
     <div className="flex min-h-screen flex-col">
+      <NewsArticleJsonLd news={news} />
       <SkipLink targetId="main-content" />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="flex-1">

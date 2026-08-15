@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { Capability } from "@/platform/auth/capabilities";
+import { AuthorizationError } from "@/platform/errors/app-error";
 import {
   approveNews,
   createNews,
@@ -134,5 +135,15 @@ describe("C3 News domain", () => {
       reason: "Test withdrawal",
     });
     expect(await getPublicNewsBySlug(prisma, released.slug!)).toBeNull();
+  });
+
+  it("denies News and Featured News mutations to an administrator without those capabilities", async () => {
+    const platformAdmin = await actor("platform-admin");
+    await expect(
+      createNews(prisma, platformAdmin, candidate("Unauthorized News")),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(
+      setFeaturedNews(prisma, platformAdmin, null),
+    ).rejects.toBeInstanceOf(AuthorizationError);
   });
 });
