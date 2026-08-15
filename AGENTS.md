@@ -99,9 +99,12 @@ Do not create ADRs for reversible local details. Link requirements to decisions 
 
 ## Agent and model routing
 
-- Use Sol for consequential architecture/security synthesis, cross-domain decisions, difficult debugging, schema coordination, and final reviews.
-- Use Terra for normal implementation, focused research, documentation, tests, adapters, UI, and bounded corrections.
-- Use Luna for mechanical inventories and deterministic repetitive work only when it is actually exposed by the runtime; never pretend an unavailable model exists.
+- **Terra is the default model** for normal engineering: implementation, repository analysis, application/database services, UI, tests, refactors, documentation, ordinary debugging, and adapters whose contracts are established.
+- Use **Luna first** when it is available for bounded mechanical work: searches, inventories, route enumeration, fixtures, repetitive tests, formatting, documentation synchronization, mechanical migrations, cleanup, and deterministic validation. Never pretend an unavailable model exists.
+- Use **Sol only as a bounded exception** for a named consequential question that Terra cannot safely resolve: security-sensitive authentication/authorization, difficult schema or migration design, payments, privacy/threat analysis, high-risk integration contracts, cross-domain failures, or a final review of a risky slice. Do not use Sol as the parent/default implementation model, for routine work, or for duplicate broad reviews.
+- Before invoking Sol, ask whether Terra can safely and competently perform the task. If yes, use Terra. State the exact review question and scope when Sol is used.
+- Optimize for correctness per token: avoid redundant full-repository reads, repeated architecture reviews, overlapping agents, and long-running Sol work without a narrowly defined risk.
+- In delivery reporting, state the parent/default model, subagent models used, why Sol was invoked (if applicable), and whether Luna was available. If Sol performs more than a bounded review, explain why Terra was insufficient.
 - Use subagents only for genuinely parallel work. Assign exclusive file/domain ownership, share the same accepted constraints, and perform one integrated final review.
 - Read the full instructions for any applicable repository or Codex skill before using it. Use a skill only when it materially fits the task.
 
