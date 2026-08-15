@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Literata, Source_Sans_3 } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
+
+const literata = Literata({ subsets: ["latin"], variable: "--font-literata" });
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +35,9 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${literata.variable} ${sourceSans.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }

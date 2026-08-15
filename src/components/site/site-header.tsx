@@ -2,24 +2,20 @@ import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <header className="border-border bg-background border-b">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4 sm:px-8 lg:px-12">
+    <header className="border-border/80 bg-background/95 border-b backdrop-blur-sm">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-4 sm:px-8 lg:px-12">
         <Link
           href="/"
-          className="text-foreground text-base font-semibold no-underline"
+          className="text-foreground font-serif text-lg leading-tight font-semibold no-underline sm:text-xl"
         >
           Fayette County Habitat for Humanity
         </Link>
-        <nav aria-label="Foundation navigation">
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        <nav aria-label="Public navigation">
+          <ul className="flex items-center gap-x-5 text-sm font-semibold">
             <li>
-              <Link href="#foundation">Foundation</Link>
-            </li>
-            <li>
-              <Link href="#accessibility">Accessibility</Link>
-            </li>
-            <li>
-              <a href="#giving-status">Giving status</a>
+              <Link className="hover:text-primary" href="/">
+                Home
+              </Link>
             </li>
           </ul>
         </nav>

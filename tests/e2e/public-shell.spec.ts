@@ -14,13 +14,13 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
   await expect(page).toHaveTitle("Foundation environment");
   await expect(page.getByRole("banner")).toBeVisible();
   await expect(
-    page.getByRole("navigation", { name: "Foundation navigation" }),
+    page.getByRole("navigation", { name: "Public navigation" }),
   ).toBeVisible();
   await expect(page.getByRole("main")).toHaveAttribute("id", "main-content");
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "A clear starting point for the public experience.",
+      name: "A place where many kinds of help can meet.",
     }),
   ).toBeVisible();
   await expect(page.getByRole("contentinfo")).toBeVisible();

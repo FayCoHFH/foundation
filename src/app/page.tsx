@@ -4,26 +4,15 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { SkipLink } from "@/components/ui/skip-link";
 
-export const metadata: Metadata = {
-  title: "Foundation environment",
-};
+export const metadata: Metadata = { title: "Foundation environment" };
 
-const foundationCapabilities = [
-  {
-    title: "Clear structure",
-    description:
-      "Semantic regions, headings, and navigation establish a usable base before product content is introduced.",
-  },
-  {
-    title: "Responsive by default",
-    description:
-      "The foundation remains readable and operable on small screens, at high zoom, and with user text preferences.",
-  },
-  {
-    title: "Safe to extend",
-    description:
-      "Future public information and provider handoffs can be added without presenting unverified content today.",
-  },
+const foundations = [
+  ["Stories", "Make room for the people, work, and care behind each result."],
+  [
+    "Participation",
+    "Welcome time, talent, useful goods, attention, and support.",
+  ],
+  ["Trust", "Let clarity, care, and evidence earn confidence over time."],
 ];
 
 export default function HomePage() {
@@ -32,55 +21,50 @@ export default function HomePage() {
       <SkipLink targetId="main-content" />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="flex-1">
+        <section className="border-border bg-editorial-sky/40 border-b">
+          <div className="editorial-arrival mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12">
+            <p className="text-primary text-sm font-bold tracking-[0.16em] uppercase">
+              Fayette County Habitat for Humanity
+            </p>
+            <h1 className="text-editorial-pecan mt-5 max-w-4xl font-serif text-5xl leading-[0.98] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
+              A place where many kinds of help can meet.
+            </h1>
+            <p className="text-muted-foreground mt-8 max-w-2xl text-xl leading-8">
+              This public experience is being built to make local work easier to
+              understand, trust, and join.
+            </p>
+            <a
+              href="#foundation"
+              className="text-primary border-editorial-paintbrush hover:text-secondary-foreground mt-10 inline-flex min-h-11 items-center border-b-2 pb-1 text-sm font-bold no-underline transition-colors motion-reduce:transition-none"
+            >
+              Explore the foundation
+            </a>
+          </div>
+        </section>
         <section
           id="foundation"
           aria-labelledby="foundation-title"
-          className="border-border bg-surface border-b"
-        >
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12">
-            <p className="text-primary text-sm font-semibold tracking-wide">
-              Foundation environment
-            </p>
-            <h1
-              id="foundation-title"
-              className="text-foreground mt-4 max-w-3xl font-serif text-4xl leading-tight sm:text-5xl"
-            >
-              A clear starting point for the public experience.
-            </h1>
-            <p className="text-muted-foreground mt-6 max-w-2xl text-lg leading-8">
-              This non-production shell establishes accessible structure,
-              responsive presentation, and intentional visual foundations.
-              Public content and services will be added only when they are ready
-              to be maintained.
-            </p>
-          </div>
-        </section>
-
-        <section
-          id="accessibility"
-          aria-labelledby="capabilities-title"
-          className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12"
+          className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12"
         >
           <div className="max-w-2xl">
-            <h2
-              id="capabilities-title"
-              className="text-foreground font-serif text-3xl leading-tight"
-            >
-              Built to be useful before it is full.
-            </h2>
-            <p className="text-muted-foreground mt-4">
-              The foundation favors understandable structure and honest
-              availability over placeholder features or unsupported claims.
+            <p className="text-primary text-sm font-bold tracking-[0.16em] uppercase">
+              Built with care
             </p>
+            <h2
+              id="foundation-title"
+              className="text-editorial-pecan mt-4 font-serif text-4xl leading-tight"
+            >
+              Useful before promotional.
+            </h2>
           </div>
-          <dl className="border-border mt-10 grid gap-8 border-t pt-8 md:grid-cols-3">
-            {foundationCapabilities.map((capability) => (
-              <div key={capability.title}>
-                <dt className="text-foreground text-lg font-semibold">
-                  {capability.title}
+          <dl className="border-border mt-12 grid gap-x-10 gap-y-10 border-t pt-10 md:grid-cols-3">
+            {foundations.map(([title, description]) => (
+              <div key={title}>
+                <dt className="text-editorial-pecan font-serif text-2xl">
+                  {title}
                 </dt>
-                <dd className="text-muted-foreground mt-2 text-sm leading-6">
-                  {capability.description}
+                <dd className="text-muted-foreground mt-3 leading-7">
+                  {description}
                 </dd>
               </div>
             ))}

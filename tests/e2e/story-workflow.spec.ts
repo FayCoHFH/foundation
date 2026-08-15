@@ -75,6 +75,9 @@ test("@smoke Story draft workflow crosses contributor, reviewer, and approver bo
   await expect(
     publicReader.getByText("A private structured draft body."),
   ).toBeVisible();
+  await expect(
+    publicReader.getByRole("link", { name: "Share this Story" }),
+  ).toHaveAttribute("href", /mailto:/);
 
   await contributorContext.close();
   await reviewerContext.close();
