@@ -47,6 +47,20 @@ the successor projection, and News expiration is evaluated from the successor
 projection without rewriting placement history. Resolution assertions are
 limited to the public projection DTO and safe placement window metadata.
 
+C4.2A-3B completes PostgreSQL rollback coverage in
+`tests/integration/content-placement-rollback.test.ts`. A narrow optional
+audit-writer dependency defaults to the production transaction-scoped writer
+and is supplied directly only by integration tests to throw after placement
+work has begun. Immediate, bounded, future, replacement, clear/end, and
+future-cancellation mutations roll back placement rows and required audit
+evidence together; original windows, versions, cancellation state, target
+Publication, current/upcoming resolution, and history remain intact after
+failure. Retries using the original version succeed, and successful mutation
+types retain one paired success audit. No production failure switch or schema
+migration was added; placement-persistence failure injection remains
+intentionally unintroduced because no safe existing repository seam supports
+it without a production backdoor.
+
 The homepage is code-composed: optional Hero, Featured Story, Featured News,
 derived Latest News, and the established participation invitation. It has no
 page builder, arbitrary placement keys, Project/Campaign placeholders, or

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import type { PrismaClient } from "@/generated/prisma/client";
+import type { Prisma, PrismaClient } from "@/generated/prisma/client";
 import { buildAuditEvent } from "@/platform/audit/event";
 import type { Capability } from "@/platform/auth/capabilities";
 import type { AdminPrincipal } from "@/platform/auth/principal";
@@ -19,6 +19,17 @@ export const PLACEMENT_KEYS = [
 ] as const;
 export type PlacementKey = (typeof PLACEMENT_KEYS)[number];
 type Actor = Pick<AdminPrincipal, "adminUserId" | "capabilities">;
+export type PlacementAuditWriter = (
+  transaction: Prisma.TransactionClient,
+  data: Prisma.AuditEventUncheckedCreateInput,
+) => Promise<void>;
+export type PlacementMutationDependencies = Readonly<{
+  auditWriter?: PlacementAuditWriter;
+}>;
+
+const writePlacementAudit: PlacementAuditWriter = async (transaction, data) => {
+  await transaction.auditEvent.create({ data });
+};
 
 const allowed: Record<PlacementKey, readonly ("STORY" | "NEWS")[]> = {
   HOME_HERO: ["STORY", "NEWS"],
@@ -89,6 +100,7 @@ export async function assignPlacement(
     endsAt?: Date | null;
     expectedVersion?: number;
   },
+  dependencies: PlacementMutationDependencies = {},
 ) {
   capability(actor, "communications.placements.manage");
   const startsAt = input.startsAt ?? new Date();
@@ -147,8 +159,9 @@ export async function assignPlacement(
         updatedByAdminUserId: actor.adminUserId,
       },
     });
-    await tx.auditEvent.create({
-      data: buildAuditEvent({
+    await (dependencies.auditWriter ?? writePlacementAudit)(
+      tx,
+      buildAuditEvent({
         actorKind: "ADMIN_USER",
         actorAdminUserId: actor.adminUserId,
         action: current ? "placement.replaced" : "placement.assigned",
@@ -166,7 +179,7 @@ export async function assignPlacement(
           previousEndsAt: current?.endsAt?.toISOString() ?? null,
         },
       }),
-    });
+    );
     return result;
   });
 }
@@ -175,6 +188,7 @@ export async function clearPlacement(
   actor: Actor,
   placement: PlacementKey,
   expectedVersion?: number,
+  dependencies: PlacementMutationDependencies = {},
 ) {
   capability(actor, "communications.placements.manage");
   const now = new Date();
@@ -209,8 +223,9 @@ export async function clearPlacement(
         version: { increment: 1 },
       },
     });
-    await tx.auditEvent.create({
-      data: buildAuditEvent({
+    await (dependencies.auditWriter ?? writePlacementAudit)(
+      tx,
+      buildAuditEvent({
         actorKind: "ADMIN_USER",
         actorAdminUserId: actor.adminUserId,
         action: "placement.cleared",
@@ -226,7 +241,7 @@ export async function clearPlacement(
           endedAt: now.toISOString(),
         },
       }),
-    });
+    );
   });
 }
 export async function cancelFuturePlacement(
@@ -234,6 +249,7 @@ export async function cancelFuturePlacement(
   actor: Actor,
   placementId: string,
   expectedVersion?: number,
+  dependencies: PlacementMutationDependencies = {},
 ) {
   capability(actor, "communications.placements.manage");
   const now = new Date();
@@ -255,8 +271,9 @@ export async function cancelFuturePlacement(
         version: { increment: 1 },
       },
     });
-    await tx.auditEvent.create({
-      data: buildAuditEvent({
+    await (dependencies.auditWriter ?? writePlacementAudit)(
+      tx,
+      buildAuditEvent({
         actorKind: "ADMIN_USER",
         actorAdminUserId: actor.adminUserId,
         action: "placement.cancelled",
@@ -271,7 +288,7 @@ export async function cancelFuturePlacement(
           cancelledAt: now.toISOString(),
         },
       }),
-    });
+    );
   });
 }
 export async function getPlacementState(
