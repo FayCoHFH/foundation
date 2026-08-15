@@ -81,6 +81,16 @@ export default async function StoryDraftPage({
             {story.editorialOwnerAdminUserId}
           </dd>
         </div>
+        <div>
+          <dt className="text-muted-foreground">Public release</dt>
+          <dd className="mt-1 font-semibold">
+            {story.releaseState.replaceAll("_", " ")}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground">Snapshots</dt>
+          <dd className="mt-1 font-semibold">{story.snapshotCount}</dd>
+        </div>
       </dl>
       {canEdit ? (
         <StoryEditorForm
@@ -104,6 +114,10 @@ export default async function StoryDraftPage({
         canSubmit={hasCapability(principal, "stories.submit")}
         canReview={hasCapability(principal, "stories.review")}
         canApprove={hasCapability(principal, "stories.approve")}
+        canPublish={hasCapability(principal, "stories.publish")}
+        canWithdraw={hasCapability(principal, "stories.withdraw")}
+        releaseState={story.releaseState}
+        slug={story.slug}
       />
     </AdminShell>
   );

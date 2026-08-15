@@ -51,6 +51,8 @@ enum PublicationWorkflowState {
 
 enum PublicationLifecycleDimension {
   CANDIDATE_WORKFLOW
+  RELEASE_SNAPSHOT
+  DISCOVERY_DISPOSITION
 }
 
 enum PublicationLifecycleAction {
@@ -61,6 +63,26 @@ enum PublicationLifecycleAction {
   CHANGES_REQUESTED
   SENT_FOR_APPROVAL
   APPROVED
+  RELEASED
+  WITHDRAWN
+  ARCHIVED
+}
+
+enum PublicationReleaseState {
+  UNPUBLISHED
+  PUBLISHED
+  WITHDRAWN
+}
+
+enum PublicationDiscoveryDisposition {
+  ACTIVE
+  ARCHIVED
+}
+
+enum PublicationSnapshotState {
+  PUBLISHED
+  SUPERSEDED
+  WITHDRAWN
 }
 
 enum PublicationApprovalDecision {
@@ -362,29 +384,76 @@ model AuditEvent {
 // The narrow shared spine for typed Communications authoring. C1 creates only
 // Story details; NEWS remains a closed discriminator reserved for a later slice.
 model Publication {
-  id                  String                           @id @default(uuid()) @db.Uuid
-  kind                PublicationKind
-  workflowState       PublicationWorkflowState         @default(DRAFT)
-  version             Int                              @default(1)
-  currentRevisionId   String?                          @unique @db.Uuid
-  approvedRevisionId  String?                          @unique @db.Uuid
-  approvedContentHash String?                          @db.Char(64)
-  createdById         String                           @db.Uuid
-  createdAt           DateTime                         @default(now())
-  updatedAt           DateTime                         @updatedAt
-  createdBy           AdminUser                        @relation("PublicationCreator", fields: [createdById], references: [id], onDelete: Restrict)
-  story               Story?
-  responsibility      PublicationResponsibility?
-  revisions           PublicationRevision[]            @relation("PublicationRevisions")
-  currentRevision     PublicationRevision?             @relation("PublicationCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
-  approvedRevision    PublicationRevision?             @relation("PublicationApprovedRevision", fields: [approvedRevisionId], references: [id], onDelete: SetNull)
-  transitions         PublicationLifecycleTransition[]
-  approvals           PublicationApproval[]
+  id                   String                           @id @default(uuid()) @db.Uuid
+  kind                 PublicationKind
+  workflowState        PublicationWorkflowState         @default(DRAFT)
+  version              Int                              @default(1)
+  currentRevisionId    String?                          @unique @db.Uuid
+  approvedRevisionId   String?                          @unique @db.Uuid
+  approvedContentHash  String?                          @db.Char(64)
+  slug                 String?                          @unique
+  releaseState         PublicationReleaseState          @default(UNPUBLISHED)
+  discoveryDisposition PublicationDiscoveryDisposition  @default(ACTIVE)
+  activeSnapshotId     String?                          @unique @db.Uuid
+  createdById          String                           @db.Uuid
+  createdAt            DateTime                         @default(now())
+  updatedAt            DateTime                         @updatedAt
+  createdBy            AdminUser                        @relation("PublicationCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  story                Story?
+  responsibility       PublicationResponsibility?
+  revisions            PublicationRevision[]            @relation("PublicationRevisions")
+  currentRevision      PublicationRevision?             @relation("PublicationCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
+  approvedRevision     PublicationRevision?             @relation("PublicationApprovedRevision", fields: [approvedRevisionId], references: [id], onDelete: SetNull)
+  transitions          PublicationLifecycleTransition[]
+  approvals            PublicationApproval[]
+  snapshots            PublicationSnapshot[]            @relation("PublicationSnapshots")
+  activeSnapshot       PublicationSnapshot?             @relation("PublicationActiveSnapshot", fields: [activeSnapshotId], references: [id], onDelete: SetNull)
+  publicProjection     PublicStoryProjection?
 
   @@unique([id, version])
   @@index([kind, workflowState])
+  @@index([releaseState, discoveryDisposition])
   @@index([createdById])
   @@map("publication")
+}
+
+// Immutable public evidence generated only by an approved release command.
+model PublicationSnapshot {
+  id                String                   @id @default(uuid()) @db.Uuid
+  publicationId     String                   @db.Uuid
+  sourceRevisionId  String                   @db.Uuid
+  sourceContentHash String                   @db.Char(64)
+  slug              String                   @db.VarChar(160)
+  payload           Json
+  activatedAt       DateTime                 @default(now())
+  state             PublicationSnapshotState @default(PUBLISHED)
+  publication       Publication              @relation("PublicationSnapshots", fields: [publicationId], references: [id], onDelete: Restrict)
+  sourceRevision    PublicationRevision      @relation(fields: [sourceRevisionId], references: [id], onDelete: Restrict)
+  activeFor         Publication[]            @relation("PublicationActiveSnapshot")
+  publicProjection  PublicStoryProjection?
+
+  @@index([publicationId, activatedAt])
+  @@index([state])
+  @@map("publication_snapshot")
+}
+
+// Read model for public Story detail. It is intentionally detached from
+// mutable authoring tables; the public route reads this projection only.
+model PublicStoryProjection {
+  id            String              @id @default(uuid()) @db.Uuid
+  publicationId String              @unique @db.Uuid
+  snapshotId    String              @unique @db.Uuid
+  slug          String              @unique @db.VarChar(160)
+  headline      String
+  deck          String?
+  excerpt       String
+  body          Json
+  publishedAt   DateTime
+  updatedAt     DateTime            @updatedAt
+  publication   Publication         @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  snapshot      PublicationSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+
+  @@map("public_story_projection")
 }
 
 // Typed root. It has no public fields or route in C1.
@@ -442,6 +511,7 @@ model PublicationRevision {
   approvedFor          Publication?                     @relation("PublicationApprovedRevision")
   lifecycleTransitions PublicationLifecycleTransition[]
   approval             PublicationApproval?
+  publicationSnapshots PublicationSnapshot[]
 
   @@unique([publicationId, number])
   @@index([publicationId, createdAt])

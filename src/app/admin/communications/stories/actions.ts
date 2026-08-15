@@ -7,10 +7,12 @@ import {
   approveStory,
   createStory,
   requestStoryChanges,
+  releaseStory,
   saveStoryRevision,
   sendStoryForApproval,
   storyDocumentFromPlainText,
   submitStory,
+  withdrawStory,
 } from "@/modules/communications/stories";
 import { resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
@@ -62,7 +64,15 @@ const revisionSchema = z.object({
 
 const workflowSchema = revisionSchema.extend({
   expectedContentHash: z.string().regex(/^[0-9a-f]{64}$/),
-  action: z.enum(["submit", "request-changes", "send-for-approval", "approve"]),
+  action: z.enum([
+    "submit",
+    "request-changes",
+    "send-for-approval",
+    "approve",
+    "release",
+    "withdraw",
+  ]),
+  slug: z.preprocess((value) => value ?? "", z.string().trim().max(160)),
   reason: z.preprocess((value) => value ?? "", z.string().trim().max(1_000)),
 });
 
@@ -224,6 +234,18 @@ export async function storyWorkflowAction(
       case "approve":
         await approveStory(prisma, principal, input);
         break;
+      case "release":
+        await releaseStory(prisma, principal, {
+          ...input,
+          slug: parsed.data.slug,
+        });
+        break;
+      case "withdraw":
+        await withdrawStory(prisma, principal, {
+          ...input,
+          reason: parsed.data.reason,
+        });
+        break;
     }
     revalidatePath(`/admin/communications/stories/${input.storyId}`);
     return {
@@ -235,7 +257,11 @@ export async function storyWorkflowAction(
             ? "Changes were requested."
             : parsed.data.action === "send-for-approval"
               ? "Story advanced for approval."
-              : "Story approved for its exact current revision.",
+              : parsed.data.action === "approve"
+                ? "Story approved for its exact current revision."
+                : parsed.data.action === "release"
+                  ? "Immutable public snapshot released."
+                  : "Public Story withdrawn.",
     };
   } catch (error) {
     return { status: "error", message: toSafeMessage(error) };

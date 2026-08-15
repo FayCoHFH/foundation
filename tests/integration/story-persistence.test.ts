@@ -8,10 +8,12 @@ import {
   createStory,
   getStoryDraft,
   requestStoryChanges,
+  releaseStory,
   saveStoryRevision,
   sendStoryForApproval,
   storyDocumentFromPlainText,
   submitStory,
+  withdrawStory,
 } from "@/modules/communications/stories";
 import {
   AuthorizationError,
@@ -83,6 +85,86 @@ beforeAll(async () => {
 });
 
 describe("C1 Story persistence", () => {
+  it("releases only an exact approved revision into an immutable public projection and withdraws it", async () => {
+    const { contributor, editor, manager } = await storyActors();
+    const created = await createStory(
+      prisma,
+      contributor,
+      candidate("Snapshot original", "The released public body."),
+    );
+    const submitted = await submitStory(prisma, contributor, {
+      storyId: created.storyId,
+      expectedVersion: created.version,
+      expectedContentHash: created.currentRevision.contentHash,
+    });
+    const pending = await sendStoryForApproval(prisma, editor, {
+      storyId: created.storyId,
+      expectedVersion: submitted.version,
+      expectedContentHash: submitted.currentRevision.contentHash,
+    });
+    const approved = await approveStory(prisma, manager, {
+      storyId: created.storyId,
+      expectedVersion: pending.version,
+      expectedContentHash: pending.currentRevision.contentHash,
+    });
+    await expect(
+      releaseStory(prisma, editor, {
+        storyId: created.storyId,
+        expectedVersion: approved.version,
+        expectedContentHash: approved.currentRevision.contentHash,
+        slug: "snapshot-original",
+      }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    const released = await releaseStory(prisma, manager, {
+      storyId: created.storyId,
+      expectedVersion: approved.version,
+      expectedContentHash: approved.currentRevision.contentHash,
+      slug: "snapshot-original",
+    });
+    const projection = await prisma.publicStoryProjection.findUniqueOrThrow({
+      where: { slug: "snapshot-original" },
+    });
+    expect(projection.headline).toBe("Snapshot original");
+    await expect(
+      prisma.publicationSnapshot.update({
+        where: { id: projection.snapshotId },
+        data: { slug: "mutated" },
+      }),
+    ).rejects.toThrow(/immutable/);
+    const changed = await saveStoryRevision(prisma, contributor, {
+      storyId: created.storyId,
+      expectedVersion: released.version,
+      ...candidate("Draft changed after release", "Private draft change."),
+    });
+    await expect(
+      prisma.publicStoryProjection.findUniqueOrThrow({
+        where: { slug: "snapshot-original" },
+      }),
+    ).resolves.toMatchObject({ headline: "Snapshot original" });
+    await expect(
+      releaseStory(prisma, manager, {
+        storyId: created.storyId,
+        expectedVersion: changed.version,
+        expectedContentHash: changed.currentRevision.contentHash,
+        slug: "draft-change",
+      }),
+    ).rejects.toThrow(/approval/i);
+    await withdrawStory(prisma, manager, {
+      storyId: created.storyId,
+      expectedVersion: changed.version,
+      reason: "Corrective removal.",
+    });
+    await expect(
+      prisma.publicStoryProjection.findUnique({
+        where: { slug: "snapshot-original" },
+      }),
+    ).resolves.toBeNull();
+    await expect(
+      prisma.publicationSnapshot.count({
+        where: { publicationId: created.publicationId },
+      }),
+    ).resolves.toBe(1);
+  });
   it("creates the Story root, responsibility, revision, lifecycle evidence, and audit atomically", async () => {
     const { contributor } = await storyActors();
     const created = await createStory(

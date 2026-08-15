@@ -8,6 +8,7 @@ export {
 } from "./content";
 export {
   approveStory,
+  archiveStory,
   assignStoryEditorialOwner,
   createStory,
   getStoryDraft,
@@ -15,5 +16,8 @@ export {
   saveStoryRevision,
   sendStoryForApproval,
   submitStory,
+  releaseStory,
+  withdrawStory,
+  getPublicStoryBySlug,
 } from "./story-service";
 export { nextStoryWorkflowState } from "./workflow";

@@ -32,6 +32,7 @@ const storyDraftInclude = {
       responsibility: true,
       currentRevision: true,
       approvedRevision: { include: { approval: true } },
+      snapshots: { select: { id: true }, orderBy: { activatedAt: "desc" } },
     },
   },
 } satisfies Prisma.StoryInclude;
@@ -47,6 +48,9 @@ export type PersistedStoryDraft = Readonly<{
   publicationId: string;
   version: number;
   workflow: PublicationWorkflowState;
+  releaseState: "UNPUBLISHED" | "PUBLISHED" | "WITHDRAWN";
+  slug: string | null;
+  snapshotCount: number;
   editorialOwnerAdminUserId: string;
   currentRevision: Readonly<{
     id: string;
@@ -84,6 +88,22 @@ export type StoryWorkflowInput = Readonly<{
   reason?: string;
 }>;
 
+export type StoryReleaseInput = StoryWorkflowInput & { slug: string };
+export type StoryWithdrawalInput = Readonly<{
+  storyId: string;
+  expectedVersion: number;
+  reason: string;
+}>;
+
+export type PublicStory = Readonly<{
+  slug: string;
+  headline: string;
+  deck: string | null;
+  excerpt: string;
+  body: StoryDocument;
+  publishedAt: Date;
+}>;
+
 export type AssignStoryOwnerInput = Readonly<{
   storyId: string;
   expectedVersion: number;
@@ -104,6 +124,16 @@ function assertExpectedVersion(value: number) {
   if (!Number.isInteger(value) || value < 1) {
     throw new ValidationError("Story version must be a positive integer.");
   }
+}
+
+function normalizedSlug(value: string) {
+  const slug = value.trim().toLowerCase();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 160) {
+    throw new ValidationError(
+      "Use a canonical URL slug with lowercase letters, numbers, and hyphens.",
+    );
+  }
+  return slug;
 }
 
 function requireCapability(actor: StoryActor, capability: Capability) {
@@ -146,6 +176,9 @@ function toDraft(record: StoryRecord): PersistedStoryDraft {
     publicationId: record.publicationId,
     version: record.publication.version,
     workflow: record.publication.workflowState,
+    releaseState: record.publication.releaseState,
+    slug: record.publication.slug,
+    snapshotCount: record.publication.snapshots.length,
     editorialOwnerAdminUserId: owner.editorialOwnerAdminUserId,
     currentRevision: {
       id: revision.id,
@@ -234,6 +267,8 @@ async function createLifecycleTransition(
   transaction: Transaction,
   input: Readonly<{
     publicationId: string;
+    dimension?:
+      "CANDIDATE_WORKFLOW" | "RELEASE_SNAPSHOT" | "DISCOVERY_DISPOSITION";
     action: PublicationLifecycleAction;
     fromState: PublicationWorkflowState | null;
     toState: PublicationWorkflowState | null;
@@ -247,7 +282,7 @@ async function createLifecycleTransition(
   await transaction.publicationLifecycleTransition.create({
     data: {
       publicationId: input.publicationId,
-      dimension: "CANDIDATE_WORKFLOW",
+      dimension: input.dimension ?? "CANDIDATE_WORKFLOW",
       action: input.action,
       fromState: input.fromState,
       toState: input.toState,
@@ -495,6 +530,7 @@ export async function saveStoryRevision(
     );
     await createLifecycleTransition(transaction, {
       publicationId: story.publicationId,
+      dimension: "RELEASE_SNAPSHOT",
       action: "REVISION_CREATED",
       fromState: story.publication.workflowState,
       toState: "DRAFT",
@@ -756,4 +792,230 @@ export async function assignStoryEditorialOwner(
     );
     return toDraft(await findStory(transaction, story.id));
   });
+}
+
+/** Release is the sole authoring-to-public boundary. The projection receives
+ * values copied from the approved revision; public reads never join revisions. */
+export async function releaseStory(
+  prisma: PrismaClient,
+  actor: StoryActor,
+  input: StoryReleaseInput,
+): Promise<PersistedStoryDraft> {
+  requireCapability(actor, "stories.publish");
+  const slug = normalizedSlug(input.slug);
+  const correlationId = randomUUID();
+  return runMutation(prisma, async (transaction) => {
+    await requireActiveAdmin(transaction, actor.adminUserId);
+    const story = await findStoryForMutation(
+      transaction,
+      input.storyId,
+      input.expectedVersion,
+    );
+    assertCurrentHash(story, input.expectedContentHash);
+    const revision = currentRevision(story);
+    const approval = story.publication.approvedRevision?.approval;
+    if (
+      story.publication.workflowState !== "APPROVED" ||
+      !approval ||
+      approval.revisionId !== revision.id ||
+      approval.contentHash !== revision.contentHash ||
+      story.publication.approvedContentHash !== revision.contentHash
+    ) {
+      throw new PreconditionError(
+        "Release requires approval of this exact current Story revision.",
+      );
+    }
+    const snapshot = await transaction.publicationSnapshot.create({
+      data: {
+        publicationId: story.publicationId,
+        sourceRevisionId: revision.id,
+        sourceContentHash: revision.contentHash,
+        slug,
+        payload: {
+          headline: revision.headline,
+          deck: revision.deck,
+          excerpt: revision.excerpt,
+          body: revision.body as Prisma.InputJsonValue,
+        },
+      },
+    });
+    await transaction.publicStoryProjection.upsert({
+      where: { publicationId: story.publicationId },
+      create: {
+        publicationId: story.publicationId,
+        snapshotId: snapshot.id,
+        slug,
+        headline: revision.headline,
+        deck: revision.deck,
+        excerpt: revision.excerpt,
+        body: revision.body as Prisma.InputJsonValue,
+        publishedAt: snapshot.activatedAt,
+      },
+      update: {
+        snapshotId: snapshot.id,
+        slug,
+        headline: revision.headline,
+        deck: revision.deck,
+        excerpt: revision.excerpt,
+        body: revision.body as Prisma.InputJsonValue,
+        publishedAt: snapshot.activatedAt,
+      },
+    });
+    await updatePublicationAtVersion(
+      transaction,
+      story.publicationId,
+      input.expectedVersion,
+      {
+        slug,
+        releaseState: "PUBLISHED",
+        discoveryDisposition: "ACTIVE",
+        activeSnapshot: { connect: { id: snapshot.id } },
+      },
+    );
+    await createLifecycleTransition(transaction, {
+      publicationId: story.publicationId,
+      action: "RELEASED",
+      fromState: story.publication.workflowState,
+      toState: story.publication.workflowState,
+      revisionId: revision.id,
+      contentHash: revision.contentHash,
+      actorAdminUserId: actor.adminUserId,
+      correlationId,
+    });
+    await createAudit(
+      transaction,
+      actor.adminUserId,
+      "story.release",
+      story.id,
+      correlationId,
+      {
+        revisionNumber: revision.number,
+        contentHash: revision.contentHash,
+        snapshotCreated: true,
+      },
+    );
+    return toDraft(await findStory(transaction, story.id));
+  });
+}
+
+export async function withdrawStory(
+  prisma: PrismaClient,
+  actor: StoryActor,
+  input: StoryWithdrawalInput,
+): Promise<PersistedStoryDraft> {
+  requireCapability(actor, "stories.withdraw");
+  const reason = normalizedReason(input.reason, true);
+  const correlationId = randomUUID();
+  return runMutation(prisma, async (transaction) => {
+    await requireActiveAdmin(transaction, actor.adminUserId);
+    const story = await findStoryForMutation(
+      transaction,
+      input.storyId,
+      input.expectedVersion,
+    );
+    if (story.publication.releaseState !== "PUBLISHED") {
+      throw new PreconditionError(
+        "Only a publicly released Story can be withdrawn.",
+      );
+    }
+    await transaction.publicStoryProjection.delete({
+      where: { publicationId: story.publicationId },
+    });
+    await updatePublicationAtVersion(
+      transaction,
+      story.publicationId,
+      input.expectedVersion,
+      {
+        releaseState: "WITHDRAWN",
+        activeSnapshot: { disconnect: true },
+      },
+    );
+    const revision = currentRevision(story);
+    await createLifecycleTransition(transaction, {
+      publicationId: story.publicationId,
+      dimension: "RELEASE_SNAPSHOT",
+      action: "WITHDRAWN",
+      fromState: story.publication.workflowState,
+      toState: story.publication.workflowState,
+      revisionId: revision.id,
+      contentHash: revision.contentHash,
+      actorAdminUserId: actor.adminUserId,
+      correlationId,
+      ...(reason ? { reason } : {}),
+    });
+    await createAudit(
+      transaction,
+      actor.adminUserId,
+      "story.withdraw",
+      story.id,
+      correlationId,
+      { revisionNumber: revision.number, publicAvailabilityRemoved: true },
+    );
+    return toDraft(await findStory(transaction, story.id));
+  });
+}
+
+export async function archiveStory(
+  prisma: PrismaClient,
+  actor: StoryActor,
+  input: Readonly<{ storyId: string; expectedVersion: number }>,
+): Promise<PersistedStoryDraft> {
+  requireCapability(actor, "stories.archive");
+  const correlationId = randomUUID();
+  return runMutation(prisma, async (transaction) => {
+    await requireActiveAdmin(transaction, actor.adminUserId);
+    const story = await findStoryForMutation(
+      transaction,
+      input.storyId,
+      input.expectedVersion,
+    );
+    if (story.publication.releaseState !== "PUBLISHED")
+      throw new PreconditionError("Only a released Story can be archived.");
+    const revision = currentRevision(story);
+    await updatePublicationAtVersion(
+      transaction,
+      story.publicationId,
+      input.expectedVersion,
+      { discoveryDisposition: "ARCHIVED" },
+    );
+    await createLifecycleTransition(transaction, {
+      publicationId: story.publicationId,
+      dimension: "DISCOVERY_DISPOSITION",
+      action: "ARCHIVED",
+      fromState: story.publication.workflowState,
+      toState: story.publication.workflowState,
+      revisionId: revision.id,
+      contentHash: revision.contentHash,
+      actorAdminUserId: actor.adminUserId,
+      correlationId,
+    });
+    await createAudit(
+      transaction,
+      actor.adminUserId,
+      "story.archive",
+      story.id,
+      correlationId,
+      { revisionNumber: revision.number, ordinaryDiscoveryRemoved: true },
+    );
+    return toDraft(await findStory(transaction, story.id));
+  });
+}
+
+export async function getPublicStoryBySlug(
+  prisma: PrismaClient,
+  slug: string,
+): Promise<PublicStory | null> {
+  const projection = await prisma.publicStoryProjection.findUnique({
+    where: { slug: normalizedSlug(slug) },
+    select: {
+      slug: true,
+      headline: true,
+      deck: true,
+      excerpt: true,
+      body: true,
+      publishedAt: true,
+    },
+  });
+  if (!projection) return null;
+  return { ...projection, body: validateStoryDocument(projection.body) };
 }

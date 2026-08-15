@@ -19,6 +19,10 @@ export function StoryWorkflowControls({
   canSubmit,
   canReview,
   canApprove,
+  canPublish,
+  canWithdraw,
+  releaseState,
+  slug,
 }: {
   storyId: string;
   version: number;
@@ -27,6 +31,10 @@ export function StoryWorkflowControls({
   canSubmit: boolean;
   canReview: boolean;
   canApprove: boolean;
+  canPublish: boolean;
+  canWithdraw: boolean;
+  releaseState: string;
+  slug: string | null;
 }) {
   const [state, action, pending] = useActionState(
     storyWorkflowAction,
@@ -45,7 +53,10 @@ export function StoryWorkflowControls({
           ? "approve"
           : null;
   const needsChangeRequest = workflow === "IN_REVIEW" && canReview;
-  if (!actionName && !needsChangeRequest) return null;
+  const canRelease = workflow === "APPROVED" && canPublish;
+  const canWithdrawStory = releaseState === "PUBLISHED" && canWithdraw;
+  if (!actionName && !needsChangeRequest && !canRelease && !canWithdrawStory)
+    return null;
   return (
     <section
       aria-labelledby="workflow-actions-heading"
@@ -73,14 +84,32 @@ export function StoryWorkflowControls({
         <input type="hidden" name="storyId" value={storyId} />
         <input type="hidden" name="expectedVersion" value={version} />
         <input type="hidden" name="expectedContentHash" value={contentHash} />
-        {needsChangeRequest ? (
+        {canRelease ? (
+          <div>
+            <label htmlFor="slug" className="block font-semibold">
+              Canonical URL slug
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              required
+              defaultValue={slug ?? ""}
+              placeholder="a-lasting-story"
+              className="border-input bg-surface text-foreground mt-2 w-full rounded-sm border px-3 py-2"
+            />
+          </div>
+        ) : null}
+        {needsChangeRequest || canWithdrawStory ? (
           <div>
             <label htmlFor="reason" className="block font-semibold">
-              Reason for requested changes
+              {canWithdrawStory
+                ? "Withdrawal reason"
+                : "Reason for requested changes"}
             </label>
             <textarea
               id="reason"
               name="reason"
+              required={canWithdrawStory}
               rows={3}
               maxLength={1000}
               className="border-input bg-surface text-foreground mt-2 w-full rounded-sm border px-3 py-2"
@@ -113,6 +142,27 @@ export function StoryWorkflowControls({
               className="bg-surface text-foreground border-border border"
             >
               Request changes
+            </Button>
+          ) : null}
+          {canRelease ? (
+            <Button
+              type="submit"
+              name="action"
+              value="release"
+              disabled={pending}
+            >
+              {pending ? "Releasing…" : "Release immutable public snapshot"}
+            </Button>
+          ) : null}
+          {canWithdrawStory ? (
+            <Button
+              type="submit"
+              name="action"
+              value="withdraw"
+              disabled={pending}
+              className="bg-surface text-foreground border-border border"
+            >
+              {pending ? "Withdrawing…" : "Withdraw public Story"}
             </Button>
           ) : null}
         </div>
