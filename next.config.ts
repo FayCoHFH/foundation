@@ -1,22 +1,29 @@
 import type { NextConfig } from "next";
 
-const contentSecurityPolicy = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  "frame-ancestors 'none'",
-  "form-action 'self'",
-  "img-src 'self' data: blob:",
-  "font-src 'self'",
-  "connect-src 'self'",
-  // Next.js emits small framework bootstrap scripts and Tailwind uses inline
-  // style attributes. A nonce-based dynamic CSP is a later hardening slice.
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline'",
-  "worker-src 'self' blob:",
-  "manifest-src 'self'",
-  "upgrade-insecure-requests",
-].join("; ");
+export function buildContentSecurityPolicy() {
+  const developmentScriptSource =
+    process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+
+  return [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "img-src 'self' data: blob:",
+    "font-src 'self'",
+    "connect-src 'self'",
+    // Next.js emits small framework bootstrap scripts and Turbopack's React
+    // development tooling requires eval only in the development runtime.
+    `script-src 'self' 'unsafe-inline'${developmentScriptSource}`,
+    "style-src 'self' 'unsafe-inline'",
+    "worker-src 'self' blob:",
+    "manifest-src 'self'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+}
+
+const contentSecurityPolicy = buildContentSecurityPolicy();
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
