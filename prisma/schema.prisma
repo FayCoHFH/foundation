@@ -41,6 +41,13 @@ enum PublicationKind {
   NEWS
 }
 
+enum PlacementKey {
+  HOME_HERO
+  HOME_FEATURED_STORY
+  HOME_FEATURED_NEWS
+  NEWS_FEATURED
+}
+
 enum PublicationWorkflowState {
   DRAFT
   IN_REVIEW
@@ -207,7 +214,8 @@ model AdminUser {
   changedResponsibilities   PublicationResponsibility[]      @relation("PublicationResponsibilityChanger")
   publicationTransitions    PublicationLifecycleTransition[] @relation("PublicationTransitionActor")
   publicationApprovals      PublicationApproval[]            @relation("PublicationApprover")
-  changedFeaturedNewsPlacements FeaturedNewsPlacement[]       @relation("FeaturedNewsPlacementChanger")
+  createdContentPlacements  ContentPlacement[]               @relation("ContentPlacementCreator")
+  changedContentPlacements  ContentPlacement[]               @relation("ContentPlacementChanger")
 
   @@index([status])
   @@map("admin_user")
@@ -412,7 +420,7 @@ model Publication {
   activeSnapshot       PublicationSnapshot?             @relation("PublicationActiveSnapshot", fields: [activeSnapshotId], references: [id], onDelete: SetNull)
   publicProjection     PublicStoryProjection?
   publicNewsProjection PublicNewsProjection?
-  featuredNewsPlacement FeaturedNewsPlacement?
+  contentPlacements    ContentPlacement[]
 
   @@unique([id, version])
   @@index([kind, workflowState])
@@ -423,18 +431,18 @@ model Publication {
 
 // Immutable public evidence generated only by an approved release command.
 model PublicationSnapshot {
-  id                String                   @id @default(uuid()) @db.Uuid
-  publicationId     String                   @db.Uuid
-  sourceRevisionId  String                   @db.Uuid
-  sourceContentHash String                   @db.Char(64)
-  slug              String                   @db.VarChar(160)
-  payload           Json
-  activatedAt       DateTime                 @default(now())
-  state             PublicationSnapshotState @default(PUBLISHED)
-  publication       Publication              @relation("PublicationSnapshots", fields: [publicationId], references: [id], onDelete: Restrict)
-  sourceRevision    PublicationRevision      @relation(fields: [sourceRevisionId], references: [id], onDelete: Restrict)
-  activeFor         Publication[]            @relation("PublicationActiveSnapshot")
-  publicProjection  PublicStoryProjection?
+  id                   String                   @id @default(uuid()) @db.Uuid
+  publicationId        String                   @db.Uuid
+  sourceRevisionId     String                   @db.Uuid
+  sourceContentHash    String                   @db.Char(64)
+  slug                 String                   @db.VarChar(160)
+  payload              Json
+  activatedAt          DateTime                 @default(now())
+  state                PublicationSnapshotState @default(PUBLISHED)
+  publication          Publication              @relation("PublicationSnapshots", fields: [publicationId], references: [id], onDelete: Restrict)
+  sourceRevision       PublicationRevision      @relation(fields: [sourceRevisionId], references: [id], onDelete: Restrict)
+  activeFor            Publication[]            @relation("PublicationActiveSnapshot")
+  publicProjection     PublicStoryProjection?
   publicNewsProjection PublicNewsProjection?
 
   @@index([publicationId, activatedAt])
@@ -501,17 +509,26 @@ model NewsItem {
   @@map("news_item")
 }
 
-// The deliberately narrow C3 placement: one selected eligible News item.
-// Other homepage placements remain out of scope until C4.
-model FeaturedNewsPlacement {
-  id                   String      @id @default("NEWS_FEATURED")
-  publicationId        String      @unique @db.Uuid
-  changedByAdminUserId String      @db.Uuid
-  changedAt            DateTime    @default(now())
-  publication          Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
-  changedBy            AdminUser   @relation("FeaturedNewsPlacementChanger", fields: [changedByAdminUserId], references: [id], onDelete: Restrict)
+// Code-owned singleton slots with a closed target-kind catalog in the
+// application service. Rows are retained when superseded, ended, or cancelled.
+model ContentPlacement {
+  id                   String       @id @default(uuid()) @db.Uuid
+  key                  PlacementKey
+  publicationId        String       @db.Uuid
+  startsAt             DateTime     @default(now())
+  endsAt               DateTime?
+  version              Int          @default(1)
+  createdByAdminUserId String       @db.Uuid
+  updatedByAdminUserId String       @db.Uuid
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  publication          Publication  @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  createdBy            AdminUser    @relation("ContentPlacementCreator", fields: [createdByAdminUserId], references: [id], onDelete: Restrict)
+  updatedBy            AdminUser    @relation("ContentPlacementChanger", fields: [updatedByAdminUserId], references: [id], onDelete: Restrict)
 
-  @@map("featured_news_placement")
+  @@index([key, startsAt])
+  @@index([publicationId])
+  @@map("content_placement")
 }
 
 // Private work-management assignment. This never supplies a public byline.

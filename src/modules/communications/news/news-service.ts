@@ -24,6 +24,11 @@ import {
   validateNewsDocument,
 } from "./content";
 import {
+  assignPlacement,
+  clearPlacement,
+  getEffectivePlacement,
+} from "../placements/placement-service";
+import {
   nextStoryWorkflowState,
   type StoryWorkflowAction,
 } from "../stories/workflow";
@@ -756,15 +761,9 @@ export async function getFeaturedNews(
   db: PrismaClient,
   now = new Date(),
 ): Promise<PublicNews | null> {
-  const placement = await db.featuredNewsPlacement.findUnique({
-    where: { id: "NEWS_FEATURED" },
-    include: { publication: { include: { publicNewsProjection: true } } },
-  });
-  const item = placement?.publication.publicNewsProjection;
-  return !item ||
-    placement.publication.releaseState !== "PUBLISHED" ||
-    placement.publication.discoveryDisposition !== "ACTIVE" ||
-    !isCurrentNews(item, now)
+  const placement = await getEffectivePlacement(db, "NEWS_FEATURED", now);
+  const item = placement?.news;
+  return !item || !isCurrentNews(item, now)
     ? null
     : { ...item, body: validateNewsDocument(item.body) };
 }
@@ -774,57 +773,10 @@ export async function setFeaturedNews(
   newsId: string | null,
 ) {
   cap(actor, "communications.placements.manage");
-  const correlationId = randomUUID();
-  return run(db, async (tx) => {
-    await active(tx, actor.adminUserId);
-    if (!newsId) {
-      await tx.featuredNewsPlacement.deleteMany({
-        where: { id: "NEWS_FEATURED" },
-      });
-      await event(
-        tx,
-        actor.adminUserId,
-        "news.featured.clear",
-        "NEWS_FEATURED",
-        correlationId,
-        { cleared: true },
-      );
-      return;
-    }
-    const record = await find(tx, newsId);
-    const projection = await tx.publicNewsProjection.findUnique({
-      where: { publicationId: record.publicationId },
-    });
-    if (
-      record.publication.kind !== "NEWS" ||
-      record.publication.releaseState !== "PUBLISHED" ||
-      record.publication.discoveryDisposition !== "ACTIVE" ||
-      !projection ||
-      !isCurrentNews(projection)
-    )
-      throw new PreconditionError(
-        "Featured News must be a current publicly released News item.",
-      );
-    await tx.featuredNewsPlacement.upsert({
-      where: { id: "NEWS_FEATURED" },
-      create: {
-        id: "NEWS_FEATURED",
-        publicationId: record.publicationId,
-        changedByAdminUserId: actor.adminUserId,
-      },
-      update: {
-        publicationId: record.publicationId,
-        changedByAdminUserId: actor.adminUserId,
-        changedAt: new Date(),
-      },
-    });
-    await event(
-      tx,
-      actor.adminUserId,
-      "news.featured.set",
-      record.id,
-      correlationId,
-      { placement: "NEWS_FEATURED" },
-    );
+  if (!newsId) return clearPlacement(db, actor, "NEWS_FEATURED");
+  const record = await find(db as never, newsId);
+  return assignPlacement(db, actor, {
+    key: "NEWS_FEATURED",
+    publicationId: record.publicationId,
   });
 }
