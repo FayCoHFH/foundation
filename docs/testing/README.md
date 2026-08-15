@@ -26,12 +26,13 @@ shared, preview, staging, or production database for these suites.
 
 For an explicit migration-drift check, set `SHADOW_DATABASE_URL` to a separate
 disposable PostgreSQL database that also matches the `habitat*_test` allowlist.
-For example, use `habitat_c2_test` as the test database and
-`habitat_c2_shadow_test` as the shadow database, then run:
+Use explicit database roles in all URLs. For example, use `habitat_i1_test` as
+the test database and `habitat_i1_shadow_test` as the shadow database, then
+run the guard and drift command:
 
 ```bash
-pnpm exec prisma migrate diff --from-migrations prisma/migrations \
-  --to-config-datasource --exit-code
+pnpm db:test:assert-migration-environment
+pnpm db:migrate:diff
 ```
 
 The shadow URL is optional and is used only by Prisma migration diff; never set
@@ -42,9 +43,12 @@ it to development, preview, staging, or production data.
 ```bash
 pnpm install --frozen-lockfile
 pnpm exec tsx tests/support/assert-destructive-test-database.ts
+pnpm db:test:assert-migration-environment
 pnpm db:validate
 pnpm db:generate
 pnpm db:migrate:deploy
+pnpm db:migrate:status
+pnpm db:migrate:diff
 pnpm db:seed
 pnpm format:check
 pnpm lint

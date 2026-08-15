@@ -42,6 +42,7 @@ jobs:
       CI: "true"
       DATABASE_URL: postgresql://habitat_test:habitat_test@localhost:5432/habitat_test?schema=public
       DIRECT_DATABASE_URL: postgresql://habitat_test:habitat_test@localhost:5432/habitat_test?schema=public
+      SHADOW_DATABASE_URL: postgresql://habitat_test:habitat_test@localhost:5432/habitat_shadow_test?schema=public
       ENABLE_TEST_AUTH: "false"
       GOOGLE_WORKSPACE_DOMAIN: example.org
       NEXT_PUBLIC_APP_ENV: test
@@ -73,8 +74,14 @@ jobs:
       - name: Reject high-severity dependency advisories
         run: pnpm audit --audit-level high
 
+      - name: Create isolated Prisma migration shadow database
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'CREATE DATABASE habitat_shadow_test'
+
       - name: Guard disposable PostgreSQL target
         run: pnpm exec tsx tests/support/assert-destructive-test-database.ts
+
+      - name: Guard disposable Prisma migration and shadow targets
+        run: pnpm db:test:assert-migration-environment
 
       - name: Validate Prisma schema
         run: pnpm db:validate
@@ -87,6 +94,9 @@ jobs:
 
       - name: Confirm migration status
         run: pnpm db:migrate:status
+
+      - name: Confirm migrations match the Prisma schema
+        run: pnpm db:migrate:diff
 
       - name: Seed code-defined capability catalog
         run: pnpm db:seed

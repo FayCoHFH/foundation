@@ -18,8 +18,12 @@ pnpm install --frozen-lockfile
 ```
 
 Replace example values in `.env.local`. `DATABASE_URL` is the pooled/runtime
-connection and `DIRECT_DATABASE_URL` is the direct migration connection. A
-local PostgreSQL installation may use the same direct URL for both. Prisma,
+connection and `DIRECT_DATABASE_URL` is the direct migration connection. Use
+an explicit database role in each URL; do not rely on the shell's operating
+system user. A local PostgreSQL installation may use the same direct URL for
+both runtime and migration access. `SHADOW_DATABASE_URL` must identify a
+separate disposable database and is required for migration authoring and drift
+checks. Prisma,
 seed, initial-bootstrap, and auth-schema commands keep existing process
 environment values first, then load `.env.local`, then `.env`.
 
@@ -50,12 +54,18 @@ local active principal must exist before a session can be issued.
 pnpm db:validate
 pnpm db:generate
 pnpm db:migrate:deploy
+pnpm db:migrate:status
 pnpm db:seed
 ```
 
 Use `pnpm db:migrate:dev -- --name <name>` only when intentionally authoring a
-new development migration. Review generated SQL; application invariants that
-Prisma cannot express must be represented deliberately in the migration.
+new development migration. It requires both direct and separate shadow URLs.
+Review generated SQL; application invariants that Prisma cannot express must
+be represented deliberately in the migration. Before committing, run
+`pnpm db:migrate:diff`; it compares checked-in migrations with the schema using
+the shadow database and exits nonzero on drift. Never point a shadow URL at a
+development, preview, or production database, and never use `migrate dev` or a
+database reset against those environments.
 
 ## Run and check
 

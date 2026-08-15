@@ -40,7 +40,9 @@ and may fall back to `DIRECT_DATABASE_URL`. Prisma schema generation and
 validation do not connect and require neither database credential nor a direct
 URL. Every migration script fails closed without `DIRECT_DATABASE_URL`, which
 must be an unpooled/direct connection owned by the controlled migration
-operator.
+operator. Migration authoring and drift checks also fail closed without a
+separate `SHADOW_DATABASE_URL`; all connection URLs must carry an explicit
+database role rather than rely on an inherited shell user.
 
 ## Build and migration
 
@@ -54,9 +56,9 @@ Production responses use host-only one-year HSTS. Do not add
 `includeSubDomains` or submit the domain for preload until G-05 confirms
 canonical DNS ownership and HTTPS coverage for every affected subdomain.
 
-The checked-in GitHub Actions workflow proves the same migration against a
-disposable PostgreSQL service after a fail-closed target check and explicit
-destructive-test opt-in. It then runs seed, static checks, unit, integration,
+The checked-in GitHub Actions workflow creates a distinct disposable shadow
+database, proves the migration and migration-to-schema diff after fail-closed
+target checks and explicit destructive-test opt-in, then runs seed, static checks, unit, integration,
 production build, and browser smoke tests. Local integration and end-to-end runs
 have the same disposable-database and explicit-opt-in requirement; they must
 never target a development, preview, or production database.

@@ -22,12 +22,15 @@ pnpm install --frozen-lockfile
 pnpm db:validate
 pnpm db:generate
 pnpm db:migrate:deploy
+pnpm db:migrate:status
 pnpm db:seed
 pnpm dev
 ```
 
 Set the database URLs and development-only secrets in `.env.local` before
-running migrations. Google sign-in additionally requires an approved Workspace
+running migrations. `DIRECT_DATABASE_URL` must include an explicit database
+role, and `SHADOW_DATABASE_URL` is a separate disposable database for migration
+authoring and drift checks. Google sign-in additionally requires an approved Workspace
 domain and a Google OAuth client whose callback is
 `http://localhost:3000/api/auth/callback/google`. See the
 [local setup guide](docs/development/local-setup.md) and
