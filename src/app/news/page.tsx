@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getFeaturedNews, getLatestNews } from "@/modules/communications/news";
 import { prisma } from "@/platform/database/prisma";
+import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 export const dynamic = "force-dynamic";
 function formatted(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -20,6 +22,7 @@ export default async function NewsIndex() {
     <div className="flex min-h-screen flex-col">
       <SkipLink targetId="main-content" />
       <SiteHeader />
+      <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <header className="bg-editorial-sky/30 border-border border-b">
           <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">

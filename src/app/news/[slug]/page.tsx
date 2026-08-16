@@ -4,9 +4,11 @@ import { NewsArticleJsonLd } from "@/components/editorial/news-article-json-ld";
 import { StoryBody } from "@/components/editorial/story-body";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicNewsBySlug } from "@/modules/communications/news";
 import { prisma } from "@/platform/database/prisma";
+import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
@@ -44,6 +46,7 @@ export default async function NewsDetail({
       <NewsArticleJsonLd news={news} />
       <SkipLink targetId="main-content" />
       <SiteHeader />
+      <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <article>
           <header className="border-border bg-editorial-sky/30 border-b">

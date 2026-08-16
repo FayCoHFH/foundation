@@ -5,9 +5,11 @@ import { ParticipationInvitation } from "@/components/editorial/participation-in
 import { StoryBody } from "@/components/editorial/story-body";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicStoryBySlug } from "@/modules/communications/stories";
 import { prisma } from "@/platform/database/prisma";
+import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +43,7 @@ export default async function PublicStoryPage({
     <div className="flex min-h-screen flex-col">
       <SkipLink targetId="main-content" />
       <SiteHeader />
+      <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <article>
           <header className="border-border bg-editorial-sky/45 border-b">

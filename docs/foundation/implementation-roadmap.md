@@ -92,8 +92,15 @@ safe CTA validation, optimistic concurrency, capability authorization, atomic
 audit evidence, public effective read model, administrative read model, and
 PostgreSQL/unit validation are documented in
 [the C6A-1 delivery record](../development/c6a1-site-notice-domain.md).
-Site Notice UI, public rendering, accessibility, and browser validation remain
-C6A-2 work; Public Story Submissions remain C6B.
+
+**C6A-2A — Site Notice administration and public rendering: complete locally
+on 2026-08-16.** The protected list/create/detail routes, capability-filtered
+navigation, create/update/publish/withdraw forms, optimistic-concurrency
+feedback, safe public SITE_WIDE/HOMEPAGE rendering, responsive semantic
+structure, focused render coverage, and delivery boundaries are documented in
+[the C6A-2A delivery record](../development/c6a2a-site-notice-ui.md).
+Browser, axe, and visual validation remain C6A-2B work; Public Story
+Submissions remain C6B.
 
 ## Slice 1 — Application Foundation and Scaffold
 

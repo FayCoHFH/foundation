@@ -3,10 +3,12 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getLatestNews } from "@/modules/communications/news";
 import { getEffectivePlacement } from "@/modules/communications/placements";
 import { prisma } from "@/platform/database/prisma";
+import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -49,7 +51,9 @@ export default async function HomePage() {
     <div className="flex min-h-screen flex-col">
       <SkipLink targetId="main-content" />
       <SiteHeader />
+      <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
+        <SiteNoticeRegion targetArea={SiteNoticeTargetArea.HOMEPAGE} />
         <section className="border-border bg-editorial-sky/40 border-b">
           <div className="editorial-arrival mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12">
             <p className="text-primary text-sm font-bold tracking-[.16em] uppercase">
