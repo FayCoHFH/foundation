@@ -61,7 +61,12 @@ regression validation is documented in
 
 **C5A-2 — Publication Queue: complete 2026-08-16.**
 
-**Next Communications slice: C5B-1 — Communications Dashboard read model.**
+**C5B-1 — Communications Dashboard read model: complete 2026-08-16.** The
+derived four-module, capability-filtered Dashboard read model, explicit
+clock/window behavior, PostgreSQL matrix, privacy boundary, and validation
+evidence are documented in
+[the C5B-1 delivery record](../development/c5b1-communications-dashboard-read-model.md).
+The Dashboard UI remains the next bounded slice.
 
 ## Slice 1 — Application Foundation and Scaffold
 
