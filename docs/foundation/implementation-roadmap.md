@@ -42,11 +42,16 @@ accessibility, visual, CSP, concurrency, rollback, and build validation
 evidence. The accepted catalog reserves future Project/Campaign placements,
 but those keys are not implemented or available.
 
-**Next Communications slice: C5 — Communications Dashboard & Publication
-Queue.** C5 should build on Story and News workflows, publication
-responsibilities, schedules, content placements, quality issues, audit events,
-and public release state. This roadmap entry identifies the next slice only;
-it does not begin C5 implementation.
+**C5A-1 — Publication Queue read model: complete 2026-08-15.** The typed,
+capability-filtered PostgreSQL read model, seven required views, counts,
+filters, deterministic pagination, explicit-clock News classification, and
+PostgreSQL regression evidence are documented in
+[the C5A-1 delivery record](../development/c5a1-publication-queue-read-model.md).
+The Queue UI, Dashboard, workflow actions, and publication scheduling remain
+outside this bounded slice.
+
+**Next Communications slice: C5A-2 — Publication Queue admin UI,
+accessibility & browser validation.**
 
 ## Slice 1 — Application Foundation and Scaffold
 
