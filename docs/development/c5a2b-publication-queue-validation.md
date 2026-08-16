@@ -64,8 +64,9 @@ pagination labels, visible focus styles, keyboard-sized controls, mobile
 stacking, safe empty/error semantics, and no hover-only content or duplicate
 mobile/desktop row trees. The suite checks no horizontal overflow at every
 required viewport and captures Chromium screenshots at 375×812, 768×1024,
-1440×1100, and 1920×1200. Screenshots remain test artifacts and are not
-committed.
+1440×1100, and 1920×1200 for Contributor My Drafts, Editor Needs Review,
+Manager Needs Approval, populated filters, page two, and an empty view.
+Screenshots remain test artifacts and are not committed.
 
 The only defect exposed by the required axe/browser journey was the existing
 Story workflow “Request changes” and “Withdraw public Story” secondary button

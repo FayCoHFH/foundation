@@ -473,6 +473,25 @@ async function expectNoHorizontalOverflow(page: Page) {
   ).toBe(true);
 }
 
+async function captureResponsiveState(page: Page, name: string) {
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 1100 },
+    { width: 1920, height: 1200 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await expectNoHorizontalOverflow(page);
+    await page.screenshot({
+      fullPage: true,
+      path: test
+        .info()
+        .outputPath(`${name}-${viewport.width}x${viewport.height}.png`),
+    });
+  }
+  await page.setViewportSize({ width: 1280, height: 900 });
+}
+
 function rowTexts(page: Page) {
   return page
     .getByRole("list", { name: /items$/ })
@@ -583,6 +602,7 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
         .first(),
     ).toHaveAttribute("href", /\/admin\/communications\/news\//);
     await expectAxe(session.page);
+    await captureResponsiveState(session.page, "queue-contributor-my-drafts");
 
     await session.page.goto(
       `/admin/communications/queue?view=MY_DRAFTS&owner=${manager.adminUserId}`,
@@ -613,6 +633,7 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
     await expect(
       session.page.getByText(queueTitles.storyApproval, { exact: true }),
     ).toHaveCount(0);
+    await expectAxe(session.page);
     await expect(
       session.page
         .getByRole("link", {
@@ -629,6 +650,15 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
       session.page.getByRole("button", { name: /Approve|Release/ }),
     ).toHaveCount(0);
     await expectAxe(session.page);
+    await session.page.goBack();
+    await expect(
+      session.page.getByRole("heading", {
+        name: "Publication Queue",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expectAxe(session.page);
+    await captureResponsiveState(session.page, "queue-editor-needs-review");
     await session.context.close();
   });
 
@@ -666,6 +696,8 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
       ).toBeVisible();
     }
     await session.page.goto("/admin/communications/queue?view=NEEDS_APPROVAL");
+    await expectAxe(session.page);
+    await captureResponsiveState(session.page, "queue-manager-needs-approval");
     await expect(
       session.page.getByText(queueTitles.storyApproval, { exact: true }),
     ).toBeVisible();
@@ -681,6 +713,7 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
     await session.page.goto(
       "/admin/communications/queue?view=APPROVED_UNRELEASED",
     );
+    await expectAxe(session.page);
     await expect(
       session.page.getByText(queueTitles.approvedStory, { exact: true }),
     ).toBeVisible();
@@ -696,6 +729,7 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
     await session.page.goto(
       "/admin/communications/queue?view=RECENTLY_PUBLISHED",
     );
+    await expectAxe(session.page);
     await expect(
       session.page.getByText(queueTitles.releasedStory, { exact: true }),
     ).toBeVisible();
@@ -706,6 +740,7 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
       session.page.getByText(queueTitles.expiredNews, { exact: true }),
     ).toHaveCount(0);
     await session.page.goto("/admin/communications/queue?view=EXPIRED_NEWS");
+    await expectAxe(session.page);
     await expect(
       session.page.getByText(queueTitles.expiredNews, { exact: true }),
     ).toBeVisible();
@@ -744,6 +779,8 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
           .allTextContents()
       ).join(""),
     ).not.toContain("News");
+    await expectAxe(session.page);
+    await captureResponsiveState(session.page, "queue-filtered");
     await session.page
       .getByRole("link", { name: /Recently Published/ })
       .click();
@@ -833,6 +870,8 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
         .getByRole("navigation", { name: "Publication Queue pagination" })
         .locator('span[aria-current="page"]'),
     ).toHaveText(/Page 2 of \d+/);
+    await expectAxe(session.page);
+    await captureResponsiveState(session.page, "queue-page-two");
     await session.page.getByLabel("Items per page").selectOption("50");
     await session.page.getByRole("button", { name: "Apply filters" }).click();
     const pageSizeUrl = new URL(session.page.url());
@@ -878,6 +917,8 @@ test.describe("C5A-2B Publication Queue browser validation", () => {
       ).toBeVisible();
       await expect(session.page.getByText(message)).toBeVisible();
     }
+    await expectAxe(session.page);
+    await captureResponsiveState(session.page, "queue-empty");
     await session.page.goto("/admin/communications/queue?view=NOPE");
     await expect(session.page.locator('section[role="alert"]')).toContainText(
       "invalid view",
