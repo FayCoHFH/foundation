@@ -99,8 +99,17 @@ navigation, create/update/publish/withdraw forms, optimistic-concurrency
 feedback, safe public SITE_WIDE/HOMEPAGE rendering, responsive semantic
 structure, focused render coverage, and delivery boundaries are documented in
 [the C6A-2A delivery record](../development/c6a2a-site-notice-ui.md).
-Browser, axe, and visual validation remain C6A-2B work; Public Story
-Submissions remain C6B.
+
+**C6A-2B — Site Notice browser, accessibility, responsive, and visual
+validation: complete locally on 2026-08-16.** The manager/denied/anonymous
+browser matrix, lifecycle and target-area journeys, axe scans, manual
+accessibility review, four viewport captures, dynamic/CSP/console checks, and
+full browser/PostgreSQL regression are documented in
+[the C6A-2B validation record](../development/c6a2b-site-notice-validation.md).
+
+**C6A — Site Notices: complete locally on 2026-08-16.** Site Notice domain,
+administration, public rendering, and browser/accessibility/visual validation
+are complete. Public Story Submissions remain C6B.
 
 ## Slice 1 — Application Foundation and Scaffold
 

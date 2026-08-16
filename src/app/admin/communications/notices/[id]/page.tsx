@@ -11,11 +11,12 @@ import { formatEditorialDateTime } from "@/platform/time/editorial";
 
 import { saveSiteNoticeAction, siteNoticeWorkflowAction } from "../actions";
 import {
+  noticeDefaults,
   noticeSeverityLabel,
   noticeStatusLabel,
   noticeTargetLabel,
 } from "../form-contract";
-import { NoticeForm, noticeDefaults } from "../notice-form";
+import { NoticeForm } from "../notice-form";
 import { isSiteNoticeStatusCode, SITE_NOTICE_STATUS_MESSAGES } from "../status";
 import { NoticeWorkflowControls } from "../workflow-controls";
 

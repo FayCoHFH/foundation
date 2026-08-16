@@ -2,9 +2,6 @@
 
 import { useActionState, useEffect, useRef } from "react";
 
-import type { SiteNoticeAdmin } from "@/modules/communications/notices";
-import { formatEditorialDateTimeInput } from "@/platform/time/editorial";
-
 import {
   EMPTY_NOTICE_FORM_VALUES,
   SITE_NOTICE_SEVERITIES,
@@ -99,7 +96,7 @@ export function NoticeForm({
 
   useEffect(() => {
     if (state.status === "error") summaryRef.current?.focus();
-  }, [state.status]);
+  }, [state.fieldErrors, state.message, state.status]);
 
   const values = state.status === "error" ? state.values : defaults;
   const textClass =
@@ -289,17 +286,4 @@ export function NoticeForm({
       ) : null}
     </form>
   );
-}
-
-export function noticeDefaults(notice: SiteNoticeAdmin): NoticeFormValues {
-  return {
-    title: notice.title,
-    message: notice.message,
-    severity: notice.severity,
-    targetArea: notice.targetArea,
-    startsAt: formatEditorialDateTimeInput(notice.startsAt),
-    endsAt: formatEditorialDateTimeInput(notice.endsAt),
-    ctaLabel: notice.ctaLabel ?? "",
-    ctaUrl: notice.ctaUrl ?? "",
-  };
 }

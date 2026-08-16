@@ -51,14 +51,14 @@ export default async function NewsDetail({
         <article>
           <header className="border-border bg-editorial-sky/30 border-b">
             <div className="editorial-arrival mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-18 lg:px-12">
-              <p className="text-editorial-pecan text-sm font-bold tracking-[0.16em] uppercase">
+              <p className="text-foreground text-sm font-bold tracking-[0.16em] uppercase">
                 News &amp; updates
               </p>
               <h1 className="text-editorial-pecan mt-4 max-w-4xl font-serif text-4xl leading-[1.02] tracking-[-0.03em] sm:text-6xl">
                 {news.headline}
               </h1>
               <time
-                className="text-editorial-pecan mt-7 block text-sm font-semibold"
+                className="text-foreground mt-7 block text-sm font-semibold"
                 dateTime={news.publishedAt.toISOString()}
               >
                 Published {date}

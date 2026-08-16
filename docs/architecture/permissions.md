@@ -50,6 +50,11 @@ reads, edits, publication, and withdrawal. Public effective-notice reads are
 unauthenticated and return only the bounded safe projection; they never expose
 actors, versions, lifecycle internals, or audit metadata.
 
+C6A-2B browser validation verified the capability boundary with an authorized
+Communications Manager, a signed-in editor without the capability, and an
+anonymous visitor. Direct protected navigation remained denied or redirected,
+while public effective reads remained unauthenticated and projection-only.
+
 ### Projects, programs, and public impact
 
 - `programs.manage`

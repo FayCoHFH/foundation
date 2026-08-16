@@ -56,18 +56,18 @@ export default async function HomePage() {
         <SiteNoticeRegion targetArea={SiteNoticeTargetArea.HOMEPAGE} />
         <section className="border-border bg-editorial-sky/40 border-b">
           <div className="editorial-arrival mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12">
-            <p className="text-primary text-sm font-bold tracking-[.16em] uppercase">
+            <p className="text-foreground text-sm font-bold tracking-[.16em] uppercase">
               Fayette County Habitat for Humanity
             </p>
             {hero ? (
               <>
-                <p className="text-primary mt-7 text-sm font-bold tracking-[.14em] uppercase">
+                <p className="text-foreground mt-7 text-sm font-bold tracking-[.14em] uppercase">
                   Featured {hero.label}
                 </p>
                 <h1 className="text-editorial-pecan mt-3 max-w-4xl font-serif text-5xl leading-[.98] tracking-[-.035em] sm:text-6xl lg:text-7xl">
                   <Link href={hero.href}>{hero.headline}</Link>
                 </h1>
-                <p className="text-muted-foreground mt-7 max-w-2xl text-xl leading-8">
+                <p className="text-foreground mt-7 max-w-2xl text-xl leading-8">
                   {hero.summary}
                 </p>
               </>
@@ -76,7 +76,7 @@ export default async function HomePage() {
                 <h1 className="text-editorial-pecan mt-5 max-w-4xl font-serif text-5xl leading-[.98] tracking-[-.035em] sm:text-6xl lg:text-7xl">
                   A place where many kinds of help can meet.
                 </h1>
-                <p className="text-muted-foreground mt-8 max-w-2xl text-xl leading-8">
+                <p className="text-foreground mt-8 max-w-2xl text-xl leading-8">
                   This public experience is being built to make local work
                   easier to understand, trust, and join.
                 </p>

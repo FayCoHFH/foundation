@@ -278,6 +278,14 @@ Only designated taxonomy managers may create, rename, retire, or merge categorie
 
 Only authorized notice managers can create or change one, with optimistic concurrency and bounded audit evidence. Published fields may be edited through the authorized mutation; effectiveness is recalculated immediately, while withdrawal remains explicit. It renders only in its window and automatically stops at `endsAt`; the record and audit persist. Site-wide notices render in the global surface and target-area notices render in the relevant local template. Notice content must remain concise, must not duplicate a long News item, and must link to a canonical page/News item when more explanation is necessary. Urgent means operational importance, not sensational “breaking news.” V1 does not build notice audience segmentation, push notifications, or a public notice archive.
 
+The C6A-2B browser validation confirms this boundary: authorized notice
+management is capability-protected, public homepage/News/Story surfaces use
+projection-only effective notices, target-area and severity ordering remain
+deterministic, and end-time/withdrawal removes presentation without deleting
+the record. Axe, manual accessibility, responsive visual, dynamic-rendering,
+CSP, console, and full browser/PostgreSQL regression evidence is recorded in
+[the C6A-2B validation record](../development/c6a2b-site-notice-validation.md).
+
 ## 10. Public Story Submission
 
 ### Separate confidential intake lifecycle

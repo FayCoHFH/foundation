@@ -9,8 +9,10 @@ are a distinct typed aggregate, not a Publication subtype, Story, News item,
 placement, page-builder block, or permanent public archive. This slice covers
 persistence, lifecycle, authorization, scheduling/effectiveness, safe public
 and administrative read models, audit, concurrency, migration, and tests.
-Site Notice UI, public rendering, accessibility/browser validation, and Public
-Story Submissions remain later slices.
+Site Notice UI and public rendering were delivered in C6A-2A; their browser,
+accessibility, responsive, and visual validation is complete in
+[C6A-2B](c6a2b-site-notice-validation.md). Public Story Submissions remain a
+later C6B slice.
 
 ## Domain contract
 

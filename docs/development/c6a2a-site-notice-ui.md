@@ -7,8 +7,8 @@ Status: **complete locally on 2026-08-16**.
 Site Notices are temporary operational messages. They remain separate from
 Stories, News, homepage ContentPlacements, the Publication Queue, and the
 Communications Dashboard. This slice adds the protected administrative
-interface and server-rendered public presentation; browser, axe, and visual
-validation belong to C6A-2B.
+interface and server-rendered public presentation. Browser, axe, responsive,
+and visual validation is recorded in [C6A-2B](c6a2b-site-notice-validation.md).
 
 ## Administrative experience
 
@@ -68,6 +68,8 @@ Focused unit/render coverage covers navigation, list/form fields, protected
 expected version, lifecycle action visibility, withdrawn boundaries, safe
 status codes, field association, public DTO-only rendering, order, empty
 state, severity, CTA safety, formatted time, static semantics, and the single
-responsive DOM structure. The C6A-1 PostgreSQL suite and full integration
-regression remain required. Playwright, axe, formal screenshot QA, Dashboard
-integration, dismissal/preferences, and C6B work are intentionally deferred.
+responsive DOM structure. C6A-2B then verified the manager/denied/anonymous
+browser matrix, all lifecycle and target-area journeys, axe, manual
+accessibility, four viewport screenshot review, dynamic rendering, CSP, and
+console cleanliness. Dashboard integration, dismissal/preferences, and C6B
+work remain outside this slice.

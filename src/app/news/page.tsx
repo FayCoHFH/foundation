@@ -26,13 +26,13 @@ export default async function NewsIndex() {
       <main id="main-content" tabIndex={-1} className="flex-1">
         <header className="bg-editorial-sky/30 border-border border-b">
           <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">
-            <p className="text-editorial-pecan text-sm font-bold tracking-[.16em] uppercase">
+            <p className="text-foreground text-sm font-bold tracking-[.16em] uppercase">
               Fayette County Habitat
             </p>
             <h1 className="text-editorial-pecan mt-4 font-serif text-5xl tracking-[-.035em] sm:text-6xl">
               News &amp; updates
             </h1>
-            <p className="text-muted-foreground mt-5 max-w-2xl text-lg leading-8">
+            <p className="text-foreground mt-5 max-w-2xl text-lg leading-8">
               Timely news from our work alongside Fayette County neighbors.
             </p>
           </div>

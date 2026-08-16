@@ -38,6 +38,12 @@ Every important datum has one authoritative owner. The platform may store a refe
 | Audit history | Habitat platform | Append-only AuditEvent | Corrections are compensating events, not mutation/deletion |
 | Legacy Wix content and media | Legacy source during migration only | Ledger entry, transformed local record, or archive | Migration disposition is a one-time decision; legacy structures do not remain authoritative |
 
+C6A-2B validation confirmed this boundary in the browser: public homepage,
+News, and Story routes receive only effective notice projections, while the
+administrative list/detail surface retains the local workflow and safe display
+metadata. No actor, audit, version, or authoring record is copied into public
+rendering.
+
 ## Communications ownership
 
 Fayette County Habitat owns Stories, News, Newsletter content, editorial revisions, internal publication responsibility assignments, publication state, approval evidence, public authorship, related-domain selections, and curated placements. None of these belongs to DonorView. Internal editorial owner/reviewer/approver AdminUser assignments are authorization/work-management facts and never become public AuthorProfile/byline data.

@@ -1,11 +1,15 @@
 import { z } from "zod";
 
+import type { SiteNoticeAdmin } from "@/modules/communications/notices";
 import type { SiteNoticeInput } from "@/modules/communications/notices/notice-content";
 import type {
   SiteNoticeSeverity,
   SiteNoticeTargetArea,
 } from "@/generated/prisma/client";
-import { parseEditorialWallTime } from "@/platform/time/editorial";
+import {
+  formatEditorialDateTimeInput,
+  parseEditorialWallTime,
+} from "@/platform/time/editorial";
 
 export const SITE_NOTICE_SEVERITIES = ["INFO", "IMPORTANT", "URGENT"] as const;
 export const SITE_NOTICE_TARGET_AREAS = ["SITE_WIDE", "HOMEPAGE"] as const;
@@ -168,4 +172,17 @@ export function noticeTargetLabel(targetArea: SiteNoticeTargetArea) {
 
 export function noticeSeverityLabel(severity: SiteNoticeSeverity) {
   return severity.charAt(0) + severity.slice(1).toLowerCase();
+}
+
+export function noticeDefaults(notice: SiteNoticeAdmin): NoticeFormValues {
+  return {
+    title: notice.title,
+    message: notice.message,
+    severity: notice.severity,
+    targetArea: notice.targetArea,
+    startsAt: formatEditorialDateTimeInput(notice.startsAt),
+    endsAt: formatEditorialDateTimeInput(notice.endsAt),
+    ctaLabel: notice.ctaLabel ?? "",
+    ctaUrl: notice.ctaUrl ?? "",
+  };
 }
