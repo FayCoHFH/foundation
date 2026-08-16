@@ -288,24 +288,29 @@ CSP, console, and full browser/PostgreSQL regression evidence is recorded in
 
 ## 10. Public Story Submission
 
-### Separate confidential intake lifecycle
+### Separate confidential intake lifecycle (C6B-1A foundation)
 
 ```text
-RECEIVED -> TRIAGED -> ACCEPTED_FOR_DEVELOPMENT -> CONVERTED
-                   \-> NEEDS_FOLLOW_UP -> TRIAGED
-                   \-> DECLINED -> RETENTION_PENDING -> PURGED
-CONVERTED -> RETENTION_PENDING -> PURGED (raw intake after its approved retention period)
+RECEIVED -> IN_REVIEW -> FOLLOW_UP -> IN_REVIEW -> ACCEPTED
+    |             |           |          |
+    +-------------+-----------+----------+---------> DECLINED
+    +-------------+-----------+----------+---------> SPAM
+ACCEPTED / DECLINED / SPAM are terminal in C6B-1A.
 ```
 
 `PublicStorySubmission` is a confidential intake aggregate. It contains minimum contact and pitch information: name, email, chosen relationship-to-Habitat category, suggested title, story text, optional contact preference, privacy-notice acknowledgment version/time, contact consent, publication-consent indication (not proof of final publication permission), and a minor/participant sensitivity declaration. It must clearly instruct submitters not to include applicant, eligibility, financial, medical, household, address, or other sensitive information. Free text is treated as potentially confidential and excluded from logs, analytics, search, previews, and fixtures.
 
-Optional `SubmissionMedia` uploads are private only: opaque upload identifier, private object key/version, validation/scan state, source/ownership affirmation, subject/consent declaration, and separate rights-review status. Public form file upload launches only after the upload controls in ADR-0005 are implemented (size/type/dimension limits, magic-byte/decode validation, quarantine/scan, metadata stripping, private delivery, deletion, and abuse controls); the intake can launch text-only if those controls or media policy are not ready. The form uses rate limiting, bot-resistant challenge appropriate to accessibility, server-side validation, duplicate/throttle detection, CSRF/origin protections, and a generic success response that cannot be used to enumerate submissions.
+C6B-1A implements the confidential text-only aggregate and service contract. It
+has no media or attachment rows, no public route/form/action/API, and no Story
+or Publication conversion. The future public boundary still requires the
+upload, rate-limit, challenge, duplicate/throttle, CSRF/origin, and generic
+response controls described below before launch.
 
 An editor may review the intake with `communications.submissions.review`, request follow-up through an approved contact process, decline it, or accept it for development. A sensitive participant/minor declaration automatically flags it for policy review; it does not publish, expose identity, or create an application/case record. Conversion creates a new Story and initial internal draft with a restricted provenance link to the submission. It copies only selected editorial material, never blindly promotes the submission, does not reuse the submitter as public byline without AuthorProfile/consent review, and enters the normal Story workflow. Submission media becomes a normal candidate media usage only after independent rights and contextual-alt review.
 
 There is no public News submission in V1. Authorized staff create News internally. A future public news-tip intake requires a separate abuse, triage, retention, and authority decision; it must not reuse Story Submission casually.
 
-Before launch, the submission form needs a named owner and approved retention profile. The proposed default is purge declined/duplicate submissions 90 days after final disposition, purge quarantined/rejected uploads after 30 days, and review accepted-but-unconverted submissions at 12 months; retain only consent/rights evidence and restricted audit history for their approved policy periods. A converted public Story follows normal publication retention, while raw submission text/media is still purged on the intake schedule unless a defined rights/consent purpose or hold requires restricted retention.
+Before launch, the submission form needs a named owner and approved retention profile. C6B-1A deliberately introduces no duration, cleanup job, or real-data collection. Later retention and conversion policy must be approved before production intake; an accepted submission is still not a Story draft.
 
 ## 11. Newsletter Edition and provider boundary
 

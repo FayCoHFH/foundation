@@ -45,6 +45,7 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | Private grant proposal/agreement/budget/report/note | Confidential; Restricted where credentials/bank/person data appear | Future private Grant Administration |
 | Applicant/household/eligibility/supporting document/case note | Restricted | Future private casework; no collection until approved design |
 | Analytics/correlation data with IP or stable visitor ID | Confidential until minimized/aggregated | Vendor selection must honor this policy |
+| PublicStorySubmission name, email, relationship, story text, acknowledgements, sensitivity declarations, and internal review note | Confidential | Field-minimum text-only aggregate; never public/search/analytics/logs; no production collection until owner, privacy text, consent, and retention profile are approved |
 
 ## Retention schedule
 

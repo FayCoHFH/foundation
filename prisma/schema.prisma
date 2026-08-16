@@ -65,6 +65,15 @@ enum SiteNoticeLifecycle {
   WITHDRAWN
 }
 
+enum PublicStorySubmissionStatus {
+  RECEIVED
+  IN_REVIEW
+  FOLLOW_UP
+  ACCEPTED
+  DECLINED
+  SPAM
+}
+
 enum PublicationWorkflowState {
   DRAFT
   IN_REVIEW
@@ -213,30 +222,31 @@ model AdminUser {
   updatedAt       DateTime        @updatedAt
   authUser        User            @relation(fields: [authUserId], references: [id], onDelete: Restrict)
 
-  externalIdentities        ExternalIdentity[]
-  roleAssignments           UserRole[]
-  createdInvitations        AdminInvitation[]                @relation("InvitationCreator")
-  acceptedInvitations       AdminInvitation[]                @relation("InvitationAcceptor")
-  revokedInvitations        AdminInvitation[]                @relation("InvitationRevoker")
-  grantedRoleAssignments    UserRole[]                       @relation("RoleGrantor")
-  revokedRoleAssignments    UserRole[]                       @relation("RoleRevoker")
-  auditEvents               AuditEvent[]                     @relation("AuditActor")
-  superAdminGrant           SuperAdminGrant?                 @relation("SuperAdminHolder")
-  grantedSuperAdminRecords  SuperAdminGrant[]                @relation("SuperAdminGrantor")
-  createdPublications       Publication[]                    @relation("PublicationCreator")
-  createdRevisions          PublicationRevision[]            @relation("PublicationRevisionCreator")
-  editorialResponsibilities PublicationResponsibility[]      @relation("PublicationEditorialOwner")
-  reviewerResponsibilities  PublicationResponsibility[]      @relation("PublicationAssignedReviewer")
-  approverResponsibilities  PublicationResponsibility[]      @relation("PublicationAssignedApprover")
-  changedResponsibilities   PublicationResponsibility[]      @relation("PublicationResponsibilityChanger")
-  publicationTransitions    PublicationLifecycleTransition[] @relation("PublicationTransitionActor")
-  publicationApprovals      PublicationApproval[]            @relation("PublicationApprover")
-  createdContentPlacements  ContentPlacement[]               @relation("ContentPlacementCreator")
-  changedContentPlacements  ContentPlacement[]               @relation("ContentPlacementChanger")
-  createdSiteNotices        SiteNotice[]                     @relation("SiteNoticeCreator")
-  updatedSiteNotices        SiteNotice[]                     @relation("SiteNoticeUpdater")
-  publishedSiteNotices      SiteNotice[]                     @relation("SiteNoticePublisher")
-  withdrawnSiteNotices      SiteNotice[]                     @relation("SiteNoticeWithdrawer")
+  externalIdentities            ExternalIdentity[]
+  roleAssignments               UserRole[]
+  createdInvitations            AdminInvitation[]                @relation("InvitationCreator")
+  acceptedInvitations           AdminInvitation[]                @relation("InvitationAcceptor")
+  revokedInvitations            AdminInvitation[]                @relation("InvitationRevoker")
+  grantedRoleAssignments        UserRole[]                       @relation("RoleGrantor")
+  revokedRoleAssignments        UserRole[]                       @relation("RoleRevoker")
+  auditEvents                   AuditEvent[]                     @relation("AuditActor")
+  superAdminGrant               SuperAdminGrant?                 @relation("SuperAdminHolder")
+  grantedSuperAdminRecords      SuperAdminGrant[]                @relation("SuperAdminGrantor")
+  createdPublications           Publication[]                    @relation("PublicationCreator")
+  createdRevisions              PublicationRevision[]            @relation("PublicationRevisionCreator")
+  editorialResponsibilities     PublicationResponsibility[]      @relation("PublicationEditorialOwner")
+  reviewerResponsibilities      PublicationResponsibility[]      @relation("PublicationAssignedReviewer")
+  approverResponsibilities      PublicationResponsibility[]      @relation("PublicationAssignedApprover")
+  changedResponsibilities       PublicationResponsibility[]      @relation("PublicationResponsibilityChanger")
+  publicationTransitions        PublicationLifecycleTransition[] @relation("PublicationTransitionActor")
+  publicationApprovals          PublicationApproval[]            @relation("PublicationApprover")
+  createdContentPlacements      ContentPlacement[]               @relation("ContentPlacementCreator")
+  changedContentPlacements      ContentPlacement[]               @relation("ContentPlacementChanger")
+  createdSiteNotices            SiteNotice[]                     @relation("SiteNoticeCreator")
+  updatedSiteNotices            SiteNotice[]                     @relation("SiteNoticeUpdater")
+  publishedSiteNotices          SiteNotice[]                     @relation("SiteNoticePublisher")
+  withdrawnSiteNotices          SiteNotice[]                     @relation("SiteNoticeWithdrawer")
+  changedPublicStorySubmissions PublicStorySubmission[]          @relation("PublicStorySubmissionStatusChanger")
 
   @@index([status])
   @@map("admin_user")
@@ -584,6 +594,40 @@ model SiteNotice {
   @@index([targetArea, lifecycle, startsAt, endsAt])
   @@index([lifecycle, updatedAt, id])
   @@map("site_notice")
+}
+
+// Confidential, text-only public story intake. This is not a Story,
+// Publication, projection, or media-bearing authoring record.
+model PublicStorySubmission {
+  id                                     String                      @id @default(uuid()) @db.Uuid
+  submitterName                          String                      @db.VarChar(120)
+  submitterEmail                         String                      @db.VarChar(254)
+  relationshipToHabitat                  String                      @db.VarChar(160)
+  suggestedTitle                         String?                     @db.VarChar(160)
+  storyText                              String                      @db.Text
+  contactConsent                         Boolean
+  privacyNoticeVersion                   String                      @db.VarChar(64)
+  privacyNoticeAcceptedAt                DateTime
+  editorialReviewAcknowledged            Boolean
+  sensitiveDataWarningAcknowledged       Boolean
+  publicationInterest                    Boolean?
+  involvesMinor                          Boolean                     @default(false)
+  involvesHomeownerOrApplicant           Boolean                     @default(false)
+  containsSensitivePersonalCircumstances Boolean                     @default(false)
+  status                                 PublicStorySubmissionStatus @default(RECEIVED)
+  internalReviewNote                     String?                     @db.VarChar(2000)
+  version                                Int                         @default(1)
+  receivedAt                             DateTime                    @default(now())
+  statusChangedAt                        DateTime                    @default(now())
+  statusChangedByAdminUserId             String?                     @db.Uuid
+  createdAt                              DateTime                    @default(now())
+  updatedAt                              DateTime                    @updatedAt
+  statusChangedBy                        AdminUser?                  @relation("PublicStorySubmissionStatusChanger", fields: [statusChangedByAdminUserId], references: [id], onDelete: SetNull)
+
+  @@unique([id, version])
+  @@index([status, receivedAt, id])
+  @@index([receivedAt, id])
+  @@map("public_story_submission")
 }
 
 // Private work-management assignment. This never supplies a public byline.

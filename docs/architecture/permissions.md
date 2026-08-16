@@ -50,6 +50,13 @@ reads, edits, publication, and withdrawal. Public effective-notice reads are
 unauthenticated and return only the bounded safe projection; they never expose
 actors, versions, lifecycle internals, or audit metadata.
 
+`communications.submissions.review` governs confidential submission list/detail
+reads, lifecycle transitions, and internal review-note updates. Each service
+operation checks the active local administrator and capability; list DTOs omit
+email, story text, and review notes, while detail DTOs never include raw audit
+rows or provider/request metadata. The C6B-1A receive service is unexposed and
+does not grant administrative access.
+
 C6A-2B browser validation verified the capability boundary with an authorized
 Communications Manager, a signed-in editor without the capability, and an
 anonymous visitor. Direct protected navigation remained denied or redirected,

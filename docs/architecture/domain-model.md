@@ -85,7 +85,7 @@ The candidate-revision workflow is `DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `P
 
 ### Aggregate: PublicStorySubmission
 
-- `PublicStorySubmission`: restricted public intake, separate from `Story`, containing only justified contact/relationship/story/consent data, privacy acknowledgment, anti-abuse data, and an inbox status. It may have `SubmissionMedia` in private/quarantine storage with rights/permission affirmation.
+- `PublicStorySubmission`: confidential, text-only intake, separate from `Story`, containing only justified contact/relationship/story/acknowledgement data, privacy acknowledgment, triage-only sensitivity declarations, lifecycle status, and bounded internal review notes. C6B-1A has no media/attachment relation, public projection, or conversion path.
 - An editor accepts and explicitly converts a submission into a new Story draft. The draft receives only approved/necessary material; the submitter's identity, public byline, and consent are independently selected. Rejection, withdrawal, retention, and deletion follow the intake retention policy. A public News submission aggregate is not in V1.
 
 ### Aggregate: NewsletterEdition

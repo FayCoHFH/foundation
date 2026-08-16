@@ -111,6 +111,15 @@ full browser/PostgreSQL regression are documented in
 administration, public rendering, and browser/accessibility/visual validation
 are complete. Public Story Submissions remain C6B.
 
+**C6B-1A — Public Story Submission confidential domain foundation: complete
+locally on 2026-08-16.** The text-only confidential aggregate, explicit
+lifecycle, receive/admin service contracts, capability authorization,
+allowlisted DTOs, optimistic concurrency, atomic redacted audit behavior,
+PostgreSQL constraints, and regression evidence are documented in
+[the C6B-1A delivery record](../development/c6b1a-public-story-submission-domain.md).
+Public intake security, UI, uploads, email, conversion, and final retention
+policy remain later C6B slices; C6B as a whole is not complete.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

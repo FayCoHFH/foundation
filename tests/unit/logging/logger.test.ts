@@ -109,4 +109,22 @@ describe("structured logger redaction", () => {
     expect(serialized).not.toContain("event-secret");
     expect(serialized).not.toContain("bearer-secret");
   });
+
+  it("redacts confidential public-story submission fields by name", () => {
+    const write = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    logger.error("public_story_submission.test", {
+      submitterEmail: "person@example.org",
+      storyText: "private story text",
+      internalReviewNote: "private review note",
+      relationshipToHabitat: "private relationship",
+    });
+
+    const serialized = String(write.mock.calls[0]?.[0]);
+    expect(serialized).not.toContain("private story text");
+    expect(serialized).not.toContain("private review note");
+    expect(serialized).not.toContain("private relationship");
+    expect(serialized).toContain('"storyText":"[REDACTED]"');
+    expect(serialized).toContain('"internalReviewNote":"[REDACTED]"');
+  });
 });

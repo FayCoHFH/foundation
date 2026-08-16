@@ -102,6 +102,13 @@ Security objectives, in order:
 
 **Controls:** implementation blocked until the private-casework design and retention profile are approved; never collect SSNs; dedicated module/capabilities/private store; no public foreign-key traversal; minimum necessary fields; sensitive-read/export audit; malware scanning; consented public projection separate from case record; no participant home address in public Project/Media metadata; redacted support workflows.
 
+**C6B-1A confidential submission foundation:** `PublicStorySubmission` is a
+separate text-only aggregate. Required acknowledgements, field limits, active
+local capability checks, optimistic versions, transaction-coupled redacted
+audits, allowlisted list selects, and log redaction prevent accidental public,
+search, Queue, Dashboard, provider, or telemetry exposure. The public intake
+boundary, abuse controls, uploads, and retention profile remain launch gates.
+
 **Verification:** dedicated pre-implementation threat-model update, data-flow review, privacy tests proving public/search/cache/analytics isolation, and an incident exercise.
 
 ### Private grant disclosure
