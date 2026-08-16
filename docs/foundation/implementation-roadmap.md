@@ -55,11 +55,13 @@ server-rendered Queue route, capability-filtered navigation and counts,
 URL-driven filters and pagination, typed Story/News rows, responsive semantic
 list, empty/error states, and component/render coverage are documented in
 [the C5A-2A delivery record](../development/c5a2a-publication-queue-admin-ui.md).
-Browser, axe, and formal visual validation remain in C5A-2B; this entry does
-not mark all of C5A-2 complete.
+The C5A-2B browser, axe, accessibility, responsive, visual, and full
+regression validation is documented in
+[the C5A-2B delivery record](../development/c5a2b-publication-queue-validation.md).
 
-**Next Communications slice: C5A-2B — Publication Queue browser,
-accessibility & visual validation.**
+**C5A-2 — Publication Queue: complete 2026-08-16.**
+
+**Next Communications slice: C5B-1 — Communications Dashboard read model.**
 
 ## Slice 1 — Application Foundation and Scaffold
 

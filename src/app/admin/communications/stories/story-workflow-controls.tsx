@@ -140,7 +140,7 @@ export function StoryWorkflowControls({
               name="action"
               value="request-changes"
               disabled={pending}
-              className="bg-surface text-foreground border-border border"
+              className="bg-surface !text-foreground border-border border"
             >
               Request changes
             </Button>
@@ -162,7 +162,7 @@ export function StoryWorkflowControls({
               name="action"
               value="withdraw"
               disabled={pending}
-              className="bg-surface text-foreground border-border border"
+              className="bg-surface !text-foreground border-border border"
             >
               {pending ? "Withdrawing…" : "Withdraw public Story"}
             </Button>

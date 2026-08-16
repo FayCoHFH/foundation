@@ -68,7 +68,8 @@ controls. No hover-only behavior or client-side data fetching is used.
 - Existing C5A-1 contracts and PostgreSQL regression, including owner options:
   `tests/integration/publication-queue.test.ts`
 
-Focused browser, axe, and formal screenshot/visual validation are intentionally
-deferred to C5A-2B. Dashboard, scheduling, Media Library, Newsletter,
+Focused browser, axe, and formal screenshot/visual validation were completed
+in [C5A-2B](./c5a2b-publication-queue-validation.md). Dashboard, scheduling,
+Media Library, Newsletter,
 categories, authors, Projects, Campaigns, and workflow mutations are outside
 this slice.
