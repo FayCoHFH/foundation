@@ -72,8 +72,19 @@ protected server-rendered Dashboard route, capability-filtered navigation and
 modules, typed links, responsive semantic presentation, safe empty/error
 states, focused render coverage, and delivery boundaries are documented in
 [the C5B-2A delivery record](../development/c5b2a-communications-dashboard-admin-ui.md).
-Browser, accessibility, and visual validation remain the next bounded slice;
-the C5 Dashboard is not yet fully complete.
+
+**C5B-2B — Communications Dashboard browser, accessibility, and visual
+validation: complete 2026-08-16.** The route/persona matrix, all four modules,
+negative authorization, empty/error states, no-inline-mutation boundary, axe
+scans, manual accessibility review, four viewport captures, server-rendering
+checks, and full browser/PostgreSQL regression are documented in
+[the C5B-2B validation record](../development/c5b2b-communications-dashboard-validation.md).
+
+**C5 — Communications Dashboard and Publication Queue: complete 2026-08-16.**
+The Queue and Dashboard read models, protected admin surfaces, capability
+boundaries, typed routing, and browser/accessibility/visual validation are
+complete. Scheduling, Site Notices, and public Story Submissions remain later
+bounded slices.
 
 ## Slice 1 — Application Foundation and Scaffold
 

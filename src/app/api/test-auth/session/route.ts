@@ -23,6 +23,8 @@ const requestSchema = z.object({
     "news-contributor",
     "news-editor",
     "news-manager",
+    "dashboard-contributor",
+    "dashboard-only",
     "denied",
   ]),
 });
@@ -35,6 +37,16 @@ const fixtureRoleKeys = {
   "news-contributor": "contributor",
   "news-editor": "editor",
   "news-manager": "communications-manager",
+} as const;
+
+const testOnlyFixtureCapabilities = {
+  "dashboard-contributor": [
+    "communications.dashboard.read",
+    "communications.queue.read",
+    "stories.read.draft.own",
+    "news.read.draft.own",
+  ],
+  "dashboard-only": ["communications.dashboard.read"],
 } as const;
 
 function unavailable() {
@@ -111,11 +123,57 @@ export async function POST(request: Request) {
     });
 
     if (parsed.data.fixture !== "denied") {
-      const roleKey = fixtureRoleKeys[parsed.data.fixture];
-      const role = await transaction.role.findUnique({
-        where: { key: roleKey },
-      });
+      const customCapabilities =
+        parsed.data.fixture in testOnlyFixtureCapabilities
+          ? testOnlyFixtureCapabilities[
+              parsed.data.fixture as keyof typeof testOnlyFixtureCapabilities
+            ]
+          : null;
+      const roleKey = customCapabilities
+        ? `test-${parsed.data.fixture}`
+        : fixtureRoleKeys[parsed.data.fixture as keyof typeof fixtureRoleKeys];
+      const role = customCapabilities
+        ? await transaction.role.upsert({
+            where: { key: roleKey },
+            create: {
+              key: roleKey,
+              name: `Test ${parsed.data.fixture}`,
+              description: "Ephemeral E2E capability fixture.",
+              isSystem: false,
+              isActive: true,
+            },
+            update: {
+              name: `Test ${parsed.data.fixture}`,
+              description: "Ephemeral E2E capability fixture.",
+              isActive: true,
+            },
+          })
+        : await transaction.role.findUnique({
+            where: { key: roleKey },
+          });
       if (!role?.isActive) throw new Error(`Seeded ${roleKey} role missing.`);
+      if (customCapabilities) {
+        const permissions = await transaction.permission.findMany({
+          where: { key: { in: [...customCapabilities] } },
+          select: { id: true },
+        });
+        if (permissions.length !== customCapabilities.length) {
+          throw new Error(`Seeded test capabilities missing for ${roleKey}.`);
+        }
+        await transaction.rolePermission.deleteMany({
+          where: {
+            roleId: role.id,
+            permissionId: { notIn: permissions.map(({ id }) => id) },
+          },
+        });
+        await transaction.rolePermission.createMany({
+          data: permissions.map(({ id }) => ({
+            roleId: role.id,
+            permissionId: id,
+          })),
+          skipDuplicates: true,
+        });
+      }
       const adminUser = await transaction.adminUser.create({
         data: { authUserId, status: "ACTIVE" },
       });

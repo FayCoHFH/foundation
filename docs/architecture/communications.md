@@ -169,6 +169,12 @@ The Dashboard is a derived, capability-filtered read model, not a reporting prod
 
 Empty states explain that no action is needed and link to permitted creation/Queue actions. There are no V1 traffic, engagement, follower, or “content count” vanity tiles. Broken-link results may appear only when a verified checker exists, its check time is displayed, and the viewer can remedy the target; otherwise they remain a future quality signal. Newsletter work appears once Newsletter Edition is implemented.
 
+The C5 Queue and Dashboard implementation is complete locally. Both surfaces
+are protected server-rendered views over capability-filtered read models;
+Dashboard browser validation covers typed Story/News routing, all four
+placement slots, ineffective eligibility, privacy-safe activity, empty/error
+states, axe checks, responsive viewports, and the no-inline-mutation boundary.
+
 The implemented C4 curation screen is `/admin/communications/homepage`. It
 shows current and upcoming assignments for the three homepage keys, allows a
 server-authorized manager to assign, replace, schedule, clear/end, or cancel a

@@ -345,6 +345,7 @@ describe("C5B-1 Communications Dashboard PostgreSQL read model", () => {
   let privateManagerStory: Awaited<ReturnType<typeof content>>;
 
   beforeAll(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE "publication" CASCADE`;
     contributor = await actor("contributor");
     editor = await actor("editor");
     editorWithoutNewsReview = {

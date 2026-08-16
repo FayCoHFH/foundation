@@ -66,9 +66,10 @@ Focused render coverage is in
 navigation capability/current state, group visibility/counts/links, typed
 Story/News routes, Upcoming ordering and kind labels, all curation statuses,
 activity redaction and labels, empty/error states, responsive structure, and
-the no-inline-mutation boundary. C5B-1 Dashboard and Queue PostgreSQL
-regressions remain required validation for this slice.
+the no-inline-mutation boundary. Browser, axe, manual accessibility,
+responsive, and visual validation are complete in the
+[C5B-2B validation record](c5b2b-communications-dashboard-validation.md).
 
-Playwright, axe browser scans, formal visual QA, publication scheduling, Media
-Library, Newsletter, categories, authors, Projects, Campaigns, and inline
-workflow actions remain intentionally deferred to their bounded assignments.
+Publication scheduling, Media Library, Newsletter, categories, authors,
+Projects, Campaigns, and inline workflow actions remain intentionally outside
+this bounded Dashboard surface.
