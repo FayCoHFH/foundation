@@ -1,7 +1,7 @@
 # Data ownership and system-of-record boundaries
 
 Status: Accepted
-Last reviewed: 2026-08-14
+Last reviewed: 2026-08-15
 
 ## Rule
 
@@ -17,7 +17,7 @@ Every important datum has one authoritative owner. The platform may store a refe
 | Newsletter delivery execution/provider credentials | Provider selected later | Provider-neutral port, minimum redacted delivery result if required | No provider commitment or credential storage until an approved integration decision; provider does not own Habitat editorial records |
 | Author profiles, editorial categories, publication workflow, Publication Queue, Communications Dashboard | Habitat platform | Local typed aggregates and derived read models | Local only; Queue/Dashboard do not become workflow truth |
 | Site Notices | Habitat platform | Small typed operational-notice aggregate | Local authorized workflow; end time removes presentation without rewriting audit history |
-| Featured News and other curated placements | Habitat platform | PlacementDefinition and ContentPlacement with typed target joins | Authorized placement managers only; a placement never grants ownership of its target |
+| Featured News and other curated placements | Habitat platform | Code-owned PlacementDefinition and ContentPlacement assignments targeting shared Publication identity | Authorized placement managers only; a placement never grants ownership of its Story/News target |
 | Public Story Submissions and submission media | Habitat platform, restricted intake boundary | Private/quarantined submission record and media, separate from Story drafts | Collect/use/retain only under the approved intake/privacy policy; an editor explicitly converts accepted material into a Story draft |
 | Programs, Projects, public partners and attributable impact | Habitat platform | Local structured records | Local workflows with verification/provenance |
 | Public event marketing | Habitat platform | Event and EventEdition | Local public facts; registration state is external |
@@ -41,6 +41,14 @@ Every important datum has one authoritative owner. The platform may store a refe
 ## Communications ownership
 
 Fayette County Habitat owns Stories, News, Newsletter content, editorial revisions, internal publication responsibility assignments, publication state, approval evidence, public authorship, related-domain selections, and curated placements. None of these belongs to DonorView. Internal editorial owner/reviewer/approver AdminUser assignments are authorization/work-management facts and never become public AuthorProfile/byline data.
+
+For C4, Fayette Habitat also owns the four implemented placement definitions
+(`HOME_HERO`, `HOME_FEATURED_STORY`, `HOME_FEATURED_NEWS`, and
+`NEWS_FEATURED`), their assignments, UTC activation windows, replacement and
+cancellation history, current/upcoming administration, audit evidence, and
+public placement resolution. `HOME_FEATURED_PROJECT` and
+`HOME_FEATURED_CAMPAIGN` remain future extensions. DonorView, Stripe, and
+Google do not own or authorize homepage placement state.
 
 Public publication is a snapshot. An author's current profile, an EditorialCategory rename, a media asset's later caption, a MediaUsage edit, or a related Project's later edit must not retroactively change what was approved. An explicit republication produces a new snapshot.
 

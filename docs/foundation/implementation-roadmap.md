@@ -1,7 +1,7 @@
 # Delivery roadmap
 
 Status: **Accepted as sequencing guidance**
-Last reviewed: 2026-08-14
+Last reviewed: 2026-08-15
 
 This roadmap organizes independently testable outcomes. It is not a promise that conceptual product groups become routes or code directories. Every slice must preserve the data-ownership, security, privacy, accessibility, and legacy-independence rules in this foundation.
 
@@ -12,7 +12,7 @@ Gate C is resolved by the [accepted Communications architecture](../architecture
 - **Scope:** Stories/Journal; News; Featured News and other curated placements; Communications Dashboard; publication queue; workflow, approvals, scheduling, and expiration; homepage curation; Newsletter; authors/categories/tags; media and related-domain content; editorial calendar direction; possible Story/Communications Packages.
 - **Output:** agreed vocabulary, lifecycle invariants, main staff journeys, dashboard decisions, MVP versus later scope, relationship rules, and refinements to the publication/placement ADRs.
 - **Non-goal:** no application scaffold, schema, migration, route, or component.
-- **Acceptance:** met. Story/News semantics, lifecycle axes, workflow/approval, Dashboard/Queue, six placements, homepage hybrid, authors/categories/media, Notices, submissions, Newsletter boundary, discovery, and V1/later scope are precise enough that implementation does not have to invent product policy.
+- **Acceptance:** met. Story/News semantics, lifecycle axes, workflow/approval, Dashboard/Queue, the reserved placement catalog and V1/later split, homepage hybrid, authors/categories/media, Notices, submissions, Newsletter boundary, discovery, and V1/later scope are precise enough that implementation does not have to invent product policy.
 - **Principal risk:** prematurely generalizing a universal CMS or, conversely, duplicating publishing engines.
 
 ## Slice 0 — Decision runway
@@ -30,7 +30,23 @@ The detailed C1–C8 acceptance criteria remain in the Communications architectu
 C1’s private Story persistence increment is implemented locally; its delivery
 record is [C1 Story persistence](../development/c1-story-persistence.md). The
 remaining Slice 2 release, snapshot, schedule, discovery, placement, and News
-work is still open.
+work is recorded in the later delivery records.
+
+### Communications closure status
+
+**C4 — Homepage Curation & Content Placements: complete 2026-08-15.** The
+implemented C4 surface is the four-key typed placement subsystem, homepage
+composition, News-featured migration, admin curation route, public
+projection-only resolution, and its PostgreSQL, migration, browser,
+accessibility, visual, CSP, concurrency, rollback, and build validation
+evidence. The accepted catalog reserves future Project/Campaign placements,
+but those keys are not implemented or available.
+
+**Next Communications slice: C5 — Communications Dashboard & Publication
+Queue.** C5 should build on Story and News workflows, publication
+responsibilities, schedules, content placements, quality issues, audit events,
+and public release state. This roadmap entry identifies the next slice only;
+it does not begin C5 implementation.
 
 ## Slice 1 — Application Foundation and Scaffold
 
@@ -63,7 +79,7 @@ external G-05 acceptance action and was not performed without account authority.
 
 ## Slice 4 — Communications MVP
 
-- **Scope:** C3–C5 from the accepted Communications architecture: public Stories and News; typed authoring and relationships; approved V1 rich text/media; five homepage placements plus `NEWS_FEATURED`; submit/review/approve; separate schedule/release, shared Story/News discovery-disposition, and News-availability behavior; Publication Queue; four-module Dashboard; preview, search, and SEO. Site Notices and public Story Submission may follow in C6 when their launch controls are satisfied.
+- **Scope:** C3–C5 from the accepted Communications architecture: public Stories and News; typed authoring and relationships; approved V1 rich text/media; the implemented four-key placement surface plus reserved future Project/Campaign extensions; submit/review/approve; separate schedule/release, shared Story/News discovery-disposition, and News-availability behavior; Publication Queue; four-module Dashboard; preview, search, and SEO. Site Notices and public Story Submission may follow in C6 when their launch controls are satisfied.
 - **Dependencies:** Slices 2–3 and the accepted Gate C contract; verified content is not required to implement approved structures.
 - **Acceptance:** Stories and News have typed validation/presentation while sharing the kernel; a published version can coexist with a later draft; normal authors cannot self-approve; archived Stories and News leave ordinary discovery without silent deletion and restore only through an approved successor; scheduled and expiring News recover after a missed job; featured placements are permissioned and audited; media rights and contextual alt text gate publication; public and admin journeys pass Playwright and accessibility review.
 - **Model/parallelism:** Terra leads bounded domain/UI work; Sol reviews workflow, scheduling, and placement concurrency; public Story, public News, and admin UI can proceed in parallel after contracts freeze.

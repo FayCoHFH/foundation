@@ -1,6 +1,6 @@
 # Open gates and non-blocking verification
 
-Status as of 2026-08-14. A gate is scoped to the first slice it can block; it is not permission to reopen accepted decisions. Content facts are listed separately because unknown content is not an unknown requirement.
+Status as of 2026-08-15. A gate is scoped to the first slice it can block; it is not permission to reopen accepted decisions. Content facts are listed separately because unknown content is not an unknown requirement.
 
 ## Gates
 
@@ -20,6 +20,7 @@ Status as of 2026-08-14. A gate is scoped to the first slice it can block; it is
 | ID | Resolution | Evidence |
 |---|---|---|
 | G-01 | Resolved 2026-08-14. The Communications review fixed the V1 journeys, typed models, four lifecycle dimensions, placement scope, Dashboard/Queue, taxonomy, relations, Newsletter boundary, and V1/later split. It no longer blocks issuing Slice 1. | [Communications architecture](../architecture/communications.md) and [completed review record](../product/communications-review-runway.md) |
+| C4 closure | Resolved 2026-08-15. Homepage curation and shared ContentPlacement implementation evidence is complete, including target eligibility, public projection-only resolution, windows/cancellation, concurrency, audit atomicity, successor release, migration upgrade, browser/accessibility/visual validation, and local-preview CSP coverage. No C4-specific gate remains open. | [C4 development record](../development/c4-homepage-curation.md), [Communications architecture](../architecture/communications.md), and [delivery roadmap](implementation-roadmap.md) |
 
 The implementation half of the original G-02 spike was completed on 2026-08-14. Its executable evidence and intentionally unclaimed provider checks are recorded in the [Slice 1 authentication spike](../development/auth-spike.md); the narrowed live-environment criterion remains open above.
 

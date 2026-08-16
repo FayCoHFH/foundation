@@ -118,3 +118,51 @@ The focused CSP regression remains green: development CSP includes
 `'unsafe-eval'`, production CSP excludes it, and the `APP_ENV=test` matrix
 follows `NODE_ENV` rather than APP_ENV. The existing local visual-preview
 server on port 3200 was not restarted or altered by this slice.
+
+## C4.3B documentation closure
+
+Completed 2026-08-15. This documentation-only closure reconciles the
+architecture, domain model, ownership, permissions, product/IA language,
+roadmap, open-gate record, decision register, and this evidence record with
+the implemented C4 behavior. No application, schema, migration, test,
+fixture, CSP, dependency, or preview-server file was changed.
+
+The durable C4 model is four code-owned singleton keys with a shared
+`ContentPlacement` assignment targeting stable `Publication` identity:
+`HOME_HERO` accepts Story/News, `HOME_FEATURED_STORY` accepts Story,
+`HOME_FEATURED_NEWS` accepts News, and `NEWS_FEATURED` accepts News.
+`HOME_FEATURED_PROJECT` and `HOME_FEATURED_CAMPAIGN` are reserved future
+extensions and are not available. Assignments retain schedule/cancellation
+history, use half-open windows, reject non-cancelled overlap, enforce
+optimistic versions, and commit consequential audit evidence atomically.
+
+Public resolution requires an active, non-cancelled placement and an eligible
+released projection; withdrawn, archived, expired, or draft targets do not
+render. Resolution is projection-only. A successor release updates all
+placements for the stable Publication without rewriting placement identity,
+windows, or placement history. The current admin route is
+`/admin/communications/homepage`; public routes covered by the completed C4
+slice are `/`, `/stories/[slug]`, `/news`, and `/news/[slug]`.
+
+Previously verified C4 evidence remains recorded above and includes the
+placement target/eligibility matrix, window/concurrency/audit coverage,
+successor release, rollback, real C3-to-C4 migration upgrade, browser and axe
+coverage, four-breakpoint visual review, local-development CSP correction, and
+the final validation commits. This closure does not claim those suites were
+rerun here.
+
+The previously verified counts are: ContentPlacement PostgreSQL coverage
+96/96, successor-release coverage 4/4, rollback coverage 10/10, full
+integration 133/133 across six files, migration upgrade 1/1, focused homepage
+browser coverage 3/3, full Playwright 14/14, unit tests 88/88, and focused CSP
+coverage 5/5. The required axe states passed at the tested admin/public
+states, and manual visual QA passed at 375×812, 768×1024, 1440×1100, and
+1920×1200. These are prior-slice results, not C4.3B reruns.
+
+C4 implementation commits are `1158e38`, `85e2a13`, `8a52d52`, `b117e94`,
+`2fadd2e`, `26622c4`, `e330df2`, `51da52f`, `0883217`, and `6d74f45`.
+
+C4 is complete. Project/Campaign placements, Communications Dashboard and
+Publication Queue implementation, Media Library, Newsletter, categories,
+author profiles, related content, and Find Your Place remain outside C4 and
+are not blockers for this closure.

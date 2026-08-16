@@ -1,7 +1,7 @@
 # Communications domain architecture
 
 Status: **Accepted implementation specification**
-Last reviewed: 2026-08-14
+Last reviewed: 2026-08-15
 
 ## 1. Purpose, boundary, and decisions
 
@@ -164,29 +164,52 @@ The Dashboard is a derived, capability-filtered read model, not a reporting prod
 | --- | --- | --- |
 | Needs Attention | Open items awaiting the viewer’s review/approval; failed schedules/snapshot generation; and actionable content, consent, relation, media-rights, or accessibility blockers | Workflow, schedule, requirement, media usage, and quality records |
 | Upcoming | Inspect scheduled Stories/News and News expiring in the next 14 days; open the focused record to cancel, revise, archive, or confirm no action | Approved schedules plus `NewsItem.expiresAt`/availability |
-| Current Curation | Inspect the five homepage singleton slots and open placement management if authorized; `NEWS_FEATURED` remains visible on its News management surface | Content Placement resolver |
+| Current Curation | Inspect the three implemented homepage singleton slots and open placement management if authorized; `NEWS_FEATURED` remains visible on its News management surface | Content Placement resolver |
 | Recent Activity | Understand recent publish, approve, schedule, withdraw/archive, placement, and rights-clearance events | Append-only audit/workflow events |
 
 Empty states explain that no action is needed and link to permitted creation/Queue actions. There are no V1 traffic, engagement, follower, or “content count” vanity tiles. Broken-link results may appear only when a verified checker exists, its check time is displayed, and the viewer can remedy the target; otherwise they remain a future quality signal. Newsletter work appears once Newsletter Edition is implemented.
+
+The implemented C4 curation screen is `/admin/communications/homepage`. It
+shows current and upcoming assignments for the three homepage keys, allows a
+server-authorized manager to assign, replace, schedule, clear/end, or cancel a
+future assignment, and uses typed allowlisted completion statuses. The
+`communications.placements.manage` capability is enforced server-side;
+navigation visibility is not authorization. The form's current/upcoming
+presentation is keyboard-usable and exposes no arbitrary query-string content.
 
 ## 7. Content Placement and homepage curation
 
 ### Small typed relational placement design
 
-V1 uses six code-defined singleton `PlacementDefinition` values, not an admin-created generic slot builder. A definition has `key`, display name, allowed target kinds, maximum active items, whether an active window is allowed, fallback rule, and required preview context. V1 ordering mode is always `NONE`. Definitions are:
+The accepted V1 placement catalog reserves six code-defined singleton `PlacementDefinition` values, not an admin-created generic slot builder. C4 implements four of them; Project and Campaign slots remain future extensions until those typed domains and public projections exist. A definition has `key`, display name, allowed target kinds, maximum active items, whether an active window is allowed, fallback rule, and required preview context. Ordering is currently `NONE`. The implemented definitions are:
 
 | Key | Legal target | Cardinality and fallback |
 | --- | --- | --- |
-| `HOME_HERO` | Story, News, Project, or Campaign | At most one active placement; if none is eligible, render the approved static/default home hero configuration. |
+| `HOME_HERO` | Story or News | At most one active placement; if none is eligible, render the approved static/default home hero configuration. |
 | `HOME_FEATURED_STORY` | Story | At most one active placement; omit the region if none is eligible. |
 | `HOME_FEATURED_NEWS` | News | At most one active placement; fall back to latest eligible News, clearly labelled as latest rather than featured. |
-| `HOME_FEATURED_PROJECT` | Project | At most one active placement; omit the region if none is eligible. |
-| `HOME_FEATURED_CAMPAIGN` | Campaign | At most one active placement; omit the region if the Campaign domain/projection is absent or no target is eligible. |
 | `NEWS_FEATURED` | News | At most one active placement on the News landing; fall back to the latest eligible News, clearly labelled as latest rather than featured, or omit the region when no News is eligible. |
 
-`ContentPlacement` is the aggregate for a selected target: definition key, optional start/end instants, optional editor note, created/changed actor, and lifecycle/audit history. It has typed foreign-key alternatives (`storyPublicationId`, `newsPublicationId`, `projectId`, `campaignId`) and a `targetKind` check enforcing exactly one populated target and a target that is legal for its definition. This explicit union is intentionally small and schema-validated; it is not an `entityType/entityId` polymorphic blob. Each target has its normal FK and public-eligibility resolver.
+`ContentPlacement` is the persistent assignment for one shared `Publication`: definition key, real `Publication` foreign key, optional start/end instants, optional cancellation timestamp, optimistic version, actor/timestamp metadata, and retained lifecycle/audit history. The placement service applies the closed Story/News target matrix for each key; arbitrary placement keys and arbitrary target types cannot be created. This bounded relational design is not an admin-created page-builder record or a distributed `isFeatured` flag.
 
-The placement service validates capability, definition, active-window overlap/cardinality, target publication eligibility, and type. It checks a Story/News target’s currently active snapshot at resolve time, so a withdrawn, expired, archived, or unpublished target cannot remain featured. V1 permits schedule windows but does not support multiple ordered carousel items. Changing a placement, ending it, or resolving a collision is auditable. Cache invalidation follows the placement transaction.
+Placement definitions and target restrictions are code-owned. The service validates capability, definition, active-window overlap/cardinality, target publication eligibility, and type. Windows are half-open (`startsAt <= instant < endsAt`); a null end is open-ended; adjacent windows are allowed; overlapping non-cancelled windows for one key are rejected. Replacement ends the effective predecessor and advances the persisted version. Clearing/ending and future cancellation retain historical rows; cancellation preserves the original window and excludes the row from effectiveness and overlap enforcement. Stale mutations fail with a concurrency conflict, and successful consequential mutations write their audit evidence in the same transaction.
+
+Public placement resolution is deterministic for the requested instant and returns only safe placement window metadata plus the eligible `PublicStoryProjection` or `PublicNewsProjection`. It never reads an editable draft or exposes workflow, approval, audit, or internal-responsibility data. A target must have a released public projection, remain discovery-eligible and not withdrawn, and News must not be expired. If eligibility later changes, the placement history remains but the target does not render. C4 permits schedule windows but does not support multiple ordered carousel items.
+
+The successor-release invariant is durable: a placement targets stable `Publication` identity. A successor draft or approval does not change placed output; releasing the approved successor updates every effective placement for that Publication to the successor projection without changing placement IDs, windows, or placement history. Publication release records publication audit evidence, not a false placement mutation.
+
+Implemented mutation operations are immediate assignment, future scheduling, current inspection, upcoming inspection, current replacement, clear/end, and future cancellation. Clear follows the implemented idempotent behavior when the current assignment is already ended or absent; future cancellation rejects active, ended, and already-cancelled assignments.
+
+The implemented placement target matrix is:
+
+| Key | Allowed target |
+| --- | --- |
+| `HOME_HERO` | Story, News |
+| `HOME_FEATURED_STORY` | Story |
+| `HOME_FEATURED_NEWS` | News |
+| `NEWS_FEATURED` | News |
+
+The reserved but not implemented keys are `HOME_FEATURED_PROJECT` and `HOME_FEATURED_CAMPAIGN`. They are not currently available.
 
 Later definitions such as `HOME_FEATURED_EVENT`, `HOME_RESTORE`, `HOME_SHOP`, and `STORIES_FEATURED` must be added only with a public-region requirement, allowed-type rules, and fallback—not merely because the infrastructure can accept them.
 
@@ -199,14 +222,21 @@ The homepage is structured curation, not newest-row automation or drag-and-drop 
 | Hero | Curated | `HOME_HERO`; approved default when unplaced. |
 | Featured Story | Curated | `HOME_FEATURED_STORY`; omit if no eligible target. |
 | Featured News | Curated with derived fallback | `HOME_FEATURED_NEWS`; latest eligible News only when no managed placement. |
-| Featured Project | Curated | `HOME_FEATURED_PROJECT`; omit if no eligible target. |
-| Featured Campaign | Curated | `HOME_FEATURED_CAMPAIGN`; omit if the Campaign domain/projection is absent or no eligible target. |
 | Latest News | Derived | Most recent eligible News snapshots; never confused with featured. |
 | Upcoming Events | Derived | Public Event/Edition dates; no Communications duplicate schedule. |
 | Impact evidence | Curated configuration | Approved metric set from Impact domain; show source/methodology/period. |
 | Volunteer, newsletter, ReStore, Shop, Partners | Stable approved component/configuration in V1 | Each domain remains authoritative; future contextual placements require approved definitions. |
 
 Homepage preview resolves the same placement and eligible public projection rules as public rendering, against an authorized preview context. It does not make drafts generally public or let a placement override publication approval.
+
+The implemented C4 homepage is complete without configured placements: it
+renders the safe hero state, optional Featured Story, optional Featured News,
+derived Latest News, the participation-oriented invitation, and the
+established navigation/footer. It does not promote arbitrary content
+automatically, and configured News links are not duplicated in Latest News
+where the current composition can identify the duplicate. Project and
+Campaign regions are not placeholders in this implementation; they remain
+future domain extensions.
 
 ## 8. Authors and controlled taxonomy
 
@@ -385,7 +415,7 @@ Public DTOs are snapshot-specific allowlists. They contain only public author fi
 | Stories | typed model, shared kernel, authored public index/detail, archive/withdraw/restore semantics, relations, categories, AuthorProfile, V1 rich text | RSS, more relation presentation, audio/transcript | multilingual, advanced media/story formats |
 | News | typed model, lifecycle/expiration/archive/withdrawal, index/detail/archive, Featured News placement | RSS, defined pin policy if justified | press-release subtype/syndication |
 | Queue/Dashboard | listed V1 views, actionable modules, no vanity metrics | Newsletter work, calendar entry point, verified link signal | analytics/recommendation dashboards |
-| Placements/homepage | six code-defined singleton V1 slots and hybrid sections | additional specifically designed slots | general placement catalog only if repeated needs prove it |
+| Placements/homepage | four implemented Story/News singleton keys and hybrid sections; Project/Campaign keys remain reserved future extensions | additional specifically designed slots | general placement catalog only if repeated needs prove it |
 | Authors/categories | AuthorProfile, flat controlled category, no tags | category merge UX/analytics | carefully governed supplemental vocabulary if evidence warrants |
 | Site Notices | small scoped notice/banner | more controlled target areas | segmentation, push/notification integrations |
 | Story Submission | secure text intake/triage/conversion after approved owner, retention/privacy text, and abuse controls; uploads only after private-upload/consent controls | safer follow-up workflow/reporting | separate News tip intake only after design review |
@@ -403,7 +433,7 @@ These slices refine, but do not replace, the accepted platform roadmap. Slice 2 
 | C1 — Publishing kernel contract | After platform shell: shared typed publication spine, immutable revision/hash/approval/snapshot/schedule/withdraw semantics, shared Story/News discovery disposition and restore-through-successor, internal responsibility assignments, audit hooks, public-query boundary, and test fixtures. Accept only when real PostgreSQL migrations and adversarial approval, scheduler, public-draft, archive/restore, and own/any-scope tests pass. | Sol coordinates schema/concurrency/security; Terra can implement isolated renderer/test work after contracts freeze. Risk: generic blob or stale approval. | UI dashboard, rich editing polish, all placements except contract. |
 | C2 — Media and authoring safety | Storage adapter integration, MediaAsset/Usage, rights/contextual-alt gates, V1 structured schema/renderer, AuthorProfile/category controls. Depends on C1 and upload-provider safety decisions. Accept when private/public delivery is isolated, unsafe/unready usage cannot snapshot, author/category cardinality is enforced, and editor/renderer/hash parity tests pass. | Terra leads bounded work; Sol reviews public/private and snapshot invariants; renderer, media processing, and negative tests can parallelize after contracts freeze. Risk: unsafe upload or snapshot drift. | Video/embeds, generic media library/public gallery. |
 | C3 — Stories | Story typed validation, authoring/review/public index/detail/preview, shared archive/withdraw/restore presentation, relations, and search DTO. Depends on C1–C2 and authorization shell. Accept when the typed journey publishes only the approved snapshot, successor drafts stay private, archived Stories leave ordinary discovery while retaining the approved direct historical behavior, restoration uses an approved successor, consent/relation negatives pass, and public SEO/accessibility/search journeys pass. | Terra; public/admin/test journeys may parallelize after contracts freeze. Risk: consent/private context leak. | Submissions, newsletter, packages. |
-| C4 — News and placements | News expiration/archive/withdrawal behavior, News public routes/archive, six Content Placement definitions, and homepage hybrid resolution. Depends on C1–C3; Project/Campaign slots stay safely empty until their public projections exist. Accept when missed/duplicate jobs, time zones, restore-through-successor, singleton overlap, target ineligibility, audit, and every fallback/omission are tested. | Terra; public News, placement UI, and tests can parallelize after target contracts; Sol reviews schedule/window/collision semantics. Risk: stale featured/expired item. | Pinning, generalized slots, calendar. |
+| C4 — News and placements | News expiration/archive/withdrawal behavior, News public routes/archive, four implemented Content Placement definitions, and homepage hybrid resolution. Depends on C1–C3; Project/Campaign slots remain reserved until their public projections exist. Accept when target matrix, half-open windows, overlap, cancellation history, concurrency, audit atomicity, successor release, migration upgrade, public projection boundary, browser/accessibility/visual states, and preview CSP behavior are verified. | Terra; public News, placement UI, and tests can parallelize after target contracts; schedule/window/collision semantics require focused review. Risk: stale featured/expired item. | Project/Campaign slots, pinning, generalized slots, calendar. |
 | C5 — Queue and Dashboard | V1 saved views, four Dashboard modules, focused action routing, capability filtering, and quality classifications. Depends on C1–C4. Accept when every view/module reconciles to authoritative queries, own/any and negative scopes pass, confidential intake never appears, and counts/deep links match their destination. | Terra; read-model, presentation, and adversarial authorization tests may parallelize. Risk: dashboard becomes alternate workflow truth or reveals confidential data. | Analytics/vanity metrics, broad filters. |
 | C6 — Notices and submissions | Site Notices plus public Story Submission intake/retention/triage/conversion after named owner and policy approval. Text-only intake may launch first; private uploads require the full upload/consent controls. Depends on C2/C3 and abuse controls. Accept when notices stop exactly at end time, intake is non-enumerable/rate-limited/private, conversion creates a distinct Story draft, retention jobs work, and participant/minor/media paths remain blocked pending clearance. | Terra; Notice UI, text intake, and retention tests can parallelize after contracts; Sol reviews intake/security boundary. Risk: collecting protected data or unsafe upload. | Public News tips, applicant-like workflow. |
 | C7 — Newsletter Edition | Typed edition/blocks/revision/snapshot and public web archive after archive policy; provider port/adapter only after DonorView/provider confirmation. Depends on C1/C2; delivery alone depends on a selected contract. Accept when block order and referenced versions freeze, later source edits do not mutate an edition, no subscriber list is copied, web publishing is independently authorized, and `SENT` can arise only from an idempotent verified provider result. | Terra; web edition and provider-contract tests can parallelize only after boundaries freeze; Sol reviews delivery idempotency/privacy. Risk: subscriber shadow database or mutable archive. | Personalization, automation, subscriber sync. |

@@ -1,7 +1,7 @@
 # Authorization and permissions
 
 Status: Accepted policy baseline
-Last reviewed: 2026-08-14
+Last reviewed: 2026-08-15
 
 ## Core policy
 
@@ -37,6 +37,13 @@ Names may be mechanically refined before migrations, but separation must be pres
 - `communications.requirements.override` for an explicit, audited exceptional publication-requirement override only
 
 The `own` scope is evaluated only from the required internal `PublicationResponsibility.editorialOwnerAdminUserId`, never from a client-supplied author/byline, revision creator, or reviewer assignment. Creation defaults ownership to the active creator unless an authorized any-scope command assigns another active user; owner reassignment requires typed `edit.any` and audit. Reviewer/approver assignments organize Queue responsibility but grant no capability. Creating/editing, reviewing, approving, publishing, scheduling, archiving/withdrawing, media clearance, and placing are deliberately independent. Placement management acts only through `ContentPlacement`; it does not grant a permanent “featured” state or bypass target eligibility. `newsletter.publish` covers an approved public web-edition snapshot only. Newsletter delivery-provider configuration and send execution are not Communications capabilities until a provider decision establishes their security boundary.
+
+`communications.placements.manage` governs assignment, replacement, future
+scheduling, current clearing/ending, and cancellation of a future assignment.
+It does not authorize arbitrary placement keys, bypass the Story/News target
+matrix, make an unpublished or otherwise ineligible target public, or expose
+internal placement audit data through public resolution. Capability enforcement
+is server-side; hiding the curation route or its controls is not authorization.
 
 ### Projects, programs, and public impact
 

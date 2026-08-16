@@ -22,7 +22,7 @@ Use a narrow shared publication spine (`Publication`, immutable `PublicationRevi
 - Withdrawal, expiration, archival, and superseding publication preserve snapshots and audit history.
 - News adds typed optional expiration behavior; Story and News share deliberate archival discovery behavior, while Stories do not inherit expiry. Urgency, pinning, and editorial priority are not V1 News fields: urgency belongs in a Site Notice where appropriate, recency is derived, and featured presentation is a placement.
 
-Model featured content through `PlacementDefinition` plus `ContentPlacement`, with a named slot, closed eligible target set, optional active window, fallback, and audit. Do not scatter permanent `isFeatured` flags. V1 has six code-owned singleton definitions—five homepage slots plus `NEWS_FEATURED`—with no priority or ordering.
+Model featured content through `PlacementDefinition` plus `ContentPlacement`, with a named slot, closed eligible target set, optional active window, fallback, and audit. Do not scatter permanent `isFeatured` flags. The accepted V1 catalog reserves six code-owned singleton definitions—five homepage slots plus `NEWS_FEATURED`—with no priority or ordering; C4 implements the four Story/News keys and leaves Project/Campaign slots for their future typed domains.
 
 Existing schedule fields remain queryable for a future Communications Calendar. A future publication type adopts the shared contract plus typed invariants. No calendar-only or Package model is created now.
 

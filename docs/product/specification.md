@@ -89,7 +89,7 @@ Media requires rights/provenance, consent/restrictions where people are identifi
 
 Featured News is an editorial selection, not an inherent permanent property of every News record. The product direction is a managed curated-placement capability that can eventually address homepage and landing-page selections such as Featured Story, Featured News, Campaign, Project, Event, ReStore, Shop, hero, impact, volunteer, partner, and newsletter content.
 
-V1 uses six code-owned typed singleton placement definitions, not a universal page builder: `HOME_HERO` (Story, News, Project, or Campaign), `HOME_FEATURED_STORY` (Story), `HOME_FEATURED_NEWS` (News), `HOME_FEATURED_PROJECT` (Project), `HOME_FEATURED_CAMPAIGN` (Campaign), and `NEWS_FEATURED` (News). Each slot allows at most one active target, may have a start/end window, and retains audited history. Ineligible, unpublished, expired, archived, or withdrawn targets cannot be activated; an empty unavailable-domain slot hides or uses its code-defined fallback. The five `HOME_*` slots are the V1 manual homepage curation surface; `NEWS_FEATURED` is the distinct News-surface selection. Additional placement definitions are V1.1 only when a demonstrated editorial need exists. Authorized staff can curate V1 slots without deployment.
+The accepted V1 catalog reserves six code-owned typed singleton placement definitions, not a universal page builder. C4 implements `HOME_HERO` (Story or News), `HOME_FEATURED_STORY` (Story), `HOME_FEATURED_NEWS` (News), and `NEWS_FEATURED` (News). `HOME_FEATURED_PROJECT` and `HOME_FEATURED_CAMPAIGN` remain future extensions until their typed domains and public projections exist. Each implemented slot allows at most one effective target, uses an optional half-open start/end window, and retains audited history. Ineligible, unpublished, expired, archived, or withdrawn targets cannot render; an unavailable implemented region uses its code-defined fallback or is omitted. Authorized staff can curate implemented slots without deployment.
 
 ### 3.3 Projects, programs, partners, and impact
 
@@ -209,7 +209,7 @@ This is a domain grouping, not a frozen sidebar.
 
 #### Communications Dashboard
 
-The dashboard is a required task-oriented editorial command center. V1 modules are: Needs attention (items awaiting the viewer's review/approval, blocking validation, failed release/schedule, consent/rights gaps); Upcoming (approved candidates with scheduled releases and News expiring in the next 14 days); Current curation (the five V1 homepage slots); and Recent activity (meaningful candidate workflow, release, placement, rights, and withdrawal events). Counts link to filtered authoritative lists; they are not a second workflow store. Broken-link checks, newsletter readiness, and broad freshness scores are V1.1. All modules show only records/actions the viewer can read or act on.
+The dashboard is a required task-oriented editorial command center. Its planned modules are: Needs attention (items awaiting the viewer's review/approval, blocking validation, failed release/schedule, consent/rights gaps); Upcoming (approved candidates with scheduled releases and News expiring in the next 14 days); Current curation (the implemented homepage slots, with `NEWS_FEATURED` on the News surface); and Recent activity (meaningful candidate workflow, release, placement, rights, and withdrawal events). Counts link to filtered authoritative lists; they are not a second workflow store. Broken-link checks, newsletter readiness, and broad freshness scores are V1.1. All modules show only records/actions the viewer can read or act on.
 
 #### Story and News administration
 
@@ -359,7 +359,7 @@ The foundation is product-ready for implementation planning when all of the foll
 - Stories and News use typed authoring roots and typed public presentation over shared revision, approval, scheduling, snapshot, media, SEO, relationship, and audit infrastructure.
 - Public reads use immutable published snapshots only. The currently published snapshot remains visible while a successor draft is edited.
 - News expiration is an automatic relevance transition: it removes current/featured treatment, preserves an explicit historical canonical page, and does not equal withdrawal or deletion.
-- V1 curation is six code-owned typed singleton placement definitions: five manually curated homepage slots plus the distinct `NEWS_FEATURED` selection, with eligibility validation, optional active windows, defined fallback, and audit—not flags on content records or a page builder.
+- The accepted curation catalog reserves six code-owned typed singleton placement definitions; C4 implements the four Story/News keys with eligibility validation, optional half-open windows, defined fallback, and audit—not flags on content records or a page builder. Project/Campaign keys are future extensions.
 - V1 Queue and Dashboard are action-oriented derived views over authoritative workflow/placement/audit records.
 - Authors are public profiles independent of admin access; taxonomy is a controlled flat category set; generic tags are excluded from V1.
 - Site Notices are a minimal, separate operational channel. Public Story submissions are isolated private intake that may become a Story Draft only after editorial acceptance. Public News submission is not planned.

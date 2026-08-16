@@ -1,7 +1,7 @@
 # Domain model
 
 Status: Accepted conceptual model; not a database schema
-Last reviewed: 2026-08-14
+Last reviewed: 2026-08-15
 
 ## Modeling rules
 
@@ -66,9 +66,11 @@ The candidate-revision workflow is `DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `P
 
 ### Aggregate: PlacementDefinition and ContentPlacement
 
-- `PlacementDefinition`: code-owned slot definition with a stable key, permitted target kinds, cardinality, overlap/window rules, fallback policy, and public surface. V1 has six singleton definitions and no ordering mode; definitions are not administrator-created page-builder data.
-- `ContentPlacement`: a placement instance for one definition, with optional active interval, lifecycle/audit fields, and exactly one typed target join. V1 definitions are singletons with no priority or ordering; a later multi-item definition must state its ordering rule explicitly. Typed joins point from placement to their normal domain root; arbitrary polymorphic `target_type`/`target_id` storage is rejected. The definition validates which typed joins can exist.
-- A target must remain public and otherwise eligible for the entire active window. Ineligible, expired, archived, withdrawn, or missing targets deactivate/fail placement validation and invoke the definition's fallback behavior. Only placements approved by the homepage/Communications design are created in Slice work.
+- `PlacementDefinition`: code-owned singleton slot definition with a stable key, permitted target kinds, cardinality, half-open window rules, fallback policy, and public surface. The accepted catalog reserves six definitions; C4 implements `HOME_HERO`, `HOME_FEATURED_STORY`, `HOME_FEATURED_NEWS`, and `NEWS_FEATURED`. `HOME_FEATURED_PROJECT` and `HOME_FEATURED_CAMPAIGN` are future extensions, not available keys. Definitions are not administrator-created page-builder data and have no ordering mode.
+- `ContentPlacement`: a persistent assignment for one definition and one shared `Publication` foreign key, with optional active interval, cancellation timestamp, optimistic version, actor/timestamp metadata, and retained lifecycle/audit history. The service enforces the typed Story/News target matrix; arbitrary polymorphic target storage and distributed `isFeatured` flags are rejected. One key has at most one effective non-cancelled assignment at an instant, while historical rows remain queryable.
+- Placement windows are half-open; null `endsAt` is open-ended; adjacent windows are allowed and overlapping non-cancelled windows for one key are rejected. Replacement, clear/end, and future cancellation preserve historical rows. Stale mutations fail with a concurrency conflict, and consequential mutation audit evidence commits atomically with placement state.
+- A target must have an eligible released public projection at resolution time. Ineligible, expired, archived, withdrawn, or missing targets do not render, but their placement history is not deleted. Public resolution returns only safe placement metadata and projection DTO fields; it never falls back to an editable draft or exposes authoring/workflow/approval/audit/internal-responsibility data.
+- Because the placement targets stable `Publication` identity, a released successor projection updates every effective placement for that publication without rewriting placement IDs, windows, or placement history. Publication release audit is not a placement mutation event.
 
 ### Aggregate: AuthorProfile and editorial taxonomy
 
