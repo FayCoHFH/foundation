@@ -38,6 +38,7 @@ type RawQueueRow = {
 };
 
 type RawCountRow = {
+  all: number;
   myDrafts: number;
   needsReview: number;
   needsApproval: number;
@@ -448,6 +449,7 @@ export async function getPublicationQueue(
   `);
   const counts = await db.$queryRaw<RawCountRow[]>(Prisma.sql`
     SELECT
+      COUNT(*) FILTER (WHERE ${conditions.ALL} ${filters})::int AS "all",
       COUNT(*) FILTER (WHERE ${conditions.MY_DRAFTS} ${filters})::int AS "myDrafts",
       COUNT(*) FILTER (WHERE ${conditions.NEEDS_REVIEW} ${filters})::int AS "needsReview",
       COUNT(*) FILTER (WHERE ${conditions.NEEDS_APPROVAL} ${filters})::int AS "needsApproval",
@@ -467,6 +469,7 @@ export async function getPublicationQueue(
     total: count.selectedTotal,
     hasNextPage: offset + rows.length < count.selectedTotal,
     summary: {
+      all: count.all,
       myDrafts: count.myDrafts,
       needsReview: count.needsReview,
       needsApproval: count.needsApproval,
@@ -477,4 +480,68 @@ export async function getPublicationQueue(
     },
     evaluatedAt: request.now,
   };
+}
+
+export type PublicationQueueOwnerOption = Readonly<{
+  adminUserId: string;
+  displayName: string;
+}>;
+
+export function getAvailablePublicationQueueViews(
+  actor: QueueActor,
+): readonly QueueView[] {
+  if (!has(actor, "communications.queue.read")) return [];
+
+  const storyDraft =
+    typeCapability(actor, "STORY", "anyDraft") ||
+    typeCapability(actor, "STORY", "ownDraft");
+  const newsDraft =
+    typeCapability(actor, "NEWS", "anyDraft") ||
+    typeCapability(actor, "NEWS", "ownDraft");
+  const storyReview = typeCapability(actor, "STORY", "review") && storyDraft;
+  const newsReview = typeCapability(actor, "NEWS", "review") && newsDraft;
+  const storyApproval = typeCapability(actor, "STORY", "approve");
+  const newsApproval = typeCapability(actor, "NEWS", "approve");
+  const storyRelease = canInspectAnyPublished("STORY", actor);
+  const newsRelease = canInspectAnyPublished("NEWS", actor);
+  const views: QueueView[] = [];
+
+  if (storyDraft || newsDraft) views.push("MY_DRAFTS");
+  if (storyReview || newsReview) views.push("NEEDS_REVIEW");
+  if (storyApproval || newsApproval) views.push("NEEDS_APPROVAL");
+  if (storyRelease || newsRelease) views.push("APPROVED_UNRELEASED");
+  if (storyRelease || newsRelease) views.push("RECENTLY_PUBLISHED");
+  if (newsRelease) views.push("EXPIRED_NEWS");
+  if (storyRelease || newsRelease) views.push("ARCHIVED");
+  if (views.length) views.push("ALL");
+  return views;
+}
+
+export async function listPublicationQueueOwnerOptions(
+  db: PrismaClient,
+  actor: QueueActor,
+  now = new Date(),
+): Promise<readonly PublicationQueueOwnerOption[]> {
+  if (!has(actor, "communications.queue.read")) {
+    throw new AuthorizationError();
+  }
+  const active = await db.adminUser.findFirst({
+    where: { id: actor.adminUserId, status: "ACTIVE" },
+    select: { id: true },
+  });
+  if (!active) throw new AuthorizationError();
+  if (!canInspectBroadOwnership(actor)) return [];
+
+  const conditions = viewConditions(actor, now);
+  const rows = await db.$queryRaw<PublicationQueueOwnerOption[]>(Prisma.sql`
+    SELECT DISTINCT
+      r."editorialOwnerAdminUserId" AS "adminUserId",
+      owner_user.name AS "displayName"
+    ${baseFrom()}
+    WHERE r."editorialOwnerAdminUserId" IS NOT NULL
+      AND owner_user.name IS NOT NULL
+      AND ${conditions.ALL}
+    ORDER BY owner_user.name ASC, r."editorialOwnerAdminUserId" ASC
+  `);
+  return rows;
 }

@@ -166,6 +166,7 @@ export type PublicationQueueItem = Readonly<{
 }>;
 
 export type PublicationQueueSummary = Readonly<{
+  all: number;
   myDrafts: number;
   needsReview: number;
   needsApproval: number;

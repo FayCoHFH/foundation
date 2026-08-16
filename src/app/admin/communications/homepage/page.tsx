@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import {
   PLACEMENT_KEYS,
   getPlacementState,
@@ -54,14 +54,10 @@ export default async function HomepageCuration({
         displayName: access.principal.name,
         email: access.principal.email,
       }}
-      navigation={[
-        { href: "/admin/communications/news", label: "News" },
-        {
-          href: "/admin/communications/homepage",
-          label: "Homepage curation",
-          current: true,
-        },
-      ]}
+      navigation={communicationsNavigation(
+        access.principal,
+        "/admin/communications/homepage",
+      )}
     >
       <h1 className="font-serif text-4xl">Homepage curation</h1>
       <p className="text-muted-foreground mt-3">

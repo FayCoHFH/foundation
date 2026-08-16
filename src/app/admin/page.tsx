@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { signOutAdmin } from "@/app/admin/actions";
-import { AdminShell, type AdminNavigationItem } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 
@@ -15,22 +15,13 @@ export default async function AdminHomePage() {
   }
   if (access.status === "denied") redirect("/admin/access-denied");
   const { principal } = access;
-  const navigation: AdminNavigationItem[] = [
-    { href: "/admin", label: "Administration", current: true },
-    ...(hasCapability(principal, "users.invite")
-      ? [{ href: "/admin/invitations/new", label: "Invite administrator" }]
-      : []),
-    ...(hasCapability(principal, "stories.create") ||
-    hasCapability(principal, "stories.read.draft.own") ||
-    hasCapability(principal, "stories.read.draft.any")
-      ? [{ href: "/admin/communications/stories", label: "Story drafts" }]
-      : []),
-    ...(hasCapability(principal, "news.create") ||
-    hasCapability(principal, "news.read.draft.own") ||
-    hasCapability(principal, "news.read.draft.any")
-      ? [{ href: "/admin/communications/news", label: "News" }]
-      : []),
-  ];
+  const navigation = communicationsNavigation(principal, "/admin");
+  if (hasCapability(principal, "users.invite")) {
+    navigation.splice(1, 0, {
+      href: "/admin/invitations/new",
+      label: "Invite administrator",
+    });
+  }
 
   return (
     <AdminShell

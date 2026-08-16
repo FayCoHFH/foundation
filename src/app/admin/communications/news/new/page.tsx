@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { createNewsForm } from "../actions";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 export default async function NewNews() {
@@ -15,10 +15,10 @@ export default async function NewNews() {
         displayName: access.principal.name,
         email: access.principal.email,
       }}
-      navigation={[
-        { href: "/admin/communications/news", label: "News" },
-        { href: "#", label: "New News", current: true },
-      ]}
+      navigation={communicationsNavigation(
+        access.principal,
+        "/admin/communications/news",
+      )}
     >
       <h1 className="font-serif text-4xl">Create News draft</h1>
       <NewsForm action={createNewsForm} />

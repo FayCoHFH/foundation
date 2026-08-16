@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import type { Capability } from "@/platform/auth/capabilities";
 import {
   getPublicationQueue,
+  listPublicationQueueOwnerOptions,
   type PublicationQueueItem,
 } from "@/modules/communications/queue";
 import { AuthorizationError } from "@/platform/errors/app-error";
@@ -749,6 +750,7 @@ describe("C5A-1 Publication Queue PostgreSQL read model", () => {
     expect(page.hasNextPage).toBe(true);
     expect(page.summary.myDrafts).toBeGreaterThan(0);
     const expectedCounts = {
+      all: pages.length,
       myDrafts: (
         await getPublicationQueue(prisma, manager, {
           view: "MY_DRAFTS",
@@ -835,5 +837,30 @@ describe("C5A-1 Publication Queue PostgreSQL read model", () => {
         /^\/admin\/communications\/(stories|news)\//,
       );
     }
+  });
+
+  it("limits owner options to broader readers and exposes the ALL count", async () => {
+    const managerOwners = await listPublicationQueueOwnerOptions(
+      prisma,
+      manager,
+      now,
+    );
+    expect(managerOwners).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          adminUserId: contributor.adminUserId,
+          displayName: expect.any(String),
+        }),
+      ]),
+    );
+    await expect(
+      listPublicationQueueOwnerOptions(prisma, contributor, now),
+    ).resolves.toEqual([]);
+    const all = await getPublicationQueue(prisma, manager, {
+      view: "ALL",
+      filters: { editorialOwnerAdminUserId: contributor.adminUserId },
+      now,
+    });
+    expect(all.summary.all).toBe(all.total);
   });
 });

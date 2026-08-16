@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { signOutAdmin } from "@/app/admin/actions";
 import { StoryCreateForm } from "@/app/admin/communications/stories/story-create-form";
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 
@@ -22,15 +22,10 @@ export default async function NewStoryPage() {
   return (
     <AdminShell
       identity={{ displayName: principal.name, email: principal.email }}
-      navigation={[
-        { href: "/admin", label: "Administration" },
-        { href: "/admin/communications/stories", label: "Story drafts" },
-        {
-          href: "/admin/communications/stories/new",
-          label: "Create Story draft",
-          current: true,
-        },
-      ]}
+      navigation={communicationsNavigation(
+        principal,
+        "/admin/communications/stories",
+      )}
       accountActions={
         <form action={signOutAdmin}>
           <Button type="submit">Sign out</Button>

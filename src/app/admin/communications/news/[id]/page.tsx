@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import {
   getNewsDraft,
   newsDocumentToPlainText,
@@ -67,10 +67,10 @@ export default async function NewsDraft({
         displayName: access.principal.name,
         email: access.principal.email,
       }}
-      navigation={[
-        { href: "/admin/communications/news", label: "News" },
-        { href: "#", label: "News draft", current: true },
-      ]}
+      navigation={communicationsNavigation(
+        access.principal,
+        "/admin/communications/news",
+      )}
     >
       <h1 className="font-serif text-4xl">{item.currentRevision.headline}</h1>
       <p className="text-muted-foreground mt-3">

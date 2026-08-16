@@ -50,8 +50,16 @@ PostgreSQL regression evidence are documented in
 The Queue UI, Dashboard, workflow actions, and publication scheduling remain
 outside this bounded slice.
 
-**Next Communications slice: C5A-2 — Publication Queue admin UI,
-accessibility & browser validation.**
+**C5A-2A — Publication Queue admin UI: complete 2026-08-16.** The protected
+server-rendered Queue route, capability-filtered navigation and counts,
+URL-driven filters and pagination, typed Story/News rows, responsive semantic
+list, empty/error states, and component/render coverage are documented in
+[the C5A-2A delivery record](../development/c5a2a-publication-queue-admin-ui.md).
+Browser, axe, and formal visual validation remain in C5A-2B; this entry does
+not mark all of C5A-2 complete.
+
+**Next Communications slice: C5A-2B — Publication Queue browser,
+accessibility & visual validation.**
 
 ## Slice 1 — Application Foundation and Scaffold
 

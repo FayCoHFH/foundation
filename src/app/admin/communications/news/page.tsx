@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import { signOutAdmin } from "@/app/admin/actions";
 import { listNewsDrafts } from "@/modules/communications/news";
@@ -21,10 +21,10 @@ export default async function NewsAdmin() {
         displayName: access.principal.name,
         email: access.principal.email,
       }}
-      navigation={[
-        { href: "/admin", label: "Administration" },
-        { href: "/admin/communications/news", label: "News", current: true },
-      ]}
+      navigation={communicationsNavigation(
+        access.principal,
+        "/admin/communications/news",
+      )}
       accountActions={
         <form action={signOutAdmin}>
           <Button type="submit">Sign out</Button>

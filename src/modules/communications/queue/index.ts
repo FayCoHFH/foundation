@@ -18,3 +18,8 @@ export {
   type QueueView,
 } from "./queue-contracts";
 export { getPublicationQueue } from "./queue-service";
+export {
+  getAvailablePublicationQueueViews,
+  listPublicationQueueOwnerOptions,
+} from "./queue-service";
+export type { PublicationQueueOwnerOption } from "./queue-service";

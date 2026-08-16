@@ -58,8 +58,10 @@ public release first; newest expiration first; and newest archive transition
 first.
 
 Summary counts are calculated in the same capability-filtered SQL query as the
-selected page. They are not persisted. Counts use the explicit request clock,
-so News can move between `RECENTLY_PUBLISHED` and `EXPIRED_NEWS` deterministically.
+selected page, including the capability-filtered `ALL` union count used by the
+admin Queue navigation. They are not persisted. Counts use the explicit request
+clock, so News can move between `RECENTLY_PUBLISHED` and `EXPIRED_NEWS`
+deterministically.
 
 ## Implementation and validation
 

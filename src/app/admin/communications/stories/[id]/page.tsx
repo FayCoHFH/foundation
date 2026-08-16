@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { signOutAdmin } from "@/app/admin/actions";
 import { StoryEditorForm } from "@/app/admin/communications/stories/story-editor-form";
 import { StoryWorkflowControls } from "@/app/admin/communications/stories/story-workflow-controls";
-import { AdminShell } from "@/components/admin-shell";
+import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import {
   getStoryDraft,
@@ -41,15 +41,10 @@ export default async function StoryDraftPage({
   return (
     <AdminShell
       identity={{ displayName: principal.name, email: principal.email }}
-      navigation={[
-        { href: "/admin", label: "Administration" },
-        { href: "/admin/communications/stories", label: "Story drafts" },
-        {
-          href: `/admin/communications/stories/${story.storyId}`,
-          label: "Story draft",
-          current: true,
-        },
-      ]}
+      navigation={communicationsNavigation(
+        principal,
+        "/admin/communications/stories",
+      )}
       accountActions={
         <form action={signOutAdmin}>
           <Button type="submit">Sign out</Button>
