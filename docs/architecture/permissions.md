@@ -45,6 +45,11 @@ matrix, make an unpublished or otherwise ineligible target public, or expose
 internal placement audit data through public resolution. Capability enforcement
 is server-side; hiding the curation route or its controls is not authorization.
 
+`communications.notices.manage` governs Site Notice creation, administrative
+reads, edits, publication, and withdrawal. Public effective-notice reads are
+unauthenticated and return only the bounded safe projection; they never expose
+actors, versions, lifecycle internals, or audit metadata.
+
 ### Projects, programs, and public impact
 
 - `programs.manage`

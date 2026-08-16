@@ -86,6 +86,15 @@ boundaries, typed routing, and browser/accessibility/visual validation are
 complete. Scheduling, Site Notices, and public Story Submissions remain later
 bounded slices.
 
+**C6A-1 — Site Notice domain foundation: complete locally on 2026-08-16.** The
+typed SiteNotice aggregate, PostgreSQL persistence, bounded lifecycle windows,
+safe CTA validation, optimistic concurrency, capability authorization, atomic
+audit evidence, public effective read model, administrative read model, and
+PostgreSQL/unit validation are documented in
+[the C6A-1 delivery record](../development/c6a1-site-notice-domain.md).
+Site Notice UI, public rendering, accessibility, and browser validation remain
+C6A-2 work; Public Story Submissions remain C6B.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

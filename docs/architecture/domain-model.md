@@ -79,8 +79,8 @@ The candidate-revision workflow is `DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `P
 
 ### Aggregate: SiteNotice
 
-- `SiteNotice`: a small, separately typed Communications aggregate for operational notices: title, short accessible message, severity (`INFO`, `IMPORTANT`, `URGENT`), target surface, required active window, optional CTA, and `DRAFT`/`PUBLISHED`/`WITHDRAWN` lifecycle with derived upcoming/active/ended presentation.
-- Notices automatically stop rendering after their end time, are audited, and are not indexed or modeled as News unless staff intentionally creates a separate News item.
+- `SiteNotice`: a small, separately typed Communications aggregate for operational notices: bounded plain-text title/message, severity (`INFO`, `IMPORTANT`, `URGENT`), code-owned target area (`SITE_WIDE` or `HOMEPAGE`), optional single CTA, optimistic version, and `DRAFT`/`PUBLISHED`/`WITHDRAWN` lifecycle with derived upcoming/active/expired presentation.
+- Published notices require a bounded half-open activation window. They automatically stop rendering after their exclusive end time, are audited, and are not indexed or modeled as News unless staff intentionally creates a separate News item.
 
 ### Aggregate: PublicStorySubmission
 

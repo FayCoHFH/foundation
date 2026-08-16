@@ -48,6 +48,23 @@ enum PlacementKey {
   NEWS_FEATURED
 }
 
+enum SiteNoticeSeverity {
+  INFO
+  IMPORTANT
+  URGENT
+}
+
+enum SiteNoticeTargetArea {
+  SITE_WIDE
+  HOMEPAGE
+}
+
+enum SiteNoticeLifecycle {
+  DRAFT
+  PUBLISHED
+  WITHDRAWN
+}
+
 enum PublicationWorkflowState {
   DRAFT
   IN_REVIEW
@@ -216,6 +233,10 @@ model AdminUser {
   publicationApprovals      PublicationApproval[]            @relation("PublicationApprover")
   createdContentPlacements  ContentPlacement[]               @relation("ContentPlacementCreator")
   changedContentPlacements  ContentPlacement[]               @relation("ContentPlacementChanger")
+  createdSiteNotices        SiteNotice[]                     @relation("SiteNoticeCreator")
+  updatedSiteNotices        SiteNotice[]                     @relation("SiteNoticeUpdater")
+  publishedSiteNotices      SiteNotice[]                     @relation("SiteNoticePublisher")
+  withdrawnSiteNotices      SiteNotice[]                     @relation("SiteNoticeWithdrawer")
 
   @@index([status])
   @@map("admin_user")
@@ -530,6 +551,39 @@ model ContentPlacement {
   @@index([key, startsAt])
   @@index([publicationId])
   @@map("content_placement")
+}
+
+// Small, temporary operational communications. Site Notices are not
+// Publications, placements, or permanent public archive records.
+model SiteNotice {
+  id                     String               @id @default(uuid()) @db.Uuid
+  title                  String               @db.VarChar(160)
+  message                String               @db.VarChar(500)
+  severity               SiteNoticeSeverity
+  targetArea             SiteNoticeTargetArea
+  ctaLabel               String?              @db.VarChar(80)
+  ctaUrl                 String?              @db.VarChar(2048)
+  lifecycle              SiteNoticeLifecycle  @default(DRAFT)
+  startsAt               DateTime?
+  endsAt                 DateTime?
+  version                Int                  @default(1)
+  createdByAdminUserId   String               @db.Uuid
+  updatedByAdminUserId   String               @db.Uuid
+  publishedByAdminUserId String?              @db.Uuid
+  publishedAt            DateTime?
+  withdrawnByAdminUserId String?              @db.Uuid
+  withdrawnAt            DateTime?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  createdBy              AdminUser            @relation("SiteNoticeCreator", fields: [createdByAdminUserId], references: [id], onDelete: Restrict)
+  updatedBy              AdminUser            @relation("SiteNoticeUpdater", fields: [updatedByAdminUserId], references: [id], onDelete: Restrict)
+  publishedBy            AdminUser?           @relation("SiteNoticePublisher", fields: [publishedByAdminUserId], references: [id], onDelete: Restrict)
+  withdrawnBy            AdminUser?           @relation("SiteNoticeWithdrawer", fields: [withdrawnByAdminUserId], references: [id], onDelete: Restrict)
+
+  @@unique([id, version])
+  @@index([targetArea, lifecycle, startsAt, endsAt])
+  @@index([lifecycle, updatedAt, id])
+  @@map("site_notice")
 }
 
 // Private work-management assignment. This never supplies a public byline.

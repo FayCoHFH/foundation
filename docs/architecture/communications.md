@@ -169,6 +169,13 @@ The Dashboard is a derived, capability-filtered read model, not a reporting prod
 
 Empty states explain that no action is needed and link to permitted creation/Queue actions. There are no V1 traffic, engagement, follower, or “content count” vanity tiles. Broken-link results may appear only when a verified checker exists, its check time is displayed, and the viewer can remedy the target; otherwise they remain a future quality signal. Newsletter work appears once Newsletter Edition is implemented.
 
+The C6A-1 Site Notice foundation is a distinct mutable aggregate rather than
+a Publication subtype or placement. It supports the code-owned `SITE_WIDE`
+and `HOMEPAGE` areas, INFO/IMPORTANT/URGENT severity, bounded half-open
+windows, optional safe single CTAs, DRAFT/PUBLISHED/WITHDRAWN lifecycle,
+optimistic versioning, and bounded public/admin read models. UI and public
+rendering remain the next bounded assignment.
+
 The C5 Queue and Dashboard implementation is complete locally. Both surfaces
 are protected server-rendered views over capability-filtered read models;
 Dashboard browser validation covers typed Story/News routing, all four
@@ -267,9 +274,9 @@ Only designated taxonomy managers may create, rename, retire, or merge categorie
 
 ## 9. Site Notices
 
-`SiteNotice` belongs to Communications but does not use the Story/News publication aggregate. It is intentionally small: `title`, plain/structured short message with a very restricted text schema, severity (`INFO`, `IMPORTANT`, `URGENT`), controlled target area (`GLOBAL`, `HOME`, `RESTORE`, `BUILD` initially), required `startsAt`/`endsAt`, optional validated CTA, author, and audit history. Stored lifecycle is `DRAFT`, `PUBLISHED`, or `WITHDRAWN`; `UPCOMING`, `ACTIVE`, and `ENDED` presentation are derived from the required window for a published notice.
+`SiteNotice` belongs to Communications but does not use the Story/News publication aggregate. It is intentionally small: bounded plain-text `title`/`message`, severity (`INFO`, `IMPORTANT`, `URGENT`), controlled target area (`SITE_WIDE` or `HOMEPAGE` in the current public surface), required `startsAt`/`endsAt` for publication, optional validated single CTA, optimistic version, author fields, and audit history. Stored lifecycle is `DRAFT`, `PUBLISHED`, or `WITHDRAWN`; `UPCOMING`, `ACTIVE`, and `EXPIRED` presentation are derived from the half-open window for a published notice.
 
-Only authorized notice managers can create or change one. A material change to a published/live notice records an audited successor version. It renders only in its window and automatically stops at `endsAt`; the record and audit persist. Global notices render as a dismissible but keyboard-accessible banner; target-area notices render in the relevant local template. Notice content must remain concise, must not duplicate a long News item, and must link to a canonical page/News item when more explanation is necessary. Urgent means operational importance, not sensational “breaking news.” V1 does not build notice audience segmentation, push notifications, or a public notice archive.
+Only authorized notice managers can create or change one, with optimistic concurrency and bounded audit evidence. Published fields may be edited through the authorized mutation; effectiveness is recalculated immediately, while withdrawal remains explicit. It renders only in its window and automatically stops at `endsAt`; the record and audit persist. Site-wide notices render in the global surface and target-area notices render in the relevant local template. Notice content must remain concise, must not duplicate a long News item, and must link to a canonical page/News item when more explanation is necessary. Urgent means operational importance, not sensational “breaking news.” V1 does not build notice audience segmentation, push notifications, or a public notice archive.
 
 ## 10. Public Story Submission
 
