@@ -66,7 +66,14 @@ derived four-module, capability-filtered Dashboard read model, explicit
 clock/window behavior, PostgreSQL matrix, privacy boundary, and validation
 evidence are documented in
 [the C5B-1 delivery record](../development/c5b1-communications-dashboard-read-model.md).
-The Dashboard UI remains the next bounded slice.
+
+**C5B-2A — Communications Dashboard admin UI: complete 2026-08-16.** The
+protected server-rendered Dashboard route, capability-filtered navigation and
+modules, typed links, responsive semantic presentation, safe empty/error
+states, focused render coverage, and delivery boundaries are documented in
+[the C5B-2A delivery record](../development/c5b2a-communications-dashboard-admin-ui.md).
+Browser, accessibility, and visual validation remain the next bounded slice;
+the C5 Dashboard is not yet fully complete.
 
 ## Slice 1 — Application Foundation and Scaffold
 

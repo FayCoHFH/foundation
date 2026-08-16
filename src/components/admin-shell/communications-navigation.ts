@@ -3,6 +3,7 @@ import type { Capability } from "@/platform/auth/capabilities";
 import type { AdminPrincipal } from "@/platform/auth/principal";
 
 const COMMUNICATIONS_ROUTES = {
+  dashboard: "/admin/communications",
   queue: "/admin/communications/queue",
   stories: "/admin/communications/stories",
   news: "/admin/communications/news",
@@ -33,6 +34,13 @@ export function communicationsNavigation(
       href: COMMUNICATIONS_ROUTES.queue,
       label: "Publication Queue",
       current: currentRoute(currentHref, COMMUNICATIONS_ROUTES.queue),
+    });
+  }
+  if (hasCapability(principal, "communications.dashboard.read")) {
+    navigation.splice(1, 0, {
+      href: COMMUNICATIONS_ROUTES.dashboard,
+      label: "Communications Dashboard",
+      current: currentHref === COMMUNICATIONS_ROUTES.dashboard,
     });
   }
   if (
