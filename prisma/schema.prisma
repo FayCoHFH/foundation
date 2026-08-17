@@ -74,6 +74,12 @@ enum PublicStorySubmissionStatus {
   SPAM
 }
 
+enum PublicStoryIntakeRateLimitScope {
+  NETWORK
+  EMAIL
+  GLOBAL
+}
+
 enum PublicationWorkflowState {
   DRAFT
   IN_REVIEW
@@ -623,11 +629,43 @@ model PublicStorySubmission {
   createdAt                              DateTime                    @default(now())
   updatedAt                              DateTime                    @updatedAt
   statusChangedBy                        AdminUser?                  @relation("PublicStorySubmissionStatusChanger", fields: [statusChangedByAdminUserId], references: [id], onDelete: SetNull)
+  intakeTokenUse                         PublicStoryIntakeTokenUse?
 
   @@unique([id, version])
   @@index([status, receivedAt, id])
   @@index([receivedAt, id])
   @@map("public_story_submission")
+}
+
+// Short-lived privacy-preserving abuse-control state. These rows never store
+// raw IP addresses, email addresses, user agents, tokens, or request bodies.
+model PublicStoryIntakeRateLimitBucket {
+  id              String                          @id @default(uuid()) @db.Uuid
+  scope           PublicStoryIntakeRateLimitScope
+  keyHash         String                          @db.Char(64)
+  windowStartedAt DateTime
+  expiresAt       DateTime
+  count           Int                             @default(0)
+  createdAt       DateTime                        @default(now())
+  updatedAt       DateTime                        @updatedAt
+
+  @@unique([scope, keyHash, windowStartedAt])
+  @@index([expiresAt])
+  @@map("public_story_intake_rate_limit_bucket")
+}
+
+// A consumed signed form token is retained only long enough to prevent replay
+// and to make retries idempotent. The raw token and nonce are never persisted.
+model PublicStoryIntakeTokenUse {
+  id           String                 @id @default(uuid()) @db.Uuid
+  tokenHash    String                 @unique @db.Char(64)
+  expiresAt    DateTime
+  consumedAt   DateTime               @default(now())
+  submissionId String?                @unique @db.Uuid
+  submission   PublicStorySubmission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+
+  @@index([expiresAt])
+  @@map("public_story_intake_token_use")
 }
 
 // Private work-management assignment. This never supplies a public byline.

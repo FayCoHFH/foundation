@@ -42,6 +42,12 @@ domain and a Google OAuth client whose callback is
 [local setup guide](docs/development/local-setup.md) and
 [authentication spike record](docs/development/auth-spike.md).
 
+The future public Story Submission intake is disabled by default. Its
+server-only `PUBLIC_STORY_SUBMISSIONS_ENABLED`, dedicated secret, and approved
+privacy-notice version must be configured before an isolated test or approved
+deployment may enable the boundary. See the
+[C6B-1B intake-security record](docs/development/c6b1b-public-story-intake-security.md).
+
 ## Validate the foundation
 
 ```bash

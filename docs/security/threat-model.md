@@ -109,6 +109,18 @@ audits, allowlisted list selects, and log redaction prevent accidental public,
 search, Queue, Dashboard, provider, or telemetry exposure. The public intake
 boundary, abuse controls, uploads, and retention profile remain launch gates.
 
+**C6B-1B intake boundary:** the server-only intake is disabled by default and
+requires a dedicated 32-byte secret plus configured privacy-notice version when
+enabled. Exact origin, supplemental Fetch Metadata, bounded scalar form
+shape/size, short-lived HMAC token, privacy-version binding, one-second
+completion floor, honeypot, and PostgreSQL-backed network/email/global limits
+protect the untrusted boundary. Rate and replay state stores only HMAC/hash
+artifacts; unique token consumption, domain persistence, and receipt audit are
+atomic. Security outcomes and logs do not reveal limiter, token, timing,
+honeypot, request, IP, email, or narrative details. Public privacy wording,
+content retention, owner, abuse response, CAPTCHA/provider, and uploads remain
+launch decisions.
+
 **Verification:** dedicated pre-implementation threat-model update, data-flow review, privacy tests proving public/search/cache/analytics isolation, and an incident exercise.
 
 ### Private grant disclosure

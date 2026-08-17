@@ -28,6 +28,14 @@ const rawEnvironmentSchema = z.object({
   VERCEL: z.string().optional(),
   VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).optional(),
+  PUBLIC_STORY_SUBMISSIONS_ENABLED: z.enum(["true", "false"]).default("false"),
+  PUBLIC_STORY_SUBMISSIONS_SECRET: z.string().min(32).optional(),
+  PUBLIC_STORY_SUBMISSIONS_PRIVACY_NOTICE_VERSION: z
+    .string()
+    .trim()
+    .min(1)
+    .max(64)
+    .optional(),
 });
 
 export type AppEnvironment = z.infer<typeof appEnvironmentSchema>;
@@ -171,6 +179,36 @@ export function readServerEnvironment(
     }
   }
 
+  const publicStorySubmissionsEnabled =
+    parsed.PUBLIC_STORY_SUBMISSIONS_ENABLED === "true";
+  if (publicStorySubmissionsEnabled) {
+    if (!parsed.PUBLIC_STORY_SUBMISSIONS_SECRET) {
+      throw new Error(
+        "PUBLIC_STORY_SUBMISSIONS_SECRET is required when public Story Submissions are enabled.",
+      );
+    }
+    if (
+      Buffer.byteLength(parsed.PUBLIC_STORY_SUBMISSIONS_SECRET, "utf8") < 32
+    ) {
+      throw new Error(
+        "PUBLIC_STORY_SUBMISSIONS_SECRET must contain at least 32 bytes.",
+      );
+    }
+    if (!parsed.PUBLIC_STORY_SUBMISSIONS_PRIVACY_NOTICE_VERSION) {
+      throw new Error(
+        "PUBLIC_STORY_SUBMISSIONS_PRIVACY_NOTICE_VERSION is required when public Story Submissions are enabled.",
+      );
+    }
+    if (
+      appEnv === "production" &&
+      new URL(parsed.APP_BASE_URL).protocol !== "https:"
+    ) {
+      throw new Error(
+        "Production public Story Submission intake requires an HTTPS application origin.",
+      );
+    }
+  }
+
   return {
     appEnv,
     appBaseUrl: appOrigin,
@@ -197,6 +235,10 @@ export function readServerEnvironment(
     logLevel: parsed.LOG_LEVEL,
     secureCookies: isDeployment || appOrigin.startsWith("https://"),
     isVercel,
+    publicStorySubmissionsEnabled,
+    publicStorySubmissionsSecret: parsed.PUBLIC_STORY_SUBMISSIONS_SECRET,
+    publicStorySubmissionsPrivacyNoticeVersion:
+      parsed.PUBLIC_STORY_SUBMISSIONS_PRIVACY_NOTICE_VERSION,
   } as const;
 }
 

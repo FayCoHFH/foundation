@@ -127,4 +127,21 @@ describe("structured logger redaction", () => {
     expect(serialized).toContain('"storyText":"[REDACTED]"');
     expect(serialized).toContain('"internalReviewNote":"[REDACTED]"');
   });
+
+  it("redacts intake security fields and never serializes raw request context", () => {
+    const write = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    logger.error("public_story_submission.security.test", {
+      formToken: "signed-token-value",
+      honeypot: "bot-value",
+      rawRequest: "raw-request-value",
+      requestContext: "raw-context-value",
+    });
+
+    const serialized = String(write.mock.calls[0]?.[0]);
+    expect(serialized).not.toContain("signed-token-value");
+    expect(serialized).not.toContain("bot-value");
+    expect(serialized).not.toContain("raw-request-value");
+    expect(serialized).not.toContain("raw-context-value");
+  });
 });

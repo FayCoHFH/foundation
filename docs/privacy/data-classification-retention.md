@@ -46,6 +46,7 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | Applicant/household/eligibility/supporting document/case note | Restricted | Future private casework; no collection until approved design |
 | Analytics/correlation data with IP or stable visitor ID | Confidential until minimized/aggregated | Vendor selection must honor this policy |
 | PublicStorySubmission name, email, relationship, story text, acknowledgements, sensitivity declarations, and internal review note | Confidential | Field-minimum text-only aggregate; never public/search/analytics/logs; no production collection until owner, privacy text, consent, and retention profile are approved |
+| Public Story intake token hashes, HMAC rate-limit fingerprints, expiry, and bounded counters | Confidential operational security artifact | No raw token, nonce, IP, email, user agent, or request body; expire and clean through the bounded C6B-1B cleanup path; not subject to the unresolved submission-content retention profile |
 
 ## Retention schedule
 

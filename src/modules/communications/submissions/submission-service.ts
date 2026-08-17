@@ -119,6 +119,11 @@ export type PublicStorySubmissionReceiveResult = Readonly<{
   receivedAt: Date;
 }>;
 
+export type PublicStorySubmissionInternalReceiveResult = Readonly<{
+  submissionId: string;
+  result: PublicStorySubmissionReceiveResult;
+}>;
+
 export type SubmissionAuditWriter = (
   transaction: Transaction,
   data: Prisma.AuditEventUncheckedCreateInput,
@@ -240,40 +245,51 @@ async function findDetail(transaction: Transaction, id: string) {
   return record;
 }
 
+export async function receivePublicStorySubmissionInTransaction(
+  transaction: Transaction,
+  input: ReceivePublicStorySubmissionInput,
+  dependencies: SubmissionMutationDependencies = {},
+): Promise<PublicStorySubmissionInternalReceiveResult> {
+  const validated = validateReceivePublicStorySubmissionInput(input);
+  const now = dependencies.now?.() ?? new Date();
+  const created = await transaction.publicStorySubmission.create({
+    data: {
+      ...validated,
+      receivedAt: now,
+      statusChangedAt: now,
+      version: 1,
+    },
+    select: { id: true, receivedAt: true, version: true },
+  });
+  await (dependencies.auditWriter ?? writeAudit)(
+    transaction,
+    buildAuditEvent({
+      actorKind: "SYSTEM",
+      action: "public_story_submission.received",
+      targetType: "PublicStorySubmission",
+      targetId: created.id,
+      correlationId: randomUUID(),
+      summary: { status: "RECEIVED", version: created.version },
+    }),
+  );
+  return {
+    submissionId: created.id,
+    result: {
+      status: PublicStorySubmissionStatus.RECEIVED,
+      receivedAt: created.receivedAt,
+    },
+  };
+}
+
 export async function receivePublicStorySubmission(
   prisma: PrismaClient,
   input: ReceivePublicStorySubmissionInput,
   dependencies: SubmissionMutationDependencies = {},
 ): Promise<PublicStorySubmissionReceiveResult> {
-  const validated = validateReceivePublicStorySubmissionInput(input);
-  const now = dependencies.now?.() ?? new Date();
-  const result = await runMutation(prisma, async (transaction) => {
-    const created = await transaction.publicStorySubmission.create({
-      data: {
-        ...validated,
-        receivedAt: now,
-        statusChangedAt: now,
-        version: 1,
-      },
-      select: { id: true, receivedAt: true, version: true },
-    });
-    await (dependencies.auditWriter ?? writeAudit)(
-      transaction,
-      buildAuditEvent({
-        actorKind: "SYSTEM",
-        action: "public_story_submission.received",
-        targetType: "PublicStorySubmission",
-        targetId: created.id,
-        correlationId: randomUUID(),
-        summary: { status: "RECEIVED", version: created.version },
-      }),
-    );
-    return {
-      status: PublicStorySubmissionStatus.RECEIVED,
-      receivedAt: created.receivedAt,
-    } as const;
-  });
-  return result;
+  const internal = await runMutation(prisma, (transaction) =>
+    receivePublicStorySubmissionInTransaction(transaction, input, dependencies),
+  );
+  return internal.result;
 }
 
 export async function listPublicStorySubmissions(

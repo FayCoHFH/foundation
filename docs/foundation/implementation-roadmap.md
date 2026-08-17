@@ -120,6 +120,16 @@ PostgreSQL constraints, and regression evidence are documented in
 Public intake security, UI, uploads, email, conversion, and final retention
 policy remain later C6B slices; C6B as a whole is not complete.
 
+**C6B-1B — Public Story Submission intake security: complete locally on
+2026-08-17.** The disabled-by-default server-only boundary, signed token,
+origin/Fetch Metadata controls, bounded scalar form handling, honeypot,
+completion timing, privacy-preserving PostgreSQL rate limits, replay safety,
+atomic domain integration, expiry cleanup, safe outcomes, redaction, and
+security regression are documented in
+[the C6B-1B delivery record](../development/c6b1b-public-story-intake-security.md).
+The public form, approved privacy/retention decisions, and later operational or
+editorial surfaces remain open.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

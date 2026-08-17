@@ -312,6 +312,14 @@ There is no public News submission in V1. Authorized staff create News internall
 
 Before launch, the submission form needs a named owner and approved retention profile. C6B-1A deliberately introduces no duration, cleanup job, or real-data collection. Later retention and conversion policy must be approved before production intake; an accepted submission is still not a Story draft.
 
+C6B-1B adds the server-only, disabled-by-default intake security boundary:
+dedicated secret and privacy-version configuration, signed short-lived token,
+exact same-origin and supplemental Fetch Metadata checks, bounded scalar form
+shape/size, honeypot and completion timing, privacy-preserving PostgreSQL rate
+limits, replay/idempotency, atomic domain integration, expiry cleanup, and
+generic redacted outcomes. It does not add the public form or finalize the
+privacy/retention launch gates.
+
 ## 11. Newsletter Edition and provider boundary
 
 `NewsletterEdition` is a typed Communications aggregate, not a giant duplicated HTML blob and not a Story or News record. It owns edition identity/slug, issue label, internal title, intro/editor note, planned web/send times, candidate/web-release/delivery states, ordered blocks, revision/approval history, and delivery/archive snapshots.
@@ -444,7 +452,7 @@ Public DTOs are snapshot-specific allowlists. They contain only public author fi
 | Placements/homepage | four implemented Story/News singleton keys and hybrid sections; Project/Campaign keys remain reserved future extensions | additional specifically designed slots | general placement catalog only if repeated needs prove it |
 | Authors/categories | AuthorProfile, flat controlled category, no tags | category merge UX/analytics | carefully governed supplemental vocabulary if evidence warrants |
 | Site Notices | small scoped notice/banner | more controlled target areas | segmentation, push/notification integrations |
-| Story Submission | secure text intake/triage/conversion after approved owner, retention/privacy text, and abuse controls; uploads only after private-upload/consent controls | safer follow-up workflow/reporting | separate News tip intake only after design review |
+| Story Submission | server-only intake security plus secure text intake/triage/conversion after approved owner, retention/privacy text, and abuse controls; uploads only after private-upload/consent controls | safer follow-up workflow/reporting | separate News tip intake only after design review |
 | Newsletter | signup handoff; structure/port contract may be built with no delivery | Edition/block/web archive/delivery after provider confirmation | personalization, automation, subscriber ownership change by decision |
 | Calendar | scheduling fields queryable | derived read-only calendar | controlled drag-to-reschedule after workflow design |
 | Packages | typed relationships only | evaluate a recurring unmet grouping use case | Package aggregate after independent lifecycle proof |
