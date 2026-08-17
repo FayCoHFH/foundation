@@ -8,6 +8,7 @@ const COMMUNICATIONS_ROUTES = {
   stories: "/admin/communications/stories",
   news: "/admin/communications/news",
   notices: "/admin/communications/notices",
+  submissions: "/admin/communications/submissions",
   homepage: "/admin/communications/homepage",
 } as const;
 
@@ -71,6 +72,13 @@ export function communicationsNavigation(
       href: COMMUNICATIONS_ROUTES.notices,
       label: "Site Notices",
       current: currentRoute(currentHref, COMMUNICATIONS_ROUTES.notices),
+    });
+  }
+  if (hasCapability(principal, "communications.submissions.review")) {
+    navigation.push({
+      href: COMMUNICATIONS_ROUTES.submissions,
+      label: "Story Submissions",
+      current: currentRoute(currentHref, COMMUNICATIONS_ROUTES.submissions),
     });
   }
   if (hasCapability(principal, "communications.placements.manage")) {

@@ -130,6 +130,16 @@ security regression are documented in
 The public form, approved privacy/retention decisions, and later operational or
 editorial surfaces remain open.
 
+**C6B-2A — Public Story Submission administrative inbox: complete locally on
+2026-08-17.** The capability-protected server-rendered inbox and detail route,
+safe list/detail DTO presentation, status filtering, bounded pagination,
+explicit lifecycle actions, private review notes, optimistic-concurrency
+feedback, no-store rendering, responsive semantics, and focused UI/action
+coverage are documented in
+[the C6B-2A delivery record](../development/c6b2a-public-story-submission-inbox-ui.md).
+Browser, accessibility-scanner, and formal visual validation remain the
+separate C6B-2B slice. C6B as a whole is not complete.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

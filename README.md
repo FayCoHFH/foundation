@@ -15,8 +15,10 @@ replace the scaffold.
 Current Communications routes include `/`, `/stories/[slug]`, `/news`, and
 `/news/[slug]`; authorized curation is available at
 `/admin/communications`, `/admin/communications/queue`, and
-`/admin/communications/homepage`. The C4 placement surface is limited to its
-implemented Story/News keys and does not add Project/Campaign placements.
+`/admin/communications/homepage`, and the capability-protected Story
+Submission inbox at `/admin/communications/submissions`. The C4 placement
+surface is limited to its implemented Story/News keys and does not add
+Project/Campaign placements.
 
 ## Start locally
 
