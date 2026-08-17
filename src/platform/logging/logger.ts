@@ -95,6 +95,10 @@ const sensitiveFragments = [
   "storytext",
   "formdata",
   "relationshiptohabitat",
+  "originalsha256",
+  "suggestedphotocredit",
+  "submissionmediadescription",
+  "submissionattempt",
   "suggestedtitle",
   "useragent",
   "webhookurl",
@@ -142,6 +146,8 @@ function keyTokens(key: string) {
 export function isSensitiveFieldName(key: string) {
   const tokens = keyTokens(key);
   const compact = key.replaceAll(/[^a-z0-9]/gi, "").toLowerCase();
+
+  if (compact === "description") return true;
 
   if (
     tokens.some((token) => sensitiveTokens.has(token)) ||

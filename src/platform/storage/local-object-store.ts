@@ -15,6 +15,7 @@ import type {
   PrivateDownloadGrant,
   PrivateObjectStorePort,
   PutObjectInput,
+  SubmissionQuarantineStoragePort,
   StoredObject,
 } from "./contracts";
 
@@ -90,7 +91,7 @@ export class LocalObjectStore implements ObjectStorePort {
   readonly scope: ObjectStoreScope;
   protected readonly rootDirectory: string;
   protected readonly now: () => Date;
-  private readonly metadataByKey = new Map<string, ObjectMetadata>();
+  protected readonly metadataByKey = new Map<string, ObjectMetadata>();
 
   constructor(options: LocalStoreOptions) {
     this.rootDirectory = path.resolve(options.rootDirectory);
@@ -163,6 +164,16 @@ export class LocalObjectStore implements ObjectStorePort {
       metadata,
       body: new Uint8Array(await fs.readFile(this.destinationFor(key))),
     };
+  }
+
+  protected async deleteObject(key: string): Promise<void> {
+    assertSafeObjectKey(key);
+    try {
+      await fs.unlink(this.destinationFor(key));
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    }
+    this.metadataByKey.delete(key);
   }
 
   protected destinationFor(key: string): string {
@@ -291,6 +302,51 @@ class LocalPrivateObjectStore
     assertSafeObjectKey(payload.key);
     return payload;
   }
+}
+
+class LocalSubmissionQuarantineStore
+  extends LocalObjectStore
+  implements SubmissionQuarantineStoragePort
+{
+  constructor(options: Omit<LocalStoreOptions, "scope">) {
+    super({ ...options, scope: "PRIVATE" });
+  }
+
+  async put(input: PutObjectInput): Promise<ObjectMetadata> {
+    if (input.classification !== "CONFIDENTIAL") {
+      throw new InvalidObjectKeyError(
+        "Submission quarantine accepts Confidential objects only.",
+      );
+    }
+    if (!input.key.startsWith("submission-quarantine/")) {
+      throw new InvalidObjectKeyError(
+        "Submission quarantine keys must use the private quarantine namespace.",
+      );
+    }
+    return super.put(input);
+  }
+
+  readForProcessing(key: string) {
+    return this.read(key);
+  }
+
+  statForProcessing(key: string) {
+    return this.head(key);
+  }
+
+  deleteForCleanup(key: string) {
+    return this.deleteObject(key);
+  }
+}
+
+export function createLocalSubmissionQuarantineStore(options: {
+  readonly rootDirectory: string;
+  readonly now?: () => Date;
+}): SubmissionQuarantineStoragePort {
+  return new LocalSubmissionQuarantineStore({
+    rootDirectory: options.rootDirectory,
+    ...(options.now === undefined ? {} : { now: options.now }),
+  });
 }
 
 export function createLocalObjectStores(options: {

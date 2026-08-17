@@ -47,6 +47,7 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | Analytics/correlation data with IP or stable visitor ID | Confidential until minimized/aggregated | Vendor selection must honor this policy |
 | PublicStorySubmission name, email, relationship, story text, acknowledgements, sensitivity declarations, and internal review note | Confidential | Field-minimum text-only aggregate; never public/search/analytics/logs; manual content retention only until owner, privacy text, consent, and retention profile are approved; spam restoration is audited and preserves content |
 | Public Story intake token hashes, HMAC rate-limit fingerprints, expiry, and bounded counters | Confidential operational security artifact | No raw token, nonce, IP, email, user agent, or request body; expire and clean through the bounded C6B-1B cleanup path; not subject to the unresolved submission-content retention profile |
+| Public Story Submission attempt recovery hashes, upload nonce hashes, raw image metadata, checksums, sensitivity declarations, and private quarantine originals | Confidential | No public URL, cache, search, analytics, or log payload; a raw recovery/upload token is never persisted; unsubmitted attempts are securely cleaned after 24 hours; submitted-media retention remains subject to the unresolved approved retention profile |
 
 The C6B-2A/2B administrative inbox is a review surface, not a new collection
 or retention policy. It server-renders the minimum list/detail DTOs only after

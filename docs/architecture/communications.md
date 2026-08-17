@@ -300,17 +300,25 @@ ACCEPTED / DECLINED / SPAM are terminal in C6B-1A.
 
 `PublicStorySubmission` is a confidential intake aggregate. It contains minimum contact and pitch information: name, email, chosen relationship-to-Habitat category, suggested title, story text, optional contact preference, privacy-notice acknowledgment version/time, contact consent, publication-consent indication (not proof of final publication permission), and a minor/participant sensitivity declaration. It must clearly instruct submitters not to include applicant, eligibility, financial, medical, household, address, or other sensitive information. Free text is treated as potentially confidential and excluded from logs, analytics, search, previews, and fixtures.
 
-C6B-1A implements the confidential text-only aggregate and service contract. It
-has no media or attachment rows, no public route/form/action/API, and no Story
-or Publication conversion. The future public boundary still requires the
-upload, rate-limit, challenge, duplicate/throttle, CSRF/origin, and generic
-response controls described below before launch.
+C6B-1A implements the confidential text aggregate and service contract. C6B-3A
+adds a separate confidential image-attempt/quarantine foundation, still with no
+public route/form/action/API or Story/Publication conversion. An attempt has an
+opaque recovery bearer stored only as a hash, a 24-hour expiry, bounded
+server-issued one-slot upload authorizations, and `ACTIVE`/`SUBMITTED`/`EXPIRED`
+states. Raw image rows remain private to the attempt and use
+`PENDING_UPLOAD`/`UPLOADED`/`PROCESSING`/`READY`/`REJECTED`/`REMOVED`; only
+retained `READY` rows may attach atomically to the final submission. Private
+quarantine storage has no public URL, listing, or client read path. This is
+technical intake state only, not consent, rights clearance, or public media.
+The future public boundary still requires the upload, rate-limit, challenge,
+duplicate/throttle, CSRF/origin, and generic response controls described below
+before launch.
 
 An editor may review the intake with `communications.submissions.review`, request follow-up through an approved contact process, decline it, or accept it for editorial consideration. Acceptance is not publication approval, consent, rights clearance, or a Story. A sensitive participant/minor declaration requires additional review before any future public use; it does not block confidential review, publish, expose identity, or create an application/case record. Spam is terminal for ordinary reviewers and may return only to `RECEIVED` through the separate higher-authority `communications.submissions.restore_spam` capability, with optimistic concurrency and an atomic redacted audit. Conversion creates a new Story and initial internal draft with a restricted provenance link to the submission. It copies only selected editorial material, never blindly promotes the submission, does not reuse the submitter as public byline without AuthorProfile/consent review, and enters the normal Story workflow. Submission media becomes a normal candidate media usage only after independent rights and contextual-alt review.
 
 There is no public News submission in V1. Authorized staff create News internally. A future public news-tip intake requires a separate abuse, triage, retention, and authority decision; it must not reuse Story Submission casually.
 
-Before launch, the submission form needs shared operational ownership between Communications review and the privacy/operations owner, approved privacy text, and an approved retention profile. C6B-1A/C6B-2C deliberately introduce no submission-content duration, deletion control, or real-data collection; content is manually retained pending that decision. Later retention and conversion policy must be approved before production intake; an accepted submission is still not a Story draft. Future text and image intake should launch together only after private quarantine, rights, per-image clearance, sanitized promotion, revocation, and abuse controls are implemented.
+Before launch, the submission form needs shared operational ownership between Communications review and the privacy/operations owner, approved privacy text, and an approved retention profile. C6B-1A/C6B-2C deliberately introduce no submission-content duration, deletion control, or real-data collection; C6B-3A only expires unattached technical upload attempts after 24 hours. Submitted-content retention remains manual pending the decision. Later retention and conversion policy must be approved before production intake; an accepted submission is still not a Story draft. Future text and image intake should launch together only after rights, per-image clearance, sanitized promotion, revocation, and abuse controls are implemented.
 
 C6B-1B adds the server-only, disabled-by-default intake security boundary:
 dedicated secret and privacy-version configuration, signed short-lived token,

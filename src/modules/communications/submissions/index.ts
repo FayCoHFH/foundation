@@ -5,3 +5,6 @@ export * from "./intake-token";
 export * from "./intake-request";
 export * from "./intake-rate-limit";
 export * from "./intake-service";
+export * from "./submission-media-content";
+export * from "./submission-media-upload-auth";
+export * from "./submission-media-service";

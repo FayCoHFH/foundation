@@ -74,6 +74,31 @@ enum PublicStorySubmissionStatus {
   SPAM
 }
 
+enum PublicStorySubmissionAttemptStatus {
+  ACTIVE
+  SUBMITTED
+  EXPIRED
+}
+
+enum PublicStorySubmissionMediaStatus {
+  PENDING_UPLOAD
+  UPLOADED
+  PROCESSING
+  READY
+  REJECTED
+  REMOVED
+}
+
+enum PublicStorySubmissionMediaRejectionReason {
+  UNSUPPORTED_FORMAT
+  FILE_TOO_LARGE
+  SUBMISSION_TOTAL_TOO_LARGE
+  DIMENSIONS_EXCEEDED
+  CORRUPTED_IMAGE
+  DUPLICATE_IMAGE
+  PROCESSING_FAILED
+}
+
 enum PublicStoryIntakeRateLimitScope {
   NETWORK
   EMAIL
@@ -605,31 +630,33 @@ model SiteNotice {
 // Confidential, text-only public story intake. This is not a Story,
 // Publication, projection, or media-bearing authoring record.
 model PublicStorySubmission {
-  id                                     String                      @id @default(uuid()) @db.Uuid
-  submitterName                          String                      @db.VarChar(120)
-  submitterEmail                         String                      @db.VarChar(254)
-  relationshipToHabitat                  String                      @db.VarChar(160)
-  suggestedTitle                         String?                     @db.VarChar(160)
-  storyText                              String                      @db.Text
+  id                                     String                         @id @default(uuid()) @db.Uuid
+  submitterName                          String                         @db.VarChar(120)
+  submitterEmail                         String                         @db.VarChar(254)
+  relationshipToHabitat                  String                         @db.VarChar(160)
+  suggestedTitle                         String?                        @db.VarChar(160)
+  storyText                              String                         @db.Text
   contactConsent                         Boolean
-  privacyNoticeVersion                   String                      @db.VarChar(64)
+  privacyNoticeVersion                   String                         @db.VarChar(64)
   privacyNoticeAcceptedAt                DateTime
   editorialReviewAcknowledged            Boolean
   sensitiveDataWarningAcknowledged       Boolean
   publicationInterest                    Boolean?
-  involvesMinor                          Boolean                     @default(false)
-  involvesHomeownerOrApplicant           Boolean                     @default(false)
-  containsSensitivePersonalCircumstances Boolean                     @default(false)
-  status                                 PublicStorySubmissionStatus @default(RECEIVED)
-  internalReviewNote                     String?                     @db.VarChar(2000)
-  version                                Int                         @default(1)
-  receivedAt                             DateTime                    @default(now())
-  statusChangedAt                        DateTime                    @default(now())
-  statusChangedByAdminUserId             String?                     @db.Uuid
-  createdAt                              DateTime                    @default(now())
-  updatedAt                              DateTime                    @updatedAt
-  statusChangedBy                        AdminUser?                  @relation("PublicStorySubmissionStatusChanger", fields: [statusChangedByAdminUserId], references: [id], onDelete: SetNull)
+  involvesMinor                          Boolean                        @default(false)
+  involvesHomeownerOrApplicant           Boolean                        @default(false)
+  containsSensitivePersonalCircumstances Boolean                        @default(false)
+  status                                 PublicStorySubmissionStatus    @default(RECEIVED)
+  internalReviewNote                     String?                        @db.VarChar(2000)
+  version                                Int                            @default(1)
+  receivedAt                             DateTime                       @default(now())
+  statusChangedAt                        DateTime                       @default(now())
+  statusChangedByAdminUserId             String?                        @db.Uuid
+  createdAt                              DateTime                       @default(now())
+  updatedAt                              DateTime                       @updatedAt
+  statusChangedBy                        AdminUser?                     @relation("PublicStorySubmissionStatusChanger", fields: [statusChangedByAdminUserId], references: [id], onDelete: SetNull)
   intakeTokenUse                         PublicStoryIntakeTokenUse?
+  submissionAttempts                     PublicStorySubmissionAttempt[]
+  submissionMedia                        PublicStorySubmissionMedia[]
 
   @@unique([id, version])
   @@index([status, receivedAt, id])
@@ -666,6 +693,66 @@ model PublicStoryIntakeTokenUse {
 
   @@index([expiresAt])
   @@map("public_story_intake_token_use")
+}
+
+// Confidential, pre-submission ownership boundary for future Story Submission
+// uploads. The raw recovery token never persists; its SHA-256 hash is the
+// lookup credential, and no public route or URL is introduced here.
+model PublicStorySubmissionAttempt {
+  id                String                             @id @default(uuid()) @db.Uuid
+  recoveryTokenHash String                             @unique @db.Char(64)
+  status            PublicStorySubmissionAttemptStatus @default(ACTIVE)
+  expiresAt         DateTime
+  submissionId      String?                            @db.Uuid
+  version           Int                                @default(1)
+  createdAt         DateTime                           @default(now())
+  updatedAt         DateTime                           @updatedAt
+  submission        PublicStorySubmission?             @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  media             PublicStorySubmissionMedia[]
+
+  @@unique([id, version])
+  @@index([status, expiresAt, id])
+  @@map("public_story_submission_attempt")
+}
+
+// Private quarantine record. It is intentionally not a MediaAsset, MediaUsage,
+// Publication, projection, or public library record.
+model PublicStorySubmissionMedia {
+  id                                     String                                     @id @default(uuid()) @db.Uuid
+  attemptId                              String                                     @db.Uuid
+  submissionId                           String?                                    @db.Uuid
+  originalFilename                       String?                                    @db.VarChar(255)
+  declaredMimeType                       String?                                    @db.VarChar(127)
+  originalByteSize                       Int?
+  ordinal                                Int?
+  description                            String?                                    @db.VarChar(300)
+  suggestedPhotoCredit                   String?                                    @db.VarChar(160)
+  involvesMinor                          Boolean                                    @default(false)
+  involvesHomeownerOrApplicant           Boolean                                    @default(false)
+  involvesOtherIdentifiablePerson        Boolean                                    @default(false)
+  depictsPrivateResidence                Boolean                                    @default(false)
+  containsSensitivePersonalCircumstances Boolean                                    @default(false)
+  technicalStatus                        PublicStorySubmissionMediaStatus           @default(PENDING_UPLOAD)
+  rejectionReason                        PublicStorySubmissionMediaRejectionReason?
+  quarantineStorageKey                   String?                                    @db.VarChar(240)
+  originalSha256                         String?                                    @db.Char(64)
+  uploadAuthorizationNonceHash           String                                     @unique @db.Char(64)
+  removedAt                              DateTime?
+  rejectedAt                             DateTime?
+  binaryDeletedAt                        DateTime?
+  version                                Int                                        @default(1)
+  createdAt                              DateTime                                   @default(now())
+  updatedAt                              DateTime                                   @updatedAt
+  attempt                                PublicStorySubmissionAttempt               @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  submission                             PublicStorySubmission?                     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@unique([id, version])
+  @@unique([attemptId, ordinal])
+  @@index([attemptId, technicalStatus, ordinal])
+  @@index([attemptId, originalSha256])
+  @@index([submissionId, ordinal])
+  @@index([technicalStatus, binaryDeletedAt])
+  @@map("public_story_submission_media")
 }
 
 // Private work-management assignment. This never supplies a public byline.

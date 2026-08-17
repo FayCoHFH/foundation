@@ -68,6 +68,17 @@ export interface PrivateObjectStorePort {
   }): Promise<StoredObject | null>;
 }
 
+/**
+ * Server-only private quarantine access for untrusted submission originals.
+ * This intentionally has no public URL or anonymous/grant consumer surface.
+ */
+export interface SubmissionQuarantineStoragePort {
+  put(input: PutObjectInput): Promise<ObjectMetadata>;
+  readForProcessing(key: string): Promise<StoredObject | null>;
+  statForProcessing(key: string): Promise<ObjectMetadata | null>;
+  deleteForCleanup(key: string): Promise<void>;
+}
+
 export interface ObjectStores {
   readonly publicStore: ObjectStorePort;
   readonly privateStore: PrivateObjectStorePort;

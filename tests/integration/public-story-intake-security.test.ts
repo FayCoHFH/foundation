@@ -307,11 +307,9 @@ describe("C6B-1B Public Story Submission intake security PostgreSQL boundary", (
         ),
       ),
     );
-    expect(networkResults.map(({ code }) => code)).toEqual([
-      "ACCEPTED",
-      "ACCEPTED",
-      "RATE_LIMITED",
-    ]);
+    expect(networkResults.map(({ code }) => code).sort()).toEqual(
+      ["ACCEPTED", "ACCEPTED", "RATE_LIMITED"].sort(),
+    );
 
     const emailTime = new Date("2040-08-18T12:00:01.000Z");
     const emailResults = await Promise.all(

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { logger } from "@/platform/logging/logger";
+import { isSensitiveFieldName, logger } from "@/platform/logging/logger";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -126,6 +126,14 @@ describe("structured logger redaction", () => {
     expect(serialized).not.toContain("private relationship");
     expect(serialized).toContain('"storyText":"[REDACTED]"');
     expect(serialized).toContain('"internalReviewNote":"[REDACTED]"');
+  });
+
+  it("redacts confidential submission-media metadata and quarantine identifiers", () => {
+    expect(isSensitiveFieldName("description")).toBe(true);
+    expect(isSensitiveFieldName("suggestedPhotoCredit")).toBe(true);
+    expect(isSensitiveFieldName("originalSha256")).toBe(true);
+    expect(isSensitiveFieldName("quarantineStorageKey")).toBe(true);
+    expect(isSensitiveFieldName("uploadAuthorization")).toBe(true);
   });
 
   it("redacts intake security fields and never serializes raw request context", () => {

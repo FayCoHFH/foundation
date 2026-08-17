@@ -156,6 +156,16 @@ private media/rights/clearance/evidence/promotion/revocation contract are
 documented in the [C6B-2C record](../development/c6b2c-submission-policy-alignment.md).
 The public form remains disabled; no media or clearance schema is included.
 
+**C6B-3A — Private Story Submission media quarantine foundation: complete
+locally on 2026-08-17.** The generated Prisma persistence, opaque recovery
+attempt lifecycle, server-only provider-neutral quarantine port, short-lived
+slot-bound upload authorization, private metadata/order/state rules, bounded
+expiry cleanup, exact same-attempt duplicate handling, `READY`-only atomic
+submission association, and allowlisted recovery/review DTOs are documented in
+[the C6B-3A delivery record](../development/c6b3a-private-submission-media.md).
+No public upload/form/UI, processing, scanning, clearance, promotion, Story
+conversion, or public media delivery is included; C6B remains incomplete.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

@@ -9,6 +9,7 @@ import {
   InvalidObjectKeyError,
   ObjectAlreadyExistsError,
   createLocalObjectStores,
+  createLocalSubmissionQuarantineStore,
   createOpaqueObjectKey,
 } from "../../../src/platform/storage";
 
@@ -135,6 +136,37 @@ describe("local provider-neutral object stores", () => {
         body: new Uint8Array([1]),
         contentType: "application/octet-stream",
         classification: "RESTRICTED",
+      }),
+    ).rejects.toBeInstanceOf(InvalidObjectKeyError);
+  });
+
+  it("keeps submission quarantine server-only, opaque, and independently deletable", async () => {
+    const root = await fs.mkdtemp(
+      path.join(os.tmpdir(), "habitat-quarantine-test-"),
+    );
+    temporaryRoots.push(root);
+    const quarantine = createLocalSubmissionQuarantineStore({
+      rootDirectory: root,
+    });
+    const key = createOpaqueObjectKey("submission-quarantine");
+    await quarantine.put({
+      key,
+      body: new Uint8Array([1, 2, 3]),
+      contentType: "image/png",
+      classification: "CONFIDENTIAL",
+    });
+    expect((await quarantine.statForProcessing(key))?.key).toBe(key);
+    expect((await quarantine.readForProcessing(key))?.body).toEqual(
+      new Uint8Array([1, 2, 3]),
+    );
+    await quarantine.deleteForCleanup(key);
+    expect(await quarantine.statForProcessing(key)).toBeNull();
+    await expect(
+      quarantine.put({
+        key: createOpaqueObjectKey("public"),
+        body: new Uint8Array([1]),
+        contentType: "image/png",
+        classification: "CONFIDENTIAL",
       }),
     ).rejects.toBeInstanceOf(InvalidObjectKeyError);
   });
