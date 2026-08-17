@@ -196,6 +196,11 @@ Stripe owns card/payment method data and processor transaction detail. Product a
 - `MediaAsset`: metadata and lifecycle for an immutable object: classification, storage key/store, checksum, MIME type determined server-side, byte size, dimensions/duration, source description, credits, consent/license basis, upload actor/time, scan state, processing state, and publication eligibility.
 - `MediaUsage`: a typed contextual join to an eligible editorial owner (Story revision, News revision, AuthorProfile, or NewsletterBlock in approved scope) with presentation role, order, focal crop, contextual caption, contextual alternative text/decorative treatment, and use constraints. V1 placement uses the target snapshot’s approved media and cannot introduce its own media override. Raw `SubmissionMedia` is not a MediaUsage; explicit promotion after acceptance/rights review creates a normal MediaAsset and Story-revision usage. Public usage requires a ready, cleared asset and complete contextual requirements. Snapshotting freezes the approved asset and usage versions.
 - `MediaVariant`: generated rendition linked to its source and transformation version.
+- `PublicStorySubmissionMedia`: confidential intake-only original and, after
+  server validation, one separate confidential review JPEG derivative. Its
+  server-determined detected format, normalized source dimensions, derivative
+  dimensions/bytes, and processing time are technical facts; neither object is
+  a `MediaAsset`, `MediaUsage`, public object, consent record, or clearance.
 - Draft/public media and private/confidential documents never share an access policy simply because both are files.
 - Replacing an asset creates a new immutable object/version; published snapshots continue to reference the version they approved.
 

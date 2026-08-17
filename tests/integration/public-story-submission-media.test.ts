@@ -3,6 +3,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
+import sharp from "sharp";
+
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
@@ -16,15 +18,18 @@ import {
   getPublicStorySubmissionAttemptRecovery,
   getPublicStorySubmissionMediaForAdministrativeReview,
   issuePublicStorySubmissionMediaUpload,
+  processPublicStorySubmissionMedia,
   removePublicStorySubmissionMedia,
   reorderPublicStorySubmissionMedia,
-  transitionPublicStorySubmissionMediaTechnicalStatus,
   updatePublicStorySubmissionMediaMetadata,
   uploadPublicStorySubmissionMedia,
 } from "@/modules/communications/submissions";
 import { receivePublicStorySubmission } from "@/modules/communications/submissions/submission-service";
 import type { Capability } from "@/platform/auth/capabilities";
-import { createLocalSubmissionQuarantineStore } from "@/platform/storage";
+import {
+  createLocalSubmissionQuarantineStore,
+  type SubmissionQuarantineStoragePort,
+} from "@/platform/storage";
 import {
   AuthorizationError,
   ConcurrencyError,
@@ -52,6 +57,7 @@ type Actor = { adminUserId: string; capabilities: readonly Capability[] };
 
 let rootDirectory: string;
 let quarantine: ReturnType<typeof createLocalSubmissionQuarantineStore>;
+let validJpeg: Uint8Array;
 
 function now() {
   return new Date("2041-02-03T04:05:06.000Z");
@@ -65,14 +71,15 @@ async function issue(
   recoveryToken: string,
   expectedAttemptVersion: number,
   suffix: string = randomUUID(),
+  declaredMimeType: "image/jpeg" | "image/png" = "image/jpeg",
 ) {
   return issuePublicStorySubmissionMediaUpload(
     prisma,
     {
       recoveryToken,
       expectedAttemptVersion,
-      declaredMimeType: "image/jpeg",
-      originalFilename: `confidential-${suffix}.jpg`,
+      declaredMimeType,
+      originalFilename: `confidential-${suffix}.${declaredMimeType === "image/png" ? "png" : "jpg"}`,
       description: "A confidential submitted image.",
       suggestedPhotoCredit: "A suggested credit",
       sensitivity,
@@ -82,7 +89,11 @@ async function issue(
   );
 }
 
-async function upload(authorization: string, body: Uint8Array) {
+async function upload(
+  authorization: string,
+  body: Uint8Array,
+  declaredMimeType = "image/jpeg",
+) {
   return uploadPublicStorySubmissionMedia(
     prisma,
     quarantine,
@@ -90,7 +101,7 @@ async function upload(authorization: string, body: Uint8Array) {
       uploadAuthorization: authorization,
       uploadAuthorizationSecret,
       body,
-      declaredMimeType: "image/jpeg",
+      declaredMimeType,
     },
     { now },
   );
@@ -143,33 +154,35 @@ async function reviewActor(roleKey: string): Promise<Actor> {
 }
 
 async function makeReady(attemptId: string, mediaId: string, version: number) {
-  const processing = await transitionPublicStorySubmissionMediaTechnicalStatus(
+  const result = await processPublicStorySubmissionMedia(
     prisma,
     quarantine,
     {
       attemptId,
       mediaId,
       expectedMediaVersion: version,
-      nextStatus: "PROCESSING",
     },
     { now },
   );
-  return transitionPublicStorySubmissionMediaTechnicalStatus(
-    prisma,
-    quarantine,
-    {
-      attemptId,
-      mediaId,
-      expectedMediaVersion: processing.version,
-      nextStatus: "READY",
-    },
-    { now },
-  );
+  if (result.kind !== "ready") throw new Error("fixture processing failed");
+  return result.media;
 }
 
 beforeAll(async () => {
   rootDirectory = await mkdtemp(join(tmpdir(), "habitat-c6b3a-quarantine-"));
   quarantine = createLocalSubmissionQuarantineStore({ rootDirectory, now });
+  validJpeg = new Uint8Array(
+    await sharp({
+      create: {
+        width: 8,
+        height: 6,
+        channels: 3,
+        background: { r: 40, g: 80, b: 120 },
+      },
+    })
+      .jpeg()
+      .toBuffer(),
+  );
   await prisma.publicStorySubmissionMedia.deleteMany();
   await prisma.publicStorySubmissionAttempt.deleteMany();
 });
@@ -355,10 +368,7 @@ describe("C6B-3A private Story Submission media PostgreSQL domain", () => {
   it("only atomically attaches Ready retained media and closes the attempt on submission", async () => {
     const attempt = await createAttempt();
     const issued = await issue(attempt.recoveryToken, attempt.version);
-    const uploaded = await upload(
-      issued.uploadAuthorization,
-      new Uint8Array([20, 21]),
-    );
+    const uploaded = await upload(issued.uploadAuthorization, validJpeg);
     if (uploaded.kind !== "uploaded") throw new Error("fixture upload failed");
     const submitterEmail = `association-${randomUUID()}@example.org`;
     await receivePublicStorySubmission(
@@ -420,10 +430,7 @@ describe("C6B-3A private Story Submission media PostgreSQL domain", () => {
   it("provides a constrained administrative DTO and no raw storage or authorization material", async () => {
     const attempt = await createAttempt();
     const issued = await issue(attempt.recoveryToken, attempt.version);
-    const uploaded = await upload(
-      issued.uploadAuthorization,
-      new Uint8Array([31]),
-    );
+    const uploaded = await upload(issued.uploadAuthorization, validJpeg);
     if (uploaded.kind !== "uploaded") throw new Error("fixture upload failed");
     const ready = await makeReady(
       attempt.id,
@@ -471,7 +478,17 @@ describe("C6B-3A private Story Submission media PostgreSQL domain", () => {
   it("expires only unsubmitted attempts in bounded cleanup and retains submitted media", async () => {
     const expired = await createAttempt();
     const issued = await issue(expired.recoveryToken, expired.version);
-    await upload(issued.uploadAuthorization, new Uint8Array([41]));
+    const uploaded = await upload(issued.uploadAuthorization, validJpeg);
+    if (uploaded.kind !== "uploaded") throw new Error("fixture upload failed");
+    const ready = await makeReady(
+      expired.id,
+      issued.media.id,
+      uploaded.media.version,
+    );
+    const beforeExpiry =
+      await prisma.publicStorySubmissionMedia.findUniqueOrThrow({
+        where: { id: issued.media.id },
+      });
     await prisma.publicStorySubmissionAttempt.update({
       where: { id: expired.id },
       data: { expiresAt: new Date(now().getTime() - 1) },
@@ -496,6 +513,12 @@ describe("C6B-3A private Story Submission media PostgreSQL domain", () => {
     expect(
       await quarantine.statForProcessing(media.quarantineStorageKey!),
     ).toBeNull();
+    expect(
+      await quarantine.statForProcessing(
+        beforeExpiry.reviewDerivativeStorageKey!,
+      ),
+    ).toBeNull();
+    expect(ready.technicalStatus).toBe("READY");
   });
 
   it("rejects stale concurrent slot issuance instead of allowing an eleventh retained slot", async () => {
@@ -523,6 +546,191 @@ describe("C6B-3A private Story Submission media PostgreSQL domain", () => {
         },
       }),
     ).resolves.toBe(10);
+  });
+
+  it("creates one confidential derivative, retains its original privately, and deletes both on removal", async () => {
+    const attempt = await createAttempt();
+    const issued = await issue(attempt.recoveryToken, attempt.version, "ready");
+    const uploaded = await upload(issued.uploadAuthorization, validJpeg);
+    if (uploaded.kind !== "uploaded") throw new Error("fixture upload failed");
+
+    const processed = await processPublicStorySubmissionMedia(
+      prisma,
+      quarantine,
+      {
+        attemptId: attempt.id,
+        mediaId: issued.media.id,
+        expectedMediaVersion: uploaded.media.version,
+      },
+      { now },
+    );
+    expect(processed).toMatchObject({ kind: "ready" });
+    const row = await prisma.publicStorySubmissionMedia.findUniqueOrThrow({
+      where: { id: issued.media.id },
+    });
+    expect(row).toMatchObject({
+      technicalStatus: "READY",
+      detectedFormat: "JPEG",
+      sourceWidth: 8,
+      sourceHeight: 6,
+      reviewDerivativeFormat: "JPEG",
+      reviewDerivativeWidth: 8,
+      reviewDerivativeHeight: 6,
+    });
+    expect(row.reviewDerivativeStorageKey).toMatch(
+      /^submission-review-derivative\//,
+    );
+    expect(
+      await quarantine.statForProcessing(row.quarantineStorageKey!),
+    ).not.toBeNull();
+    expect(
+      await quarantine.statForProcessing(row.reviewDerivativeStorageKey!),
+    ).toMatchObject({
+      classification: "CONFIDENTIAL",
+      contentType: "image/jpeg",
+    });
+    const recovery = await getPublicStorySubmissionAttemptRecovery(
+      prisma,
+      attempt.recoveryToken,
+    );
+    expect(recovery.media[0]).not.toHaveProperty("reviewDerivativeStorageKey");
+    if (processed.kind !== "ready")
+      throw new Error("fixture processing failed");
+    await removePublicStorySubmissionMedia(
+      prisma,
+      quarantine,
+      {
+        recoveryToken: attempt.recoveryToken,
+        mediaId: issued.media.id,
+        expectedMediaVersion: processed.media.version,
+      },
+      { now },
+    );
+    expect(
+      await quarantine.statForProcessing(row.quarantineStorageKey!),
+    ).toBeNull();
+    expect(
+      await quarantine.statForProcessing(row.reviewDerivativeStorageKey!),
+    ).toBeNull();
+  });
+
+  it("permanently rejects signature mismatch and restores UPLOADED only for a transient storage failure", async () => {
+    const mismatchAttempt = await createAttempt();
+    const mismatch = await issue(
+      mismatchAttempt.recoveryToken,
+      mismatchAttempt.version,
+      "mismatch",
+      "image/png",
+    );
+    const mismatchedUpload = await upload(
+      mismatch.uploadAuthorization,
+      validJpeg,
+      "image/png",
+    );
+    if (mismatchedUpload.kind !== "uploaded")
+      throw new Error("fixture upload failed");
+    await expect(
+      processPublicStorySubmissionMedia(
+        prisma,
+        quarantine,
+        {
+          attemptId: mismatchAttempt.id,
+          mediaId: mismatch.media.id,
+          expectedMediaVersion: mismatchedUpload.media.version,
+        },
+        { now },
+      ),
+    ).resolves.toEqual({ kind: "rejected", reason: "MIME_TYPE_MISMATCH" });
+    const rejected = await prisma.publicStorySubmissionMedia.findUniqueOrThrow({
+      where: { id: mismatch.media.id },
+    });
+    expect(rejected).toMatchObject({
+      technicalStatus: "REJECTED",
+      rejectionReason: "MIME_TYPE_MISMATCH",
+      binaryDeletedAt: now(),
+    });
+    expect(
+      await quarantine.statForProcessing(rejected.quarantineStorageKey!),
+    ).toBeNull();
+
+    const transientAttempt = await createAttempt();
+    const transient = await issue(
+      transientAttempt.recoveryToken,
+      transientAttempt.version,
+      "transient",
+    );
+    const transientUpload = await upload(
+      transient.uploadAuthorization,
+      validJpeg,
+    );
+    if (transientUpload.kind !== "uploaded")
+      throw new Error("fixture upload failed");
+    const unavailableStorage: SubmissionQuarantineStoragePort = {
+      put: (input) => quarantine.put(input),
+      putReviewDerivative: (input) => quarantine.putReviewDerivative(input),
+      readForProcessing: async () => {
+        throw new Error("temporary storage outage");
+      },
+      statForProcessing: (key) => quarantine.statForProcessing(key),
+      deleteForCleanup: (key) => quarantine.deleteForCleanup(key),
+    };
+    await expect(
+      processPublicStorySubmissionMedia(
+        prisma,
+        unavailableStorage,
+        {
+          attemptId: transientAttempt.id,
+          mediaId: transient.media.id,
+          expectedMediaVersion: transientUpload.media.version,
+        },
+        { now },
+      ),
+    ).resolves.toMatchObject({ kind: "retryable" });
+    await expect(
+      prisma.publicStorySubmissionMedia.findUniqueOrThrow({
+        where: { id: transient.media.id },
+      }),
+    ).resolves.toMatchObject({ technicalStatus: "UPLOADED" });
+  });
+
+  it("allows exactly one processor to claim an uploaded original", async () => {
+    const attempt = await createAttempt();
+    const issued = await issue(attempt.recoveryToken, attempt.version, "race");
+    const uploaded = await upload(issued.uploadAuthorization, validJpeg);
+    if (uploaded.kind !== "uploaded") throw new Error("fixture upload failed");
+    const outcomes = await Promise.allSettled([
+      processPublicStorySubmissionMedia(
+        prisma,
+        quarantine,
+        {
+          attemptId: attempt.id,
+          mediaId: issued.media.id,
+          expectedMediaVersion: uploaded.media.version,
+        },
+        { now },
+      ),
+      processPublicStorySubmissionMedia(
+        prisma,
+        quarantine,
+        {
+          attemptId: attempt.id,
+          mediaId: issued.media.id,
+          expectedMediaVersion: uploaded.media.version,
+        },
+        { now },
+      ),
+    ]);
+    expect(
+      outcomes.filter((outcome) => outcome.status === "fulfilled"),
+    ).toHaveLength(1);
+    expect(
+      outcomes.find((outcome) => outcome.status === "rejected")?.reason,
+    ).toBeInstanceOf(ConcurrencyError);
+    await expect(
+      prisma.publicStorySubmissionMedia.findUniqueOrThrow({
+        where: { id: issued.media.id },
+      }),
+    ).resolves.toMatchObject({ technicalStatus: "READY" });
   });
 
   it("keeps duplicate, order/removal, and final association races within one attempt boundary", async () => {
@@ -614,7 +822,7 @@ describe("C6B-3A private Story Submission media PostgreSQL domain", () => {
     );
     const finalUploaded = await upload(
       finalIssued.uploadAuthorization,
-      new Uint8Array([71]),
+      validJpeg,
     );
     if (finalUploaded.kind !== "uploaded")
       throw new Error("fixture upload failed");

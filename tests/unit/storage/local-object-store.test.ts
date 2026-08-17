@@ -161,11 +161,29 @@ describe("local provider-neutral object stores", () => {
     );
     await quarantine.deleteForCleanup(key);
     expect(await quarantine.statForProcessing(key)).toBeNull();
+    const derivativeKey = createOpaqueObjectKey("submission-review-derivative");
+    await quarantine.putReviewDerivative({
+      key: derivativeKey,
+      body: new Uint8Array([4, 5, 6]),
+      contentType: "image/jpeg",
+      classification: "CONFIDENTIAL",
+    });
+    expect((await quarantine.statForProcessing(derivativeKey))?.scope).toBe(
+      "PRIVATE",
+    );
     await expect(
       quarantine.put({
         key: createOpaqueObjectKey("public"),
         body: new Uint8Array([1]),
         contentType: "image/png",
+        classification: "CONFIDENTIAL",
+      }),
+    ).rejects.toBeInstanceOf(InvalidObjectKeyError);
+    await expect(
+      quarantine.putReviewDerivative({
+        key: createOpaqueObjectKey("submission-quarantine"),
+        body: new Uint8Array([1]),
+        contentType: "image/jpeg",
         classification: "CONFIDENTIAL",
       }),
     ).rejects.toBeInstanceOf(InvalidObjectKeyError);

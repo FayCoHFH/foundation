@@ -91,9 +91,11 @@ enum PublicStorySubmissionMediaStatus {
 
 enum PublicStorySubmissionMediaRejectionReason {
   UNSUPPORTED_FORMAT
+  MIME_TYPE_MISMATCH
   FILE_TOO_LARGE
   SUBMISSION_TOTAL_TOO_LARGE
   DIMENSIONS_EXCEEDED
+  MULTI_FRAME_UNSUPPORTED
   CORRUPTED_IMAGE
   DUPLICATE_IMAGE
   PROCESSING_FAILED
@@ -735,6 +737,15 @@ model PublicStorySubmissionMedia {
   technicalStatus                        PublicStorySubmissionMediaStatus           @default(PENDING_UPLOAD)
   rejectionReason                        PublicStorySubmissionMediaRejectionReason?
   quarantineStorageKey                   String?                                    @db.VarChar(240)
+  detectedFormat                         String?                                    @db.VarChar(16)
+  sourceWidth                            Int?
+  sourceHeight                           Int?
+  reviewDerivativeStorageKey             String?                                    @db.VarChar(240)
+  reviewDerivativeFormat                 String?                                    @db.VarChar(16)
+  reviewDerivativeWidth                  Int?
+  reviewDerivativeHeight                 Int?
+  reviewDerivativeByteSize               Int?
+  processedAt                            DateTime?
   originalSha256                         String?                                    @db.Char(64)
   uploadAuthorizationNonceHash           String                                     @unique @db.Char(64)
   removedAt                              DateTime?

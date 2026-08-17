@@ -10,6 +10,21 @@ export const SUBMISSION_MEDIA_MAX_TOTAL_BYTES = 60 * 1024 * 1024;
 export const SUBMISSION_MEDIA_ATTEMPT_TTL_MS = 24 * 60 * 60 * 1000;
 export const SUBMISSION_MEDIA_MAX_DESCRIPTION_LENGTH = 300;
 export const SUBMISSION_MEDIA_MAX_CREDIT_LENGTH = 160;
+export const SUBMISSION_MEDIA_MAX_WIDTH = 12_000;
+export const SUBMISSION_MEDIA_MAX_HEIGHT = 12_000;
+export const SUBMISSION_MEDIA_MAX_PIXELS = 80_000_000;
+export const SUBMISSION_MEDIA_REVIEW_DERIVATIVE_MAX_EDGE = 2_400;
+
+export const submissionMediaDetectedFormats = [
+  "JPEG",
+  "PNG",
+  "WEBP",
+  "HEIF",
+] as const;
+export type SubmissionMediaDetectedFormat =
+  (typeof submissionMediaDetectedFormats)[number];
+
+export const submissionMediaReviewDerivativeFormat = "JPEG" as const;
 
 export const submissionMediaMimeTypes = [
   "image/jpeg",
@@ -30,9 +45,11 @@ export type SubmissionMediaSensitivity = Readonly<{
 
 export const submissionMediaRejectionReasons = [
   "UNSUPPORTED_FORMAT",
+  "MIME_TYPE_MISMATCH",
   "FILE_TOO_LARGE",
   "SUBMISSION_TOTAL_TOO_LARGE",
   "DIMENSIONS_EXCEEDED",
+  "MULTI_FRAME_UNSUPPORTED",
   "CORRUPTED_IMAGE",
   "DUPLICATE_IMAGE",
   "PROCESSING_FAILED",
@@ -46,7 +63,9 @@ const mediaTransitions: Readonly<
 > = {
   PENDING_UPLOAD: ["UPLOADED", "REJECTED", "REMOVED"],
   UPLOADED: ["PROCESSING", "REJECTED", "REMOVED"],
-  PROCESSING: ["READY", "REJECTED", "REMOVED"],
+  // A storage failure may be returned to UPLOADED for one later server-side
+  // retry. Content failures are terminal REJECTED states.
+  PROCESSING: ["UPLOADED", "READY", "REJECTED", "REMOVED"],
   READY: ["REMOVED"],
   REJECTED: [],
   REMOVED: [],

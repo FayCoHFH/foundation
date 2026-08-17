@@ -326,6 +326,20 @@ class LocalSubmissionQuarantineStore
     return super.put(input);
   }
 
+  async putReviewDerivative(input: PutObjectInput): Promise<ObjectMetadata> {
+    if (input.classification !== "CONFIDENTIAL") {
+      throw new InvalidObjectKeyError(
+        "Submission review derivatives must remain Confidential.",
+      );
+    }
+    if (!input.key.startsWith("submission-review-derivative/")) {
+      throw new InvalidObjectKeyError(
+        "Submission review derivatives need their private derivative namespace.",
+      );
+    }
+    return super.put(input);
+  }
+
   readForProcessing(key: string) {
     return this.read(key);
   }

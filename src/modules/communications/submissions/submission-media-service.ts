@@ -33,6 +33,10 @@ import {
   validateSuggestedPhotoCredit,
 } from "./submission-media-content";
 import {
+  processSubmissionMediaImage,
+  SubmissionMediaProcessingError,
+} from "./submission-media-processing";
+import {
   issueSubmissionMediaUploadAuthorization,
   verifySubmissionMediaUploadAuthorization,
 } from "./submission-media-upload-auth";
@@ -86,6 +90,14 @@ export type SubmissionMediaAdminItem = Readonly<{
   description: string | null;
   suggestedPhotoCredit: string | null;
   sensitivity: SubmissionMediaSensitivity;
+  detectedFormat: string | null;
+  sourceWidth: number | null;
+  sourceHeight: number | null;
+  reviewDerivativeFormat: string | null;
+  reviewDerivativeWidth: number | null;
+  reviewDerivativeHeight: number | null;
+  reviewDerivativeByteSize: number | null;
+  processedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }>;
@@ -110,6 +122,15 @@ const mediaSelect = {
   technicalStatus: true,
   rejectionReason: true,
   quarantineStorageKey: true,
+  detectedFormat: true,
+  sourceWidth: true,
+  sourceHeight: true,
+  reviewDerivativeStorageKey: true,
+  reviewDerivativeFormat: true,
+  reviewDerivativeWidth: true,
+  reviewDerivativeHeight: true,
+  reviewDerivativeByteSize: true,
+  processedAt: true,
   originalSha256: true,
   uploadAuthorizationNonceHash: true,
   removedAt: true,
@@ -185,6 +206,14 @@ function adminItem(media: MediaRecord): SubmissionMediaAdminItem {
     description: media.description,
     suggestedPhotoCredit: media.suggestedPhotoCredit,
     sensitivity: sensitivity(media),
+    detectedFormat: media.detectedFormat,
+    sourceWidth: media.sourceWidth,
+    sourceHeight: media.sourceHeight,
+    reviewDerivativeFormat: media.reviewDerivativeFormat,
+    reviewDerivativeWidth: media.reviewDerivativeWidth,
+    reviewDerivativeHeight: media.reviewDerivativeHeight,
+    reviewDerivativeByteSize: media.reviewDerivativeByteSize,
+    processedAt: media.processedAt,
     createdAt: media.createdAt,
     updatedAt: media.updatedAt,
   };
@@ -282,11 +311,18 @@ async function markBinaryDeleted(
 async function deleteBinaryIfPresent(
   prisma: PrismaClient,
   storage: SubmissionQuarantineStoragePort,
-  media: Pick<MediaRecord, "id" | "quarantineStorageKey">,
+  media: Pick<
+    MediaRecord,
+    "id" | "quarantineStorageKey" | "reviewDerivativeStorageKey"
+  >,
   now: Date,
 ) {
-  if (!media.quarantineStorageKey) return;
-  await storage.deleteForCleanup(media.quarantineStorageKey);
+  const keys = [
+    media.quarantineStorageKey,
+    media.reviewDerivativeStorageKey,
+  ].filter((key): key is string => key !== null);
+  if (keys.length === 0) return;
+  for (const key of keys) await storage.deleteForCleanup(key);
   await markBinaryDeleted(prisma, media.id, now);
 }
 
@@ -763,6 +799,15 @@ export async function transitionPublicStorySubmissionMediaTechnicalStatus(
         input.nextStatus,
       );
       if (
+        input.nextStatus === PublicStorySubmissionMediaStatus.UPLOADED ||
+        input.nextStatus === PublicStorySubmissionMediaStatus.PROCESSING ||
+        input.nextStatus === PublicStorySubmissionMediaStatus.READY
+      ) {
+        throw new ValidationError(
+          "Upload and readiness states are assigned only by secure image processing.",
+        );
+      }
+      if (
         input.nextStatus === PublicStorySubmissionMediaStatus.REJECTED &&
         !input.rejectionReason
       ) {
@@ -807,6 +852,243 @@ export async function transitionPublicStorySubmissionMediaTechnicalStatus(
     await deleteBinaryIfPresent(prisma, storage, media, now);
   }
   return recoveryItem(media);
+}
+
+export type SubmissionMediaProcessingOutcome =
+  | Readonly<{ kind: "ready"; media: SubmissionMediaRecoveryItem }>
+  | Readonly<{
+      kind: "rejected";
+      reason: PublicStorySubmissionMediaRejectionReason;
+    }>
+  | Readonly<{ kind: "retryable"; media: SubmissionMediaRecoveryItem }>;
+
+async function returnProcessingToUploaded(
+  prisma: PrismaClient,
+  input: { readonly mediaId: string; readonly processingVersion: number },
+  now: Date,
+) {
+  return prisma.$transaction(
+    async (transaction) => {
+      const media = await transaction.publicStorySubmissionMedia.findUnique({
+        where: { id: input.mediaId },
+        select: mediaSelect,
+      });
+      if (
+        !media ||
+        media.technicalStatus !== PublicStorySubmissionMediaStatus.PROCESSING ||
+        media.version !== input.processingVersion
+      ) {
+        return null;
+      }
+      const attempt = await findAttempt(transaction, media.attemptId);
+      assertActiveAttempt(attempt, now);
+      const updated = await transaction.publicStorySubmissionMedia.update({
+        where: { id_version: { id: media.id, version: media.version } },
+        data: {
+          technicalStatus: PublicStorySubmissionMediaStatus.UPLOADED,
+          version: { increment: 1 },
+        },
+        select: mediaSelect,
+      });
+      return recoveryItem(updated);
+    },
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+  );
+}
+
+async function rejectProcessingMedia(
+  prisma: PrismaClient,
+  storage: SubmissionQuarantineStoragePort,
+  input: {
+    readonly mediaId: string;
+    readonly processingVersion: number;
+    readonly reason: PublicStorySubmissionMediaRejectionReason;
+  },
+  now: Date,
+) {
+  const rejected = await prisma.$transaction(
+    async (transaction) => {
+      const media = await transaction.publicStorySubmissionMedia.findUnique({
+        where: { id: input.mediaId },
+        select: mediaSelect,
+      });
+      if (
+        !media ||
+        media.technicalStatus !== PublicStorySubmissionMediaStatus.PROCESSING ||
+        media.version !== input.processingVersion
+      ) {
+        return null;
+      }
+      const active = await transaction.publicStorySubmissionMedia.findMany({
+        where: {
+          attemptId: media.attemptId,
+          technicalStatus: { notIn: ["REJECTED", "REMOVED"] },
+        },
+        select: { id: true, ordinal: true },
+        orderBy: [{ ordinal: "asc" }, { id: "asc" }],
+      });
+      const updated = await transaction.publicStorySubmissionMedia.update({
+        where: { id_version: { id: media.id, version: media.version } },
+        data: {
+          technicalStatus: PublicStorySubmissionMediaStatus.REJECTED,
+          rejectionReason: input.reason,
+          rejectedAt: now,
+          ordinal: null,
+          version: { increment: 1 },
+        },
+        select: mediaSelect,
+      });
+      await replaceOrder(
+        transaction,
+        media.attemptId,
+        active.filter((item) => item.id !== media.id).map((item) => item.id),
+      );
+      return updated;
+    },
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+  );
+  if (rejected) await deleteBinaryIfPresent(prisma, storage, rejected, now);
+  return rejected;
+}
+
+/**
+ * Claims one uploaded original, validates and sanitizes it outside a database
+ * transaction, then makes its private derivative READY with a version guard.
+ */
+export async function processPublicStorySubmissionMedia(
+  prisma: PrismaClient,
+  storage: SubmissionQuarantineStoragePort,
+  input: {
+    readonly attemptId: string;
+    readonly mediaId: string;
+    readonly expectedMediaVersion: number;
+  },
+  dependencies: SubmissionMediaServiceDependencies = {},
+): Promise<SubmissionMediaProcessingOutcome> {
+  const now = nowFrom(dependencies);
+  let claimed: MediaRecord;
+  try {
+    claimed = await prisma.$transaction(
+      async (transaction) => {
+        const attempt = await findAttempt(transaction, input.attemptId);
+        assertActiveAttempt(attempt, now);
+        const media = attempt.media.find((item) => item.id === input.mediaId);
+        if (!media) throw new NotFoundError("Submission media was not found.");
+        if (media.version !== input.expectedMediaVersion)
+          throw new ConcurrencyError();
+        if (
+          media.technicalStatus !== PublicStorySubmissionMediaStatus.UPLOADED
+        ) {
+          throw new ValidationError("Only uploaded media may be processed.");
+        }
+        if (!media.quarantineStorageKey || !media.declaredMimeType) {
+          throw new ValidationError(
+            "Uploaded media is missing secure processing data.",
+          );
+        }
+        return transaction.publicStorySubmissionMedia.update({
+          where: { id_version: { id: media.id, version: media.version } },
+          data: {
+            technicalStatus: PublicStorySubmissionMediaStatus.PROCESSING,
+            version: { increment: 1 },
+          },
+          select: mediaSelect,
+        });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2034"
+    ) {
+      throw new ConcurrencyError();
+    }
+    throw error;
+  }
+
+  const processingVersion = claimed.version;
+  let derivativeKey: string | null = null;
+  try {
+    const original = await storage.readForProcessing(
+      claimed.quarantineStorageKey!,
+    );
+    if (!original) throw new Error("Confidential original is unavailable.");
+    const processed = await processSubmissionMediaImage({
+      body: original.body,
+      declaredMimeType:
+        claimed.declaredMimeType as import("./submission-media-content").SubmissionMediaMimeType,
+      originalFilename: claimed.originalFilename,
+    });
+    derivativeKey = createOpaqueObjectKey("submission-review-derivative");
+    const derivativeMetadata = await storage.putReviewDerivative({
+      key: derivativeKey,
+      body: processed.reviewDerivative,
+      contentType: "image/jpeg",
+      classification: "CONFIDENTIAL",
+    });
+    const ready = await prisma.$transaction(
+      async (transaction) => {
+        const attempt = await findAttempt(transaction, input.attemptId);
+        assertActiveAttempt(attempt, now);
+        const media = attempt.media.find((item) => item.id === input.mediaId);
+        if (
+          !media ||
+          media.technicalStatus !==
+            PublicStorySubmissionMediaStatus.PROCESSING ||
+          media.version !== processingVersion
+        ) {
+          return null;
+        }
+        return transaction.publicStorySubmissionMedia.update({
+          where: { id_version: { id: media.id, version: media.version } },
+          data: {
+            technicalStatus: PublicStorySubmissionMediaStatus.READY,
+            detectedFormat: processed.detectedFormat,
+            sourceWidth: processed.sourceWidth,
+            sourceHeight: processed.sourceHeight,
+            reviewDerivativeStorageKey: derivativeKey,
+            reviewDerivativeFormat: processed.reviewDerivativeFormat,
+            reviewDerivativeWidth: processed.reviewDerivativeWidth,
+            reviewDerivativeHeight: processed.reviewDerivativeHeight,
+            reviewDerivativeByteSize: derivativeMetadata.byteSize,
+            processedAt: now,
+            version: { increment: 1 },
+          },
+          select: mediaSelect,
+        });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
+    if (!ready) {
+      await storage.deleteForCleanup(derivativeKey);
+      throw new ConcurrencyError();
+    }
+    return { kind: "ready", media: recoveryItem(ready) };
+  } catch (error) {
+    if (derivativeKey) await storage.deleteForCleanup(derivativeKey);
+    if (error instanceof SubmissionMediaProcessingError) {
+      const rejected = await rejectProcessingMedia(
+        prisma,
+        storage,
+        {
+          mediaId: input.mediaId,
+          processingVersion,
+          reason: error.reason,
+        },
+        now,
+      );
+      if (rejected) return { kind: "rejected", reason: error.reason };
+      throw new ConcurrencyError();
+    }
+    const retryable = await returnProcessingToUploaded(
+      prisma,
+      { mediaId: input.mediaId, processingVersion },
+      now,
+    );
+    if (retryable) return { kind: "retryable", media: retryable };
+    throw error;
+  }
 }
 
 export async function associateReadySubmissionMedia(

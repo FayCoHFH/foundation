@@ -107,15 +107,19 @@ retention, abuse, rights, and future private-media gates.
 
 **Controls:** staff uploads require authenticated, capability-gated grants. An anonymous public Story Submission upload, if enabled, receives only a short-lived, non-enumerable, single-submission-scoped grant after origin/CSRF, rate-limit, abuse-challenge, declared-size, and declared-type checks; it can write only to private quarantine and cannot read, list, overwrite, promote, or publish objects. All paths use server-generated opaque immutable keys; size/type/dimension/duration allowlists; magic-byte inspection and decode/re-encode for supported images; unnecessary-metadata stripping; quarantine until scan/validation completes; checksums; separate public/private stores; fresh authorization and safe response headers for private downloads; no SVG/PDF inline by default; immutable versions; consent/license/publication-eligibility metadata; and no trust in an original filename for a path or content type.
 
-**C6B-3A implemented subset:** a raw Story Submission image receives a
+**C6B-3A/3B implemented subset:** a raw Story Submission image receives a
 short-lived HMAC authorization that binds one opaque recovery attempt, one media
 slot, nonce, declared allowed MIME type, and byte ceiling. The nonce and recovery
 secret are stored only as hashes. The quarantine port permits server put,
 processor read/stat, and cleanup delete only; it exposes no URL, list, or public
 read. Transactional attempt/media versions, per-attempt limits, and exact
-same-attempt checksum rejection prevent race or replay bypasses. Signature
-inspection, decode/re-encode, dimensions, scan, and promotion remain blocked in
-later work.
+same-attempt checksum rejection prevent race or replay bypasses. C6B-3B adds
+server-only magic-byte/MIME/filename consistency checks, byte/dimension/pixel
+limits, static-image enforcement, orientation normalization, metadata-stripping
+decode/re-encode, and a separately keyed confidential review JPEG derivative.
+It deletes rejected/removed/expired originals and derivatives and uses
+optimistic processing ownership. No malware scanning, public delivery, or
+rights/consent clearance is claimed.
 
 **Verification:** OWASP upload corpus, oversize/bomb/polyglot tests, private URL tests, object inventory scan, and media withdrawal/consent tests. Select malware and media-processing services before those upload types launch.
 

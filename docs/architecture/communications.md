@@ -301,14 +301,17 @@ ACCEPTED / DECLINED / SPAM are terminal in C6B-1A.
 `PublicStorySubmission` is a confidential intake aggregate. It contains minimum contact and pitch information: name, email, chosen relationship-to-Habitat category, suggested title, story text, optional contact preference, privacy-notice acknowledgment version/time, contact consent, publication-consent indication (not proof of final publication permission), and a minor/participant sensitivity declaration. It must clearly instruct submitters not to include applicant, eligibility, financial, medical, household, address, or other sensitive information. Free text is treated as potentially confidential and excluded from logs, analytics, search, previews, and fixtures.
 
 C6B-1A implements the confidential text aggregate and service contract. C6B-3A
-adds a separate confidential image-attempt/quarantine foundation, still with no
+adds a separate confidential image-attempt/quarantine foundation, and C6B-3B
+adds server-only signature validation, bounded decode/re-encode, and one
+separate confidential review derivative per technically ready image, still with no
 public route/form/action/API or Story/Publication conversion. An attempt has an
 opaque recovery bearer stored only as a hash, a 24-hour expiry, bounded
 server-issued one-slot upload authorizations, and `ACTIVE`/`SUBMITTED`/`EXPIRED`
 states. Raw image rows remain private to the attempt and use
 `PENDING_UPLOAD`/`UPLOADED`/`PROCESSING`/`READY`/`REJECTED`/`REMOVED`; only
 retained `READY` rows may attach atomically to the final submission. Private
-quarantine storage has no public URL, listing, or client read path. This is
+quarantine and review-derivative storage have no public URL, listing, or client
+read path. This is
 technical intake state only, not consent, rights clearance, or public media.
 The future public boundary still requires the upload, rate-limit, challenge,
 duplicate/throttle, CSRF/origin, and generic response controls described below

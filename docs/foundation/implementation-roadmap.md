@@ -166,6 +166,14 @@ submission association, and allowlisted recovery/review DTOs are documented in
 No public upload/form/UI, processing, scanning, clearance, promotion, Story
 conversion, or public media delivery is included; C6B remains incomplete.
 
+**C6B-3B — Secure Story Submission image processing: complete locally on
+2026-08-17.** Confidential server-only processing now verifies signatures and
+MIME/extension consistency, enforces bounded static image decode, normalizes
+orientation, strips metadata, creates one private review JPEG derivative, and
+handles cleanup/concurrency without public delivery or clearance. The detailed
+record is [C6B-3B secure image processing](../development/c6b3b-secure-image-processing.md).
+C6B remains incomplete pending G-07 and later rights/consent/clearance work.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

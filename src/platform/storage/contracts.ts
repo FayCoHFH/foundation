@@ -73,7 +73,10 @@ export interface PrivateObjectStorePort {
  * This intentionally has no public URL or anonymous/grant consumer surface.
  */
 export interface SubmissionQuarantineStoragePort {
+  /** Writes a raw, untrusted original into the confidential quarantine. */
   put(input: PutObjectInput): Promise<ObjectMetadata>;
+  /** Writes a server-generated confidential review derivative. */
+  putReviewDerivative(input: PutObjectInput): Promise<ObjectMetadata>;
   readForProcessing(key: string): Promise<StoredObject | null>;
   statForProcessing(key: string): Promise<ObjectMetadata | null>;
   deleteForCleanup(key: string): Promise<void>;
