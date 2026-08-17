@@ -19,7 +19,7 @@ const database = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
 
-type Fixture = "story-manager" | "dashboard-only";
+type Fixture = "story-manager" | "super-admin" | "dashboard-only";
 
 type Persona = {
   state: Awaited<ReturnType<BrowserContext["storageState"]>>;
@@ -195,6 +195,7 @@ test.describe("C6B-2B Public Story Submission inbox browser validation", () => {
   test.describe.configure({ mode: "serial", timeout: 120_000 });
 
   let manager: Persona;
+  let restorer: Persona;
   let denied: Persona;
   let received: SubmissionFixture;
   let inReview: SubmissionFixture;
@@ -209,6 +210,7 @@ test.describe("C6B-2B Public Story Submission inbox browser validation", () => {
 
   test.beforeAll(async ({ browser }) => {
     manager = await persona(browser, "story-manager", "C6B2B Review Manager");
+    restorer = await persona(browser, "super-admin", "C6B2B Spam Restorer");
     denied = await persona(
       browser,
       "dashboard-only",
@@ -557,12 +559,20 @@ test.describe("C6B-2B Public Story Submission inbox browser validation", () => {
       });
       await openDetail(session.page, fixture);
       await session.page.getByRole("button", { name: button }).click();
+      if (button === "Mark as Spam") {
+        await expect(session.page.locator("main")).toContainText(
+          "leave ordinary triage",
+        );
+        await session.page
+          .getByRole("button", { name: "Confirm Mark as Spam" })
+          .click();
+      }
       await expect(session.page).toHaveURL(new RegExp(code));
-      await expect(
-        session.page.getByText("This submission is terminal.", {
-          exact: false,
-        }),
-      ).toBeVisible();
+      await expect(session.page.locator("main")).toContainText(
+        button === "Mark as Spam"
+          ? "terminal for ordinary reviewers"
+          : "This submission is terminal. No further lifecycle actions are available.",
+      );
       for (const unsupported of [
         "Begin Review",
         "Resume Review",
@@ -581,6 +591,38 @@ test.describe("C6B-2B Public Story Submission inbox browser validation", () => {
       }
       await expectAxe(session.page);
     }
+
+    const ordinarySpam = await createSubmission(manager.adminUserId, {
+      label: "Restore Capability Check",
+      status: PublicStorySubmissionStatus.SPAM,
+      offsetMinutes: 100,
+    });
+    await openDetail(session.page, ordinarySpam);
+    await expect(
+      session.page.getByRole("button", { name: "Restore to Received" }),
+    ).toHaveCount(0);
+    await expect(session.page.locator("main")).toContainText(
+      "higher restore capability",
+    );
+    const restorerSession = await newPersonaPage(browser, restorer);
+    await openDetail(restorerSession.page, ordinarySpam);
+    await expect(
+      restorerSession.page.getByRole("button", {
+        name: "Restore to Received",
+      }),
+    ).toBeVisible();
+    await expect(restorerSession.page.locator("main")).toContainText(
+      "does not accept or approve it",
+    );
+    await restorerSession.page
+      .getByRole("button", { name: "Restore to Received" })
+      .click();
+    await expect(restorerSession.page).toHaveURL(/submission-spam-restored/);
+    await expect(restorerSession.page.locator("main")).toContainText(
+      "Received",
+    );
+    await expectAxe(restorerSession.page);
+    await restorerSession.context.close();
     await session.context.close();
   });
 

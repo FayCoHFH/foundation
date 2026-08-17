@@ -57,11 +57,17 @@ described as proof that a submission is safe.
 
 ## Lifecycle and review notes
 
-The UI exposes only the explicit C6B-1A commands valid for the current state:
-begin/resume review, mark follow-up, accept, decline, and mark spam. Accepted,
-declined, and spam states expose no further transition controls. There is no
-generic status dropdown, reopen/restore/unspam action, conversion, deletion,
-export, or bulk action.
+The UI exposes only the explicit commands valid for the current state:
+begin/resume review, mark follow-up, accept, decline, and confirmed mark spam.
+Accepted and declined expose no further transition controls. Spam exposes no
+ordinary controls; an administrator with the separate
+`communications.submissions.restore_spam` capability also sees the dedicated
+restore-to-Received action. There is no generic status dropdown, conversion,
+deletion, export, or bulk action.
+
+Accepted is labelled editorial consideration, not publication approval or
+consent. Sensitivity indicators call for additional review before any future
+public use and do not block confidential review.
 
 The internal review-note form is private, labelled, limited to 2,000
 characters, and submits the current expected version. Note validation retains

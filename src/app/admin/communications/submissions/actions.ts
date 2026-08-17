@@ -10,6 +10,7 @@ import {
   declinePublicStorySubmission,
   markPublicStorySubmissionFollowUp,
   markPublicStorySubmissionSpam,
+  restoreSpamPublicStorySubmission,
   updatePublicStorySubmissionReviewNote,
 } from "@/modules/communications/submissions";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
@@ -44,6 +45,7 @@ const submissionMutationSchema = z.object({
     "accept",
     "decline",
     "mark-spam",
+    "restore-spam",
   ]),
 });
 
@@ -132,6 +134,10 @@ export async function submissionWorkflowAction(
       case "mark-spam":
         await markPublicStorySubmissionSpam(...input);
         code = "submission-marked-spam";
+        break;
+      case "restore-spam":
+        await restoreSpamPublicStorySubmission(...input);
+        code = "submission-spam-restored";
         break;
     }
   } catch (error) {

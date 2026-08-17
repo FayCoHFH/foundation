@@ -33,10 +33,13 @@ contract does not accept rich text, HTML, uploads, or executable content.
 The only statuses are `RECEIVED`, `IN_REVIEW`, `FOLLOW_UP`, `ACCEPTED`,
 `DECLINED`, and `SPAM`. Active transitions are explicit: receipt can enter
 review or a terminal state; review can request follow-up or enter a terminal
-state; follow-up can return to review or enter a terminal state. Terminal
-statuses cannot transition again. Every administrative operation checks the
-active local administrator and `communications.submissions.review` at the
-service boundary.
+state; follow-up can return to review or enter a terminal state. Accepted and
+declined remain terminal. Spam is terminal for ordinary operations and has one
+dedicated higher-authority `SPAM -> RECEIVED` restoration path documented in
+the [C6B-2C policy record](./c6b2c-submission-policy-alignment.md). Every
+administrative operation checks the active local administrator and
+`communications.submissions.review` at the service boundary; restoration also
+requires `communications.submissions.restore_spam`.
 
 Administrative list DTOs exclude email, story text, and review notes. Detail
 DTOs contain the required confidential fields but exclude audit rows, provider
@@ -51,7 +54,8 @@ Audit failure rolls back the corresponding receive or administrative mutation.
 
 ## Retention and deferred boundaries
 
-No final retention duration or cleanup job is introduced. A named owner,
+No final retention duration or cleanup job is introduced. Submission content
+is manually retained until an approved policy exists. A named owner,
 approved privacy/consent text, and retention profile remain launch gates before
 real production collection. Declined/spam handling, accepted-to-Story
 conversion, participant/minor consent review, public intake security controls,

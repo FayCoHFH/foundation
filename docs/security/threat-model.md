@@ -56,6 +56,19 @@ Security objectives, in order:
 
 ## Threats and required controls
 
+### Confidential Story Submission lifecycle correction
+
+Spam restoration is a narrow higher-authority operation, not a generic status
+override. The service requires an active administrator with both
+`communications.submissions.review` and
+`communications.submissions.restore_spam`, checks the current version and
+`SPAM` state, updates `RECEIVED`/actor/time/version transactionally, preserves
+the confidential record, and writes `public_story_submission.spam_restored`
+without content in the audit summary. Stale or failed-audit restores must leave
+status, actor, time, version, and audit state unchanged. Ordinary reviewers see
+no restore control, and public intake remains disabled pending the privacy,
+retention, abuse, rights, and future private-media gates.
+
 ### Identity and session compromise
 
 **Threats:** OAuth account-link takeover; email-domain checks used as authorization; stolen session; session surviving suspension; login CSRF; secret leakage.

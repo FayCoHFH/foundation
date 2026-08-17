@@ -148,6 +148,14 @@ checks, and full regression are documented in
 C6B as a whole is not complete; the visible public form remains gated by G-07
 and the human decisions recorded in that validation record.
 
+**C6B-2C — Public Story Submission policy alignment: complete locally on
+2026-08-17.** Controlled spam restoration, explicit spam confirmation,
+accepted/editorial-consideration language, sensitivity semantics, manual
+submission-content retention, shared operational ownership, and the future
+private media/rights/clearance/evidence/promotion/revocation contract are
+documented in the [C6B-2C record](../development/c6b2c-submission-policy-alignment.md).
+The public form remains disabled; no media or clearance schema is included.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

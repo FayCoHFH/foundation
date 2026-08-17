@@ -7,9 +7,10 @@ visible public Story Submission form.
 
 ## Browser personas and isolated environment
 
-The focused Playwright suite uses three capability-based personas:
+The focused Playwright suite uses four capability-based personas:
 
 - an active submission reviewer with `communications.submissions.review`;
+- a Super Admin with the separate spam-restore capability;
 - an authenticated Dashboard-only user without submission-review capability;
 - an anonymous visitor following the normal administrator sign-in boundary.
 
@@ -62,9 +63,10 @@ publication — this is not publication consent.” Historical acknowledgment
 facts are not editable.
 
 Received, In Review, and Follow Up transitions are exercised through their
-explicit allowlisted commands. Accepted, Declined, and Spam remain readable
-terminal states with no reopen, restore, unspam, archive, delete, conversion,
-export, or generic status controls. Review notes cover existing-note loading,
+explicit allowlisted commands. Accepted and Declined remain readable terminal
+states. Spam remains terminal for ordinary reviewers; only the dual-capability
+restore path returns it to Received. Mark as Spam requires explicit accessible
+confirmation. Review notes cover existing-note loading,
 successful persistence, maximum-length and field-associated validation, safe
 entered-value retention, allowlisted success feedback, and absence from list,
 URLs, status messages, and console output.
@@ -117,7 +119,8 @@ uploads, CAPTCHA, Story conversion, AuthorProfile, publication consent,
 retention cleanup, deletion, export, Queue/Dashboard integration, bulk action,
 or new lifecycle behavior is included.
 
-C6B-2A/2B administrative inbox work is complete. A Human Decision Checkpoint
+C6B-2A/2B administrative inbox work is complete, with the policy alignment in
+the [C6B-2C record](./c6b2c-submission-policy-alignment.md). A Human Decision Checkpoint
 must precede any visible public form decision, covering approved privacy text
 and version, submission-content retention, named owner, minor/homeowner/
 participant follow-up, abuse response, and whether public intake should be

@@ -12,6 +12,7 @@ import {
   markPublicStorySubmissionFollowUp,
   markPublicStorySubmissionSpam,
   receivePublicStorySubmission,
+  restoreSpamPublicStorySubmission,
   updatePublicStorySubmissionReviewNote,
 } from "@/modules/communications/submissions";
 import type { Capability } from "@/platform/auth/capabilities";
@@ -83,11 +84,13 @@ function input(overrides: Record<string, unknown> = {}) {
 
 describe("C6B-1A Public Story Submission PostgreSQL domain", () => {
   let manager: Actor;
+  let superAdmin: Actor;
   let denied: Actor;
 
   beforeAll(async () => {
     await prisma.publicStorySubmission.deleteMany();
     manager = await actor("communications-manager");
+    superAdmin = await actor("super-admin");
     denied = await actor("platform-admin");
   });
 
@@ -307,6 +310,96 @@ describe("C6B-1A Public Story Submission PostgreSQL domain", () => {
     await expect(
       markPublicStorySubmissionFollowUp(prisma, manager, spamRow.id, 2),
     ).rejects.toThrow(ValidationError);
+    await expect(
+      restoreSpamPublicStorySubmission(prisma, manager, spamRow.id, 2),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+  it("restores spam only through the dual-capability path and preserves the intake record", async () => {
+    const received = await receivePublicStorySubmission(
+      prisma,
+      input({
+        submitterName: "Restore Me",
+      }),
+    );
+    const row = await prisma.publicStorySubmission.findFirstOrThrow({
+      where: { receivedAt: received.receivedAt, submitterName: "Restore Me" },
+    });
+    const noted = await updatePublicStorySubmissionReviewNote(prisma, manager, {
+      submissionId: row.id,
+      expectedVersion: 1,
+      internalReviewNote: "Preserve this confidential note.",
+    });
+    const spam = await markPublicStorySubmissionSpam(
+      prisma,
+      manager,
+      row.id,
+      noted.version,
+    );
+    const restored = await restoreSpamPublicStorySubmission(
+      prisma,
+      superAdmin,
+      row.id,
+      spam.version,
+    );
+    expect(restored).toMatchObject({
+      status: PublicStorySubmissionStatus.RECEIVED,
+      version: 4,
+      internalReviewNote: "Preserve this confidential note.",
+      statusChangedByDisplayName: expect.any(String),
+    });
+    const audit = await prisma.auditEvent.findFirstOrThrow({
+      where: {
+        targetId: row.id,
+        action: "public_story_submission.spam_restored",
+      },
+    });
+    expect(audit.summary).toEqual({
+      fromStatus: "SPAM",
+      toStatus: "RECEIVED",
+      version: 4,
+    });
+    expect(JSON.stringify(audit.summary)).not.toContain("Restore Me");
+  });
+
+  it("rejects stale or failed-audit spam restoration without partial writes", async () => {
+    const received = await receivePublicStorySubmission(prisma, input());
+    const row = await prisma.publicStorySubmission.findFirstOrThrow({
+      where: { receivedAt: received.receivedAt },
+    });
+    const spam = await markPublicStorySubmissionSpam(
+      prisma,
+      manager,
+      row.id,
+      1,
+    );
+    const auditCount = await prisma.auditEvent.count({
+      where: { targetId: row.id },
+    });
+    await expect(
+      restoreSpamPublicStorySubmission(prisma, superAdmin, row.id, 1),
+    ).rejects.toBeInstanceOf(ConcurrencyError);
+    expect(await prisma.auditEvent.count({ where: { targetId: row.id } })).toBe(
+      auditCount,
+    );
+    await expect(
+      restoreSpamPublicStorySubmission(
+        prisma,
+        superAdmin,
+        row.id,
+        spam.version,
+        {
+          auditWriter: async () => {
+            throw new Error("audit unavailable");
+          },
+        },
+      ),
+    ).rejects.toThrow("audit unavailable");
+    expect(
+      await prisma.publicStorySubmission.findUniqueOrThrow({
+        where: { id: row.id },
+      }),
+    ).toMatchObject({ status: PublicStorySubmissionStatus.SPAM, version: 2 });
   });
 
   it("covers every active-to-terminal lifecycle direction", async () => {

@@ -101,7 +101,9 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
     description:
       "Coordinates Communications work with separation-of-duties checks.",
     capabilities: communicationsCapabilities.filter(
-      (capability) => capability !== "communications.requirements.override",
+      (capability) =>
+        capability !== "communications.requirements.override" &&
+        capability !== "communications.submissions.restore_spam",
     ),
   },
   {

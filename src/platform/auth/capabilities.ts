@@ -5,6 +5,7 @@ export const CAPABILITIES = [
   "communications.placements.manage",
   "communications.notices.manage",
   "communications.submissions.review",
+  "communications.submissions.restore_spam",
   "stories.create",
   "stories.read.draft.own",
   "stories.read.draft.any",

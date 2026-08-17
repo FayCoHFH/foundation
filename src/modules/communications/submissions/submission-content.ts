@@ -231,6 +231,20 @@ export function assertAllowedSubmissionTransition(
   }
 }
 
+export function assertAllowedSpamRestoration(
+  from: PublicStorySubmissionStatus,
+  to: PublicStorySubmissionStatus,
+) {
+  if (
+    from !== PublicStorySubmissionStatus.SPAM ||
+    to !== PublicStorySubmissionStatus.RECEIVED
+  ) {
+    throw new ValidationError(
+      `Submission cannot be restored from ${from} to ${to}.`,
+    );
+  }
+}
+
 export function validateSubmissionPage(
   value: number | undefined,
   label: string,

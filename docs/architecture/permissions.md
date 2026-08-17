@@ -57,6 +57,12 @@ email, story text, and review notes, while detail DTOs never include raw audit
 rows or provider/request metadata. The C6B-1A receive service is unexposed and
 does not grant administrative access.
 
+`communications.submissions.restore_spam` is a separate higher-authority
+capability. The initial policy grants it to Super Admin only; ordinary
+submission reviewers do not receive it. Restoration additionally requires the
+review capability, an active administrator, the expected version, and the
+dedicated atomic audit action.
+
 C6A-2B browser validation verified the capability boundary with an authorized
 Communications Manager, a signed-in editor without the capability, and an
 anonymous visitor. Direct protected navigation remained denied or redirected,

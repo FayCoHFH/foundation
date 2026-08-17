@@ -73,6 +73,10 @@ export default async function StorySubmissionDetailPage({
     >
       <StorySubmissionDetailContent
         submission={submission}
+        canRestoreSpam={hasCapability(
+          access.principal,
+          "communications.submissions.restore_spam",
+        )}
         {...(statusCode ? { statusCode } : {})}
       />
     </AdminShell>

@@ -232,6 +232,26 @@ describe("Story Submission administrative UI", () => {
       expect(markup).not.toContain('name="action"');
       expect(markup).toContain("terminal");
     }
+    const spamRestoreMarkup = renderToStaticMarkup(
+      <SubmissionWorkflowControls
+        submissionId={id}
+        expectedVersion={4}
+        status="SPAM"
+        canRestoreSpam
+      />,
+    );
+    expect(spamRestoreMarkup).toContain("Restore to Received");
+    expect(spamRestoreMarkup).toContain('value="restore-spam"');
+    const receivedMarkup = renderToStaticMarkup(
+      <SubmissionWorkflowControls
+        submissionId={id}
+        expectedVersion={4}
+        status="RECEIVED"
+      />,
+    );
+    expect(receivedMarkup).toContain("Mark as Spam");
+    expect(receivedMarkup).toContain('type="button"');
+    expect(receivedMarkup).not.toContain('value="mark-spam"');
   });
 
   it("keeps review-note input labelled, bounded, and versioned", () => {
@@ -254,6 +274,9 @@ describe("Story Submission administrative UI", () => {
     expect(isSubmissionStatusCode("submitter@example.org")).toBe(false);
     expect(SUBMISSION_STATUS_MESSAGES["submission-accepted"]).not.toContain(
       "consent",
+    );
+    expect(SUBMISSION_STATUS_MESSAGES["submission-spam-restored"]).toContain(
+      "ordinary triage",
     );
   });
 });

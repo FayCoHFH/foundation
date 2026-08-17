@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   decline: vi.fn(),
   followUp: vi.fn(),
   spam: vi.fn(),
+  restore: vi.fn(),
   updateNote: vi.fn(),
   resolveAdminAccess: vi.fn(),
   hasCapability: vi.fn(),
@@ -22,6 +23,7 @@ vi.mock("@/modules/communications/submissions", () => ({
   declinePublicStorySubmission: mocks.decline,
   markPublicStorySubmissionFollowUp: mocks.followUp,
   markPublicStorySubmissionSpam: mocks.spam,
+  restoreSpamPublicStorySubmission: mocks.restore,
   updatePublicStorySubmissionReviewNote: mocks.updateNote,
 }));
 vi.mock("@/platform/auth/principal", () => ({
@@ -95,6 +97,31 @@ describe("Story Submission administrative server actions", () => {
     expect(mocks.begin).toHaveBeenCalledWith(mocks.prisma, principal, id, 7);
     expect(mocks.redirect).toHaveBeenCalledWith(
       `/admin/communications/submissions/${id}?submission=submission-review-resumed`,
+    );
+  });
+
+  it("requires the higher restore capability for spam restoration", async () => {
+    const restorer = {
+      ...principal,
+      capabilities: [
+        "communications.submissions.review",
+        "communications.submissions.restore_spam",
+      ],
+    };
+    mocks.resolveAdminAccess.mockResolvedValue({
+      status: "authorized",
+      principal: restorer,
+    });
+    mocks.restore.mockResolvedValue({});
+    await expect(
+      submissionWorkflowAction(
+        { status: "idle" },
+        workflowForm("restore-spam"),
+      ),
+    ).rejects.toThrow("REDIRECT");
+    expect(mocks.restore).toHaveBeenCalledWith(mocks.prisma, restorer, id, 7);
+    expect(mocks.redirect).toHaveBeenCalledWith(
+      `/admin/communications/submissions/${id}?submission=submission-spam-restored`,
     );
   });
 

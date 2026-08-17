@@ -16,6 +16,7 @@ import {
   ADMIN_SUBMISSION_MAX_PAGE_SIZE,
   ADMIN_SUBMISSION_PAGE_SIZE,
   assertAllowedSubmissionTransition,
+  assertAllowedSpamRestoration,
   type ReceivePublicStorySubmissionInput,
   validateInternalReviewNote,
   validateReceivePublicStorySubmissionInput,
@@ -139,8 +140,18 @@ const writeAudit: SubmissionAuditWriter = async (transaction, data) => {
 };
 
 function requireCapability(actor: SubmissionActor) {
-  const capability: Capability = "communications.submissions.review";
-  if (!actor.capabilities.includes(capability)) throw new AuthorizationError();
+  requireCapabilities(actor, ["communications.submissions.review"]);
+}
+
+function requireCapabilities(
+  actor: SubmissionActor,
+  capabilities: readonly Capability[],
+) {
+  if (
+    capabilities.some((capability) => !actor.capabilities.includes(capability))
+  ) {
+    throw new AuthorizationError();
+  }
 }
 
 async function requireActiveAdmin(
@@ -353,15 +364,22 @@ async function transitionSubmission(
   nextStatus: PublicStorySubmissionStatus,
   action: string,
   dependencies: SubmissionMutationDependencies,
+  requiredCapabilities: readonly Capability[] = [
+    "communications.submissions.review",
+  ],
+  transitionValidator: (
+    from: PublicStorySubmissionStatus,
+    to: PublicStorySubmissionStatus,
+  ) => void = assertAllowedSubmissionTransition,
 ) {
-  requireCapability(actor);
+  requireCapabilities(actor, requiredCapabilities);
   assertVersion(expectedVersion);
   const now = dependencies.now?.() ?? new Date();
   return runMutation(prisma, async (transaction) => {
     await requireActiveAdmin(transaction, actor.adminUserId);
     const current = await findDetail(transaction, submissionId);
     if (current.version !== expectedVersion) throw new ConcurrencyError();
-    assertAllowedSubmissionTransition(current.status, nextStatus);
+    transitionValidator(current.status, nextStatus);
     try {
       await transaction.publicStorySubmission.update({
         where: { id_version: { id: submissionId, version: expectedVersion } },
@@ -475,6 +493,28 @@ export const markPublicStorySubmissionSpam = (
     PublicStorySubmissionStatus.SPAM,
     "public_story_submission.marked_spam",
     dependencies,
+  );
+
+export const restoreSpamPublicStorySubmission = (
+  prisma: PrismaClient,
+  actor: SubmissionActor,
+  id: string,
+  version: number,
+  dependencies: SubmissionMutationDependencies = {},
+) =>
+  transitionSubmission(
+    prisma,
+    actor,
+    id,
+    version,
+    PublicStorySubmissionStatus.RECEIVED,
+    "public_story_submission.spam_restored",
+    dependencies,
+    [
+      "communications.submissions.review",
+      "communications.submissions.restore_spam",
+    ],
+    assertAllowedSpamRestoration,
   );
 
 export async function updatePublicStorySubmissionReviewNote(

@@ -145,8 +145,9 @@ export function StorySubmissionsListContent({
         </h2>
         <p className="text-muted-foreground mt-2 max-w-3xl text-sm">
           Publication interest is not publication consent. Do not copy sensitive
-          information into public content. Homeowner, applicant, minor, or
-          sensitive-circumstance submissions require stronger review.
+          information into public content. Sensitivity indicators require
+          additional review before any future public use; they do not block
+          confidential review or imply rejection or consent.
         </p>
       </aside>
 
@@ -339,9 +340,11 @@ function StoryText({ text }: { text: string }) {
 export function StorySubmissionDetailContent({
   submission,
   statusCode,
+  canRestoreSpam = false,
 }: {
   submission: PublicStorySubmissionAdminDetail;
   statusCode?: SubmissionStatusCode;
+  canRestoreSpam?: boolean;
 }) {
   const hasSensitivity =
     submission.involvesMinor ||
@@ -375,8 +378,9 @@ export function StorySubmissionDetailContent({
         </h2>
         <p className="text-muted-foreground mt-2 max-w-3xl text-sm">
           Publication interest is not publication consent. Keep sensitive
-          information out of public content. Stronger review is required for
-          homeowner, applicant, minor, or sensitive-circumstance indicators.
+          information out of public content. Sensitivity indicators require
+          additional review before any future public use; they do not block
+          confidential review or imply rejection or consent.
         </p>
       </aside>
 
@@ -531,7 +535,15 @@ export function StorySubmissionDetailContent({
         <dl className="border-border mt-4 grid gap-4 border-y py-5 text-sm sm:grid-cols-2">
           <div>
             <dt className="font-semibold">Lifecycle status</dt>
-            <dd className="mt-1">{submissionStatusLabel(submission.status)}</dd>
+            <dd className="mt-1">
+              {submissionStatusLabel(submission.status)}
+              {submission.status === "ACCEPTED" ? (
+                <span className="text-muted-foreground mt-1 block text-sm">
+                  Accepted means accepted for editorial consideration. It does
+                  not approve publication, complete consent, or clear rights.
+                </span>
+              ) : null}
+            </dd>
           </div>
           <div>
             <dt className="font-semibold">Status changed</dt>
@@ -561,6 +573,7 @@ export function StorySubmissionDetailContent({
         submissionId={submission.id}
         expectedVersion={submission.version}
         status={submission.status}
+        canRestoreSpam={canRestoreSpam}
       />
     </>
   );
