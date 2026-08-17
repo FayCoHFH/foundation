@@ -62,6 +62,12 @@ Communications Manager, a signed-in editor without the capability, and an
 anonymous visitor. Direct protected navigation remained denied or redirected,
 while public effective reads remained unauthenticated and projection-only.
 
+C6B-2B browser validation additionally covered the authorized reviewer,
+authenticated user without `communications.submissions.review`, and anonymous
+visitor across inbox/detail navigation, direct denial, lifecycle actions,
+review-note writes, and stale-version conflicts. Dashboard, Queue, Story, News,
+and Site Notice capabilities did not imply confidential submission access.
+
 ### Projects, programs, and public impact
 
 - `programs.manage`

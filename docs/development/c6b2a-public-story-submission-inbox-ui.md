@@ -87,7 +87,9 @@ feedback. Existing PostgreSQL domain and intake-security suites remain the
 authoritative regression coverage for authorization, lifecycle, concurrency,
 atomic audit behavior, and intake security.
 
-Playwright, axe scans, formal screenshot QA, and browser accessibility review
-are intentionally deferred to C6B-2B. Approved privacy wording, final content
-retention, public form exposure, email/uploads, and Story conversion remain
-separate gates and are not blockers for this bounded administrative slice.
+Formal browser, axe, responsive, visual, and manual accessibility validation is
+recorded in the [C6B-2B validation record](./c6b2b-public-story-submission-inbox-validation.md).
+The administrative inbox and detail work is complete. Approved privacy wording,
+final content retention, public form exposure, email/uploads, and Story
+conversion remain separate gates and are not blockers for this bounded
+administrative slice.

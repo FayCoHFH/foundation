@@ -80,10 +80,11 @@ export function parseSubmissionSearchParams(
   params: Readonly<Record<string, string | string[] | undefined>>,
 ) {
   const rawStatus = firstValue(params.status);
+  const normalizedStatus = rawStatus === "" ? undefined : rawStatus;
   const status = PUBLIC_STORY_SUBMISSION_STATUSES.find(
-    (candidate) => candidate === rawStatus,
+    (candidate) => candidate === normalizedStatus,
   );
-  const statusInvalid = rawStatus !== undefined && !status;
+  const statusInvalid = normalizedStatus !== undefined && !status;
   const page = parsePage(firstValue(params.page));
   const pageSize = parsePageSize(firstValue(params.pageSize));
   return {

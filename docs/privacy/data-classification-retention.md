@@ -48,6 +48,14 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | PublicStorySubmission name, email, relationship, story text, acknowledgements, sensitivity declarations, and internal review note | Confidential | Field-minimum text-only aggregate; never public/search/analytics/logs; no production collection until owner, privacy text, consent, and retention profile are approved |
 | Public Story intake token hashes, HMAC rate-limit fingerprints, expiry, and bounded counters | Confidential operational security artifact | No raw token, nonce, IP, email, user agent, or request body; expire and clean through the bounded C6B-1B cleanup path; not subject to the unresolved submission-content retention profile |
 
+The C6B-2A/2B administrative inbox is a review surface, not a new collection
+or retention policy. It server-renders the minimum list/detail DTOs only after
+capability authorization, excludes confidential detail from list rows and
+prefetch, disables shared/static caching, and does not write submission data to
+browser storage, analytics, metadata, URLs, or status messages. The unresolved
+G-07 decisions for owner, privacy wording, follow-up, and submission-content
+retention remain prerequisites for any visible public form.
+
 ## Retention schedule
 
 Periods below are proposed deletion targets after the triggering event, not assertions of legal requirements. The accountable policy owners must approve them before affected production collection. A grant/contract, accounting requirement, litigation/audit hold, insurer, or approved legal policy may require a different period; each exception records owner, basis, scope, and review date. Do not retain everything “just in case.”

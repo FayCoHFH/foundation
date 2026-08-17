@@ -121,6 +121,15 @@ honeypot, request, IP, email, or narrative details. Public privacy wording,
 content retention, owner, abuse response, CAPTCHA/provider, and uploads remain
 launch decisions.
 
+**C6B-2A/2B confidential administrative inbox:** list and detail routes are
+dynamic, capability-authorized server renders with `revalidate = 0`; detail
+links disable prefetch; list DTOs exclude email, narrative, acknowledgments,
+publication interest, notes, and security artifacts; detail DTOs exclude audit,
+provider, request, token, rate-limit, and IP data. Browser validation confirms
+no submission data in storage, unrelated admin/public routes, query strings,
+metadata, console diagnostics, or client fetches. This review surface does not
+create a public intake route or change the unresolved collection/retention gate.
+
 **Verification:** dedicated pre-implementation threat-model update, data-flow review, privacy tests proving public/search/cache/analytics isolation, and an incident exercise.
 
 ### Private grant disclosure

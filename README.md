@@ -20,6 +20,10 @@ Submission inbox at `/admin/communications/submissions`. The C4 placement
 surface is limited to its implemented Story/News keys and does not add
 Project/Campaign placements.
 
+The submission inbox is an authorized confidential review surface; no public
+Story Submission route or form is enabled. Browser and accessibility evidence
+is recorded in the [C6B-2B validation record](docs/development/c6b2b-public-story-submission-inbox-validation.md).
+
 ## Start locally
 
 Requirements: Node.js 22.22.3, pnpm 10.13.1, and PostgreSQL 16 or later.

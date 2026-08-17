@@ -134,6 +134,10 @@ describe("Story Submission administrative UI", () => {
         pageSize: "101",
       }).invalid,
     ).toEqual({ status: true, page: true, pageSize: true });
+    expect(parseSubmissionSearchParams({ status: "" })).toEqual({
+      state: { page: 1, pageSize: 25 },
+      invalid: { status: false, page: false, pageSize: false },
+    });
     expect(submissionHref({ status: "FOLLOW_UP", page: 3, pageSize: 50 })).toBe(
       "/admin/communications/submissions?status=FOLLOW_UP&page=3&pageSize=50",
     );

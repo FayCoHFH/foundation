@@ -223,6 +223,14 @@ function diagnostics(page: Page) {
 }
 
 async function expectAxe(page: Page) {
+  const arrival = page.locator(".editorial-arrival");
+  if (await arrival.count()) {
+    await expect
+      .poll(() =>
+        arrival.evaluate((element) => getComputedStyle(element).opacity),
+      )
+      .toBe("1");
+  }
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 }

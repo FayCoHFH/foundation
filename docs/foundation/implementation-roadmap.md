@@ -137,8 +137,16 @@ explicit lifecycle actions, private review notes, optimistic-concurrency
 feedback, no-store rendering, responsive semantics, and focused UI/action
 coverage are documented in
 [the C6B-2A delivery record](../development/c6b2a-public-story-submission-inbox-ui.md).
-Browser, accessibility-scanner, and formal visual validation remain the
-separate C6B-2B slice. C6B as a whole is not complete.
+
+**C6B-2B — Public Story Submission administrative inbox browser, accessibility,
+responsive, and visual validation: complete locally on 2026-08-17.** The
+capability personas, confidential list/detail boundaries, status and pagination
+workflows, lifecycle and terminal-state journeys, review-note concurrency,
+axe/manual accessibility review, four-viewport visual review, no-store/prefetch
+checks, and full regression are documented in
+[the C6B-2B validation record](../development/c6b2b-public-story-submission-inbox-validation.md).
+C6B as a whole is not complete; the visible public form remains gated by G-07
+and the human decisions recorded in that validation record.
 
 ## Slice 1 — Application Foundation and Scaffold
 
