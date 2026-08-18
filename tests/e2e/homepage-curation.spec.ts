@@ -377,7 +377,10 @@ test("homepage curation covers configured, scheduled, cancelled, cleared, empty,
 
   await manager.goto("/");
   await expect(
-    manager.getByRole("heading", { level: 1, name: featuredNews.headline }),
+    manager.getByRole("heading", {
+      level: 1,
+      name: "Building and repairing homes with neighbors across Fayette County.",
+    }),
   ).toBeVisible();
   await expect(
     manager.getByText("Featured story", { exact: true }),
@@ -397,7 +400,7 @@ test("homepage curation covers configured, scheduled, cancelled, cleared, empty,
   await expect(
     manager.getByRole("heading", {
       level: 2,
-      name: "Latest news",
+      name: "Keep up with the work.",
       exact: true,
     }),
   ).toBeVisible();
@@ -405,7 +408,7 @@ test("homepage curation covers configured, scheduled, cancelled, cleared, empty,
     manager.getByText(latestNews.headline, { exact: true }),
   ).toBeVisible();
   await expect(
-    manager.getByRole("heading", { name: "Make room for participation." }),
+    manager.getByRole("heading", { name: "Keep up with the work." }),
   ).toBeVisible();
   await expect(manager.locator("body")).not.toContainText("undefined");
   await expectAxe(manager);
@@ -465,7 +468,7 @@ test("homepage curation covers configured, scheduled, cancelled, cleared, empty,
   await expect(
     manager.getByRole("heading", {
       level: 1,
-      name: "A place where many kinds of help can meet.",
+      name: "Building and repairing homes with neighbors across Fayette County.",
     }),
   ).toBeVisible();
   await expect(
@@ -475,10 +478,13 @@ test("homepage curation covers configured, scheduled, cancelled, cleared, empty,
     manager.getByRole("heading", { level: 2, name: /Featured news/i }),
   ).toHaveCount(0);
   await expect(
-    manager.getByRole("heading", { level: 2, name: "Latest news" }),
+    manager.getByRole("heading", {
+      level: 2,
+      name: "Keep up with the work.",
+    }),
   ).toBeVisible();
   await expect(
-    manager.getByRole("heading", { name: "Make room for participation." }),
+    manager.getByRole("heading", { name: "Keep up with the work." }),
   ).toBeVisible();
   await expect(
     manager.getByRole("navigation", { name: "Public navigation" }),
@@ -597,7 +603,7 @@ test("homepage curation enforces access and excludes expired, withdrawn, and end
   await expect(
     manager.getByRole("heading", {
       level: 1,
-      name: "A place where many kinds of help can meet.",
+      name: "Building and repairing homes with neighbors across Fayette County.",
     }),
   ).toBeVisible();
   await expect(manager.getByText(ended.headline, { exact: true })).toHaveCount(
@@ -647,7 +653,7 @@ test("placed Story successor stays private until release and updates without rea
   const errors = diagnostics(reader);
   await reader.goto("/");
   await expect(
-    reader.getByRole("heading", { level: 1, name: story.headline }),
+    reader.getByRole("link", { name: story.headline, exact: true }),
   ).toBeVisible();
 
   await story.contributor.goto(story.draftUrl);
@@ -665,7 +671,7 @@ test("placed Story successor stays private until release and updates without rea
   ).toBeVisible();
   await reader.reload();
   await expect(
-    reader.getByRole("heading", { level: 1, name: story.headline }),
+    reader.getByRole("link", { name: story.headline, exact: true }),
   ).toBeVisible();
   await expect(reader.getByText("Successor Story body.")).toHaveCount(0);
 
@@ -698,9 +704,9 @@ test("placed Story successor stays private until release and updates without rea
     .poll(async () => {
       await reader.reload();
       return await reader
-        .getByRole("heading", {
-          level: 1,
+        .getByRole("link", {
           name: `C4.3A Successor Story ${suffix}`,
+          exact: true,
         })
         .count();
     })

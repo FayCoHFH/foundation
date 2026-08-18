@@ -36,10 +36,7 @@ export default async function ProjectPage({
       <SkipLink targetId="project-main" />
       <SiteHeader />
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
-      <main
-        id="project-main"
-        className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-20"
-      >
+      <main id="project-main" className="public-content-wrap">
         <ProjectDetail project={project} />
       </main>
       <SiteFooter />

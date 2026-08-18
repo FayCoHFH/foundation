@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { CampaignActions } from "@/components/campaigns/campaign-presentation";
+import {
+  CAMPAIGN_STATUS_LABELS,
+  CAMPAIGN_TYPE_LABELS,
+} from "@/app/admin/campaigns/campaign-constants";
+import { PROJECT_STATUS_LABELS } from "@/app/admin/projects/project-constants";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
-import { getLatestNews } from "@/modules/communications/news";
 import { listCurrentPublicCampaigns } from "@/modules/communications/campaigns";
+import { getLatestNews } from "@/modules/communications/news";
+import { getEffectivePlacement } from "@/modules/communications/placements";
 import { listCurrentPublicProjects } from "@/modules/communications/projects";
 import { getPublicGlobalDestination } from "@/modules/engagement";
-import { getEffectivePlacement } from "@/modules/communications/placements";
 import { prisma } from "@/platform/database/prisma";
 import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 
@@ -17,10 +23,11 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Foundation environment",
 };
+
 function target(item: Awaited<ReturnType<typeof getEffectivePlacement>>) {
   if (!item) return null;
-  const story = item.story,
-    news = item.news;
+  const story = item.story;
+  const news = item.news;
   if (story)
     return {
       label: "Story",
@@ -39,6 +46,7 @@ function target(item: Awaited<ReturnType<typeof getEffectivePlacement>>) {
     };
   return null;
 }
+
 export default async function HomePage() {
   const [
     heroRow,
@@ -47,6 +55,7 @@ export default async function HomePage() {
     latest,
     projects,
     campaigns,
+    donateDestination,
     volunteerDestination,
   ] = await Promise.all([
     getEffectivePlacement(prisma, "HOME_HERO"),
@@ -55,240 +64,179 @@ export default async function HomePage() {
     getLatestNews(prisma),
     listCurrentPublicProjects(prisma, { limit: 3 }),
     listCurrentPublicCampaigns(prisma, { limit: 3 }),
+    getPublicGlobalDestination(prisma, "GENERAL_DONATE"),
     getPublicGlobalDestination(prisma, "GENERAL_VOLUNTEER"),
   ]);
-  const hero = target(heroRow),
-    story = target(storyRow),
-    news = target(newsRow);
-  const shown = new Set([hero?.href, news?.href]);
+  const selectedUpdate = target(heroRow);
+  const story = target(storyRow);
+  const news = target(newsRow);
+  const activeCampaign = campaigns[0] ?? null;
+  const shownNews = new Set([news?.href]);
+
   return (
     <div className="flex min-h-screen flex-col">
       <SkipLink targetId="main-content" />
       <SiteHeader />
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
-      <main id="main-content" tabIndex={-1} className="flex-1">
+      <main id="main-content" tabIndex={-1} className="public-page-main flex-1">
         <SiteNoticeRegion targetArea={SiteNoticeTargetArea.HOMEPAGE} />
-        <section className="border-border bg-editorial-sky/40 border-b">
-          <div className="editorial-arrival mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-12">
-            <p className="text-sm font-bold tracking-[.16em] text-[#32281f] uppercase">
-              Fayette County Habitat for Humanity
-            </p>
-            {hero ? (
-              <>
-                <p className="mt-7 text-sm font-bold tracking-[.14em] text-[#32281f] uppercase">
-                  Featured {hero.label}
-                </p>
-                <h1 className="text-editorial-pecan mt-3 max-w-4xl font-serif text-5xl leading-[.98] tracking-[-.035em] sm:text-6xl lg:text-7xl">
-                  <Link href={hero.href}>{hero.headline}</Link>
-                </h1>
-                <p className="mt-7 max-w-2xl text-xl leading-8 text-[#32281f]">
-                  {hero.summary}
-                </p>
-              </>
-            ) : (
-              <>
-                <h1 className="text-editorial-pecan mt-5 max-w-4xl font-serif text-5xl leading-[.98] tracking-[-.035em] sm:text-6xl lg:text-7xl">
-                  A place where many kinds of help can meet.
-                </h1>
-                <p className="mt-8 max-w-2xl text-xl leading-8 text-[#32281f]">
-                  This public experience is being built to make local work
-                  easier to understand, trust, and join.
-                </p>
-              </>
-            )}
+
+        <section className="border-limestone bg-warm-paper border-b">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-12 lg:px-12 lg:py-20">
+            <div className="editorial-arrival flex flex-col justify-center">
+              <p className="public-kicker">
+                Fayette County Habitat for Humanity
+              </p>
+              <h1 className="text-timber mt-5 max-w-3xl font-serif text-5xl leading-[0.94] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]">
+                Building and repairing homes with neighbors across Fayette
+                County.
+              </h1>
+              <p className="text-muted-foreground mt-7 max-w-2xl text-lg leading-8 sm:text-xl">
+                We bring practical work and community support together to help
+                local families build a stronger place to call home.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link className="public-action-primary" href="/projects">
+                  Explore our work <span aria-hidden="true">→</span>
+                </Link>
+                {donateDestination ? (
+                  <a
+                    className="public-action-secondary"
+                    href={donateDestination.url}
+                    aria-label="Donate (opens the secure DonorView giving page)"
+                  >
+                    Donate <span aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  <Link className="public-action-secondary" href="/give">
+                    Learn about giving <span aria-hidden="true">→</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+            <div
+              className="public-workshop-grid"
+              role="img"
+              aria-label="A structural documentary image space for approved Habitat photography"
+            >
+              <div>
+                <strong>Place</strong>
+                <span>Fayette County</span>
+              </div>
+              <div>
+                <strong>Work</strong>
+                <span>Homes, repairs, neighbors</span>
+              </div>
+            </div>
           </div>
         </section>
-        <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12">
-          {story ? (
-            <section
-              aria-labelledby="featured-story"
-              className="border-border border-t py-12"
-            >
-              <p className="text-primary text-sm font-bold tracking-[.14em] uppercase">
-                Featured story
-              </p>
-              <h2
-                id="featured-story"
-                className="text-editorial-pecan mt-3 font-serif text-4xl"
-              >
-                <Link href={story.href}>{story.headline}</Link>
-              </h2>
-              <p className="text-muted-foreground mt-4 max-w-3xl text-lg leading-8">
-                {story.summary}
-              </p>
-            </section>
-          ) : null}
-          {news ? (
-            <section
-              aria-labelledby="featured-news"
-              className="border-editorial-paintbrush bg-editorial-cream border-l-4 p-7 sm:p-10"
-            >
-              <p className="text-editorial-pecan text-sm font-bold tracking-[.14em] uppercase">
-                Featured news
-              </p>
-              <h2
-                id="featured-news"
-                className="text-editorial-pecan mt-3 font-serif text-3xl"
-              >
-                <Link href={news.href}>{news.headline}</Link>
-              </h2>
-              <p className="text-muted-foreground mt-3 max-w-3xl leading-7">
-                {news.summary}
-              </p>
-            </section>
-          ) : null}
-          <section className="mt-14" aria-labelledby="latest-news">
-            <h2
-              id="latest-news"
-              className="text-editorial-pecan font-serif text-3xl"
-            >
-              Latest news
-            </h2>
-            {latest
-              .filter((item) => !shown.has(`/news/${item.slug}`))
-              .slice(0, 3)
-              .map((item) => (
-                <article
-                  key={item.slug}
-                  className="border-border border-b py-6"
-                >
-                  <h3 className="text-editorial-pecan font-serif text-2xl">
-                    <Link href={`/news/${item.slug}`}>{item.headline}</Link>
-                  </h3>
-                  <p className="text-muted-foreground mt-2">{item.summary}</p>
-                </article>
-              ))}
-          </section>
-          <section
-            aria-labelledby="home-work"
-            className="border-border mt-16 border-t pt-12"
-          >
-            <div className="flex flex-wrap items-end justify-between gap-4">
+
+        <div className="public-content-wrap">
+          <section aria-labelledby="home-work" className="public-section-rule">
+            <div className="flex flex-wrap items-end justify-between gap-5">
               <div>
-                <p className="text-primary text-sm font-bold tracking-[.14em] uppercase">
-                  The work
-                </p>
-                <h2
-                  id="home-work"
-                  className="text-editorial-pecan mt-3 font-serif text-4xl"
-                >
-                  Local work, shared purpose.
+                <p className="public-kicker">What we do</p>
+                <h2 id="home-work" className="public-section-heading mt-3">
+                  The work is visible in the places we share.
                 </h2>
+                <p className="public-section-intro">
+                  Follow current Projects by their place, progress, and public
+                  purpose.
+                </p>
               </div>
-              <div className="flex gap-5 text-sm font-semibold">
-                <Link className="underline underline-offset-4" href="/projects">
-                  All Projects →
-                </Link>
-                <Link
-                  className="underline underline-offset-4"
-                  href="/campaigns"
-                >
-                  All Campaigns →
-                </Link>
-              </div>
+              <Link className="public-action-secondary" href="/projects">
+                All Projects <span aria-hidden="true">→</span>
+              </Link>
             </div>
-            <div className="mt-8 grid gap-10 md:grid-cols-2">
-              <section aria-labelledby="home-projects">
-                <h3 id="home-projects" className="font-serif text-2xl">
-                  Current Projects
-                </h3>
-                {projects.length ? (
-                  <ul className="mt-3">
-                    {projects.map((project) => (
-                      <li
-                        key={project.slug}
-                        className="border-border border-t py-4"
-                      >
-                        <Link
-                          className="decoration-primary/40 font-semibold underline underline-offset-4"
-                          href={`/projects/${project.slug}`}
-                        >
-                          {project.title}
-                        </Link>
-                        <p className="text-muted-foreground mt-1 text-sm">
-                          {project.summary}
+            {projects.length ? (
+              <ul className="public-rule-list mt-8">
+                {projects.map((project) => (
+                  <li key={project.slug}>
+                    <article className="grid gap-3 md:grid-cols-[0.8fr_1.2fr] md:gap-10">
+                      <div>
+                        <p className="text-workshop-green text-sm font-bold">
+                          {PROJECT_STATUS_LABELS[project.projectStatus]} ·{" "}
+                          {project.community}
                         </p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-muted-foreground mt-3">
-                    Projects will appear here as they are ready to share.
-                  </p>
-                )}
-              </section>
-              <section aria-labelledby="home-campaigns">
-                <h3 id="home-campaigns" className="font-serif text-2xl">
-                  Current Campaigns
-                </h3>
-                {campaigns.length ? (
-                  <ul className="mt-3">
-                    {campaigns.map((campaign) => (
-                      <li
-                        key={campaign.slug}
-                        className="border-border border-t py-4"
-                      >
-                        <Link
-                          className="decoration-primary/40 font-semibold underline underline-offset-4"
-                          href={`/campaigns/${campaign.slug}`}
-                        >
-                          {campaign.title}
-                        </Link>
-                        <p className="text-muted-foreground mt-1 text-sm">
-                          {campaign.summary}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-muted-foreground mt-3">
-                    Campaigns will appear here as they are ready to share.
-                  </p>
-                )}
-              </section>
-            </div>
+                        <h3 className="text-timber mt-2 font-serif text-2xl font-semibold sm:text-3xl">
+                          <Link
+                            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                            href={`/projects/${project.slug}`}
+                          >
+                            {project.title}
+                          </Link>
+                        </h3>
+                      </div>
+                      <p className="text-muted-foreground max-w-2xl leading-7">
+                        {project.summary}
+                      </p>
+                    </article>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="border-limestone bg-warm-paper mt-8 border p-6">
+                Projects will appear here as they are ready to share.
+              </p>
+            )}
           </section>
+
           <section
             aria-labelledby="ways-to-help"
-            className="bg-editorial-cream border-editorial-paintbrush mt-16 border-l-4 p-7 sm:p-10"
+            className="public-help-band mt-20"
           >
-            <p className="text-primary text-sm font-bold tracking-[.14em] uppercase">
-              Ways to help
-            </p>
-            <h2
-              id="ways-to-help"
-              className="text-editorial-pecan mt-3 font-serif text-4xl"
-            >
-              There is a place for your support.
-            </h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-3">
+            <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
               <div>
-                <h3 className="font-serif text-2xl">Donate</h3>
-                <p className="text-muted-foreground mt-2 leading-7">
-                  Give to Habitat’s work across Fayette County.
+                <p className="text-clean-white text-sm font-bold tracking-[0.08em] uppercase">
+                  Ways to help
                 </p>
-                <Link
-                  className="mt-3 inline-block font-semibold underline underline-offset-4"
-                  href="/give"
+                <h2
+                  id="ways-to-help"
+                  className="mt-3 font-serif text-4xl leading-tight font-semibold"
                 >
-                  Learn about giving →
-                </Link>
+                  Bring what you can to the work.
+                </h2>
+              </div>
+              <p className="text-clean-white/85 max-w-2xl text-lg leading-8">
+                Giving and volunteering are different kinds of participation,
+                with the same local purpose.
+              </p>
+            </div>
+            <div className="border-clean-white/30 mt-9 grid gap-8 border-t pt-8 md:grid-cols-2">
+              <div>
+                <h3 className="font-serif text-2xl">Give</h3>
+                <p className="text-clean-white/85 mt-2 max-w-md leading-7">
+                  Support Habitat’s building and repair work across Fayette
+                  County.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link className="public-action-primary" href="/give">
+                    Learn about giving <span aria-hidden="true">→</span>
+                  </Link>
+                  {donateDestination ? (
+                    <a
+                      className="text-clean-white inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
+                      href={donateDestination.url}
+                      aria-label="Donate (opens the secure DonorView giving page)"
+                    >
+                      Donate ↗
+                    </a>
+                  ) : null}
+                </div>
               </div>
               <div>
                 <h3 className="font-serif text-2xl">Volunteer</h3>
-                <p className="text-muted-foreground mt-2 leading-7">
-                  Bring time and practical care to the work.
+                <p className="text-clean-white/85 mt-2 max-w-md leading-7">
+                  Bring time, skills, and practical care to a workday or the
+                  wider effort.
                 </p>
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-                  <Link
-                    className="font-semibold underline underline-offset-4"
-                    href="/volunteer"
-                  >
-                    Learn about volunteering →
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link className="public-action-primary" href="/volunteer">
+                    Learn about volunteering <span aria-hidden="true">→</span>
                   </Link>
                   {volunteerDestination ? (
                     <a
-                      className="font-semibold underline underline-offset-4"
+                      className="text-clean-white inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
                       href={volunteerDestination.url}
                       aria-label="Volunteer (opens DonorView volunteer registration)"
                     >
@@ -297,27 +245,176 @@ export default async function HomePage() {
                   ) : null}
                 </div>
               </div>
-              <div>
-                <h3 className="font-serif text-2xl">Explore Campaigns</h3>
-                <p className="text-muted-foreground mt-2 leading-7">
-                  Follow a current effort and its next step.
-                </p>
-                <Link
-                  className="mt-3 inline-block font-semibold underline underline-offset-4"
-                  href="/campaigns"
-                >
-                  See current Campaigns →
-                </Link>
-              </div>
             </div>
           </section>
-          <section className="border-border mt-16 border-t pt-10">
-            <h2 className="text-editorial-pecan font-serif text-3xl">
-              Make room for participation.
-            </h2>
-            <p className="text-muted-foreground mt-4 max-w-2xl leading-7">
-              Welcome time, talent, useful goods, attention, and support.
-            </p>
+
+          {activeCampaign ? (
+            <section
+              aria-labelledby="current-campaign"
+              className="public-section-rule mt-20"
+            >
+              <div className="flex flex-wrap items-end justify-between gap-5">
+                <div>
+                  <p className="public-kicker">A current effort</p>
+                  <h2
+                    id="current-campaign"
+                    className="public-section-heading mt-3"
+                  >
+                    Rally around a shared purpose.
+                  </h2>
+                </div>
+                <Link className="public-action-secondary" href="/campaigns">
+                  All Campaigns <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+              <div className="border-habitat-green bg-warm-paper mt-8 grid gap-8 border-t-4 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+                <div>
+                  <p className="text-workshop-green text-sm font-bold">
+                    {CAMPAIGN_STATUS_LABELS[activeCampaign.campaignStatus]} ·{" "}
+                    {CAMPAIGN_TYPE_LABELS[activeCampaign.campaignType]}
+                  </p>
+                  <h3 className="text-timber mt-3 font-serif text-3xl font-semibold">
+                    <Link
+                      className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                      href={`/campaigns/${activeCampaign.slug}`}
+                    >
+                      {activeCampaign.title}
+                    </Link>
+                  </h3>
+                </div>
+                <div>
+                  <p className="text-muted-foreground max-w-2xl leading-7">
+                    {activeCampaign.summary}
+                  </p>
+                  <CampaignActions campaign={activeCampaign} />
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+          {story ? (
+            <section
+              aria-labelledby="featured-story"
+              className="public-section-rule mt-20"
+            >
+              <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
+                <p className="public-kicker">Featured story</p>
+                <div>
+                  <h2
+                    id="featured-story"
+                    className="text-timber font-serif text-4xl leading-tight font-semibold sm:text-5xl"
+                  >
+                    <Link
+                      className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                      href={story.href}
+                    >
+                      {story.headline}
+                    </Link>
+                  </h2>
+                  <p className="text-muted-foreground mt-4 max-w-2xl text-lg leading-8">
+                    {story.summary}
+                  </p>
+                  <Link
+                    className="text-habitat-blue mt-5 inline-flex font-semibold underline underline-offset-4"
+                    href={story.href}
+                  >
+                    Read the Story{" "}
+                    <span aria-hidden="true" className="ml-2">
+                      →
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+          {selectedUpdate ? (
+            <section
+              aria-labelledby="selected-update"
+              className="public-clay-rule mt-20"
+            >
+              <p className="public-kicker">Selected update</p>
+              <h2
+                id="selected-update"
+                className="text-timber mt-3 font-serif text-3xl font-semibold"
+              >
+                <Link
+                  className="decoration-texas-clay/50 hover:text-habitat-blue underline underline-offset-4"
+                  href={selectedUpdate.href}
+                >
+                  {selectedUpdate.headline}
+                </Link>
+              </h2>
+              <p className="text-muted-foreground mt-3 max-w-3xl leading-7">
+                {selectedUpdate.summary}
+              </p>
+            </section>
+          ) : null}
+
+          <section
+            aria-labelledby="latest-news"
+            className="public-section-rule mt-20"
+          >
+            <div className="flex flex-wrap items-end justify-between gap-5">
+              <div>
+                <p className="public-kicker">News &amp; updates</p>
+                <h2 id="latest-news" className="public-section-heading mt-3">
+                  Keep up with the work.
+                </h2>
+              </div>
+              <Link className="public-action-secondary" href="/news">
+                All News <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+            {news ? (
+              <article id="featured-news" className="public-clay-rule mt-8">
+                <p className="public-kicker">Featured news</p>
+                <h3 className="text-timber mt-3 font-serif text-3xl font-semibold">
+                  <Link
+                    className="decoration-texas-clay/50 hover:text-habitat-blue underline underline-offset-4"
+                    href={news.href}
+                  >
+                    {news.headline}
+                  </Link>
+                </h3>
+                <p className="text-muted-foreground mt-3 max-w-3xl leading-7">
+                  {news.summary}
+                </p>
+              </article>
+            ) : null}
+            <ul className="public-rule-list mt-8">
+              {latest
+                .filter((item) => !shownNews.has(`/news/${item.slug}`))
+                .slice(0, 3)
+                .map((item) => (
+                  <li key={item.slug}>
+                    <article className="grid gap-2 md:grid-cols-[0.25fr_0.75fr] md:gap-8">
+                      <time
+                        className="text-workshop-green text-sm font-semibold"
+                        dateTime={item.publishedAt.toISOString()}
+                      >
+                        {new Intl.DateTimeFormat("en-US", {
+                          dateStyle: "medium",
+                          timeZone: "UTC",
+                        }).format(item.publishedAt)}
+                      </time>
+                      <div>
+                        <h3 className="text-timber font-serif text-2xl font-semibold">
+                          <Link
+                            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                            href={`/news/${item.slug}`}
+                          >
+                            {item.headline}
+                          </Link>
+                        </h3>
+                        <p className="text-muted-foreground mt-2 max-w-3xl leading-7">
+                          {item.summary}
+                        </p>
+                      </div>
+                    </article>
+                  </li>
+                ))}
+            </ul>
           </section>
         </div>
       </main>

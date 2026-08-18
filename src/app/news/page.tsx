@@ -24,31 +24,25 @@ export default async function NewsIndex() {
       <SiteHeader />
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
-        <header className="bg-editorial-sky/30 border-border border-b">
-          <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">
-            <p className="text-foreground text-sm font-bold tracking-[.16em] uppercase">
-              Fayette County Habitat
-            </p>
-            <h1 className="text-editorial-pecan mt-4 font-serif text-5xl tracking-[-.035em] sm:text-6xl">
-              News &amp; updates
-            </h1>
-            <p className="text-foreground mt-5 max-w-2xl text-lg leading-8">
+        <header className="public-page-header">
+          <div className="public-page-header-inner">
+            <p className="public-kicker">Fayette County Habitat</p>
+            <h1 className="public-page-title">News &amp; updates</h1>
+            <p className="public-page-deck">
               Timely news from our work alongside Fayette County neighbors.
             </p>
           </div>
         </header>
-        <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-12">
+        <div className="public-content-wrap">
           {featured ? (
             <section
               aria-labelledby="featured-news-heading"
-              className="border-editorial-paintbrush bg-editorial-cream border-l-4 p-7 sm:p-10"
+              className="public-clay-rule"
             >
-              <p className="text-editorial-pecan text-sm font-bold tracking-[.14em] uppercase">
-                Featured news
-              </p>
+              <p className="public-kicker">Featured news</p>
               <h2
                 id="featured-news-heading"
-                className="text-editorial-pecan mt-3 font-serif text-3xl sm:text-4xl"
+                className="text-timber mt-3 font-serif text-4xl leading-tight font-semibold sm:text-5xl"
               >
                 <Link
                   className="underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
@@ -61,31 +55,31 @@ export default async function NewsIndex() {
                 {featured.summary}
               </p>
               <time
-                className="text-editorial-pecan mt-5 block text-sm font-semibold"
+                className="text-workshop-green mt-5 block text-sm font-semibold"
                 dateTime={featured.publishedAt.toISOString()}
               >
                 {formatted(featured.publishedAt)}
               </time>
             </section>
           ) : null}
-          <section className="mt-14" aria-labelledby="latest-news-heading">
-            <h2
-              id="latest-news-heading"
-              className="text-editorial-pecan font-serif text-3xl"
-            >
+          <section
+            className="public-section-rule mt-20"
+            aria-labelledby="latest-news-heading"
+          >
+            <h2 id="latest-news-heading" className="public-section-heading">
               Latest news
             </h2>
             {latest.length ? (
-              <ol className="border-border mt-7 divide-y border-y">
+              <ol className="public-rule-list mt-8">
                 {latest.map((item) => (
                   <li key={item.slug} className="py-7">
                     <time
-                      className="text-editorial-oak text-sm font-semibold"
+                      className="text-workshop-green text-sm font-semibold"
                       dateTime={item.publishedAt.toISOString()}
                     >
                       {formatted(item.publishedAt)}
                     </time>
-                    <h3 className="text-editorial-pecan mt-2 font-serif text-2xl">
+                    <h3 className="text-timber mt-2 font-serif text-2xl font-semibold">
                       <Link
                         className="underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                         href={`/news/${item.slug}`}

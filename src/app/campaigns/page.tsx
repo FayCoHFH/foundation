@@ -28,27 +28,31 @@ export default async function CampaignsPage() {
       <SkipLink targetId="campaigns-main" />
       <SiteHeader />
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
-      <main
-        id="campaigns-main"
-        className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-20"
-      >
-        <p className="text-primary text-sm font-semibold">Join the work</p>
-        <h1 className="mt-3 font-serif text-5xl leading-tight">Campaigns</h1>
-        <p className="text-muted-foreground mt-5 max-w-2xl text-xl leading-8">
-          Ways our community can rally around a shared purpose, with giving and
-          volunteer destinations kept safely with DonorView.
-        </p>
+      <main id="campaigns-main" className="public-page-main">
+        <header className="public-page-header">
+          <div className="public-page-header-inner">
+            <p className="public-kicker">Join the work</p>
+            <h1 className="public-page-title">Campaigns</h1>
+            <p className="public-page-deck">
+              Ways our community can rally around a shared purpose, with giving
+              and volunteer destinations kept safely with DonorView.
+            </p>
+          </div>
+        </header>
         {campaigns.length ? (
-          <div className="mt-12 max-w-4xl">
+          <div className="public-content-wrap">
             {current.length ? (
-              <section aria-labelledby="current-campaigns-heading">
+              <section
+                aria-labelledby="current-campaigns-heading"
+                className="public-section-rule"
+              >
                 <h2
                   id="current-campaigns-heading"
-                  className="font-serif text-3xl"
+                  className="public-section-heading"
                 >
                   Current Campaigns
                 </h2>
-                <ul className="mt-3">
+                <ul className="public-rule-list mt-8">
                   {current.map((campaign) => (
                     <CampaignCard key={campaign.slug} campaign={campaign} />
                   ))}
@@ -58,15 +62,15 @@ export default async function CampaignsPage() {
             {historical.length ? (
               <section
                 aria-labelledby="historical-campaigns-heading"
-                className="mt-14"
+                className="public-section-rule mt-20"
               >
                 <h2
                   id="historical-campaigns-heading"
-                  className="font-serif text-3xl"
+                  className="public-section-heading"
                 >
                   Completed and previous Campaigns
                 </h2>
-                <ul className="mt-3">
+                <ul className="public-rule-list mt-8">
                   {historical.map((campaign) => (
                     <CampaignCard key={campaign.slug} campaign={campaign} />
                   ))}
@@ -75,9 +79,11 @@ export default async function CampaignsPage() {
             ) : null}
           </div>
         ) : (
-          <p className="border-border mt-10 max-w-2xl border p-6">
-            Campaigns will appear here as they are ready to share.
-          </p>
+          <div className="public-content-wrap">
+            <p className="border-limestone bg-warm-paper border p-6">
+              Campaigns will appear here as they are ready to share.
+            </p>
+          </div>
         )}
       </main>
       <SiteFooter />

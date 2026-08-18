@@ -20,7 +20,7 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "A place where many kinds of help can meet.",
+      name: "Building and repairing homes with neighbors across Fayette County.",
     }),
   ).toBeVisible();
   await expect(page.getByRole("contentinfo")).toBeVisible();

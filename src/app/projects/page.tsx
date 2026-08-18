@@ -25,26 +25,30 @@ export default async function ProjectsPage() {
       <SkipLink targetId="projects-main" />
       <SiteHeader />
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
-      <main
-        id="projects-main"
-        className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-20"
-      >
-        <p className="text-primary text-sm font-semibold">Our work</p>
-        <h1 className="mt-3 font-serif text-5xl leading-tight">Projects</h1>
-        <p className="text-muted-foreground mt-5 max-w-2xl text-xl leading-8">
-          Building and repairing homes across Fayette County.
-        </p>
+      <main id="projects-main" className="public-page-main">
+        <header className="public-page-header">
+          <div className="public-page-header-inner">
+            <p className="public-kicker">Our work</p>
+            <h1 className="public-page-title">Projects</h1>
+            <p className="public-page-deck">
+              Building and repairing homes across Fayette County.
+            </p>
+          </div>
+        </header>
         {projects.length ? (
-          <div className="mt-12 max-w-4xl">
+          <div className="public-content-wrap">
             {current.length ? (
-              <section aria-labelledby="current-projects-heading">
+              <section
+                aria-labelledby="current-projects-heading"
+                className="public-section-rule"
+              >
                 <h2
                   id="current-projects-heading"
-                  className="font-serif text-3xl"
+                  className="public-section-heading"
                 >
                   Current Projects
                 </h2>
-                <ul className="mt-3">
+                <ul className="public-rule-list mt-8">
                   {current.map((project) => (
                     <ProjectCard key={project.slug} project={project} />
                   ))}
@@ -54,15 +58,15 @@ export default async function ProjectsPage() {
             {historical.length ? (
               <section
                 aria-labelledby="previous-projects-heading"
-                className="mt-14"
+                className="public-section-rule mt-20"
               >
                 <h2
                   id="previous-projects-heading"
-                  className="font-serif text-3xl"
+                  className="public-section-heading"
                 >
                   Completed and previous projects
                 </h2>
-                <ul className="mt-3">
+                <ul className="public-rule-list mt-8">
                   {historical.map((project) => (
                     <ProjectCard key={project.slug} project={project} />
                   ))}
@@ -71,9 +75,11 @@ export default async function ProjectsPage() {
             ) : null}
           </div>
         ) : (
-          <p className="border-border mt-10 max-w-2xl border p-6">
-            Project updates will appear here as they are ready to share.
-          </p>
+          <div className="public-content-wrap">
+            <p className="border-limestone bg-warm-paper border p-6">
+              Project updates will appear here as they are ready to share.
+            </p>
+          </div>
         )}
       </main>
       <SiteFooter />

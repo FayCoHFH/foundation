@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Literata, Source_Sans_3 } from "next/font/google";
+import { Source_Sans_3, Zilla_Slab } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 
-const literata = Literata({ subsets: ["latin"], variable: "--font-literata" });
+const zillaSlab = Zilla_Slab({
+  subsets: ["latin"],
+  variable: "--font-zilla-slab",
+  weight: ["400", "500", "600", "700"],
+});
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-source-sans",
@@ -35,7 +39,7 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${literata.variable} ${sourceSans.variable}`}>
+      <body className={`${zillaSlab.variable} ${sourceSans.variable}`}>
         {children}
       </body>
     </html>

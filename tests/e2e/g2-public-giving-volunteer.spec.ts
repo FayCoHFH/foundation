@@ -127,6 +127,14 @@ test("G2 public giving and volunteer experience is governed, responsive, and acc
   }
 
   await page.goto("/");
+  await expect
+    .poll(() =>
+      page
+        .locator(".editorial-arrival")
+        .first()
+        .evaluate((element) => getComputedStyle(element).opacity),
+    )
+    .toBe("1");
   await expect(page.locator(`a[href="${donateUrl}"]`).first()).toBeVisible();
   await expect(page.locator(`a[href="${volunteerUrl}"]`).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "Why give" })).toHaveAttribute(

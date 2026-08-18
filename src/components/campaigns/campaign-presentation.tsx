@@ -38,7 +38,7 @@ export function CampaignActions({ campaign }: { campaign: PublicCampaign }) {
         {campaign.actions.map((action) => (
           <li key={`${action.actionType}-${action.sortOrder}`}>
             <a
-              className="bg-primary text-primary-foreground inline-flex min-h-11 items-center rounded-sm px-4 py-2 font-semibold underline-offset-4 hover:underline"
+              className="public-action-primary"
               href={action.destination}
               aria-label={`${action.label} (${CAMPAIGN_ACTION_LABELS[action.actionType]} opens an external destination)`}
             >
@@ -88,7 +88,7 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
   return (
     <section
       aria-labelledby="campaign-progress-heading"
-      className="border-primary/40 bg-surface-subtle mt-10 border-l-4 p-5"
+      className="border-habitat-green bg-warm-paper mt-10 border-t-4 p-6 sm:p-8"
     >
       <h2 id="campaign-progress-heading" className="font-serif text-2xl">
         Campaign progress
@@ -114,12 +114,9 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
           <div className="sr-only">
             {progress} of {goal}; {percent}% of the editorial goal.
           </div>
-          <div
-            aria-hidden="true"
-            className="bg-border h-3 overflow-hidden rounded-full"
-          >
+          <div aria-hidden="true" className="bg-limestone h-3 overflow-hidden">
             <div
-              className="bg-primary h-full rounded-full"
+              className="bg-habitat-green h-full"
               style={{ width: `${Math.min(percent, 100)}%` }}
             />
           </div>
@@ -134,11 +131,11 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
 
 export function CampaignFacts({ facts }: { facts: PublicCampaign["facts"] }) {
   return facts.length ? (
-    <dl className="mt-8 grid gap-4 sm:grid-cols-2">
+    <dl className="border-limestone mt-8 grid gap-4 border-y py-6 sm:grid-cols-2">
       {facts.map((fact) => (
         <div
           key={`${fact.sortOrder}-${fact.label}`}
-          className="border-border border-l-2 pl-4"
+          className="border-limestone border-l-2 pl-4"
         >
           <dt className="text-muted-foreground text-sm">{fact.label}</dt>
           <dd className="mt-1 font-semibold">
@@ -157,15 +154,15 @@ export function CampaignProjectLinks({
   campaign: PublicCampaign;
 }) {
   return campaign.projects.length ? (
-    <section aria-labelledby="campaign-projects-heading" className="mt-12">
-      <h2 id="campaign-projects-heading" className="font-serif text-3xl">
+    <section aria-labelledby="campaign-projects-heading" className="mt-16">
+      <h2 id="campaign-projects-heading" className="public-section-heading">
         Projects connected to this purpose
       </h2>
       <ul className="mt-3">
         {campaign.projects.map((project) => (
-          <li key={project.slug} className="border-border border-t py-5">
+          <li key={project.slug} className="border-limestone border-t py-5">
             <Link
-              className="decoration-primary/40 text-lg font-semibold underline underline-offset-4"
+              className="text-habitat-blue decoration-habitat-blue/40 text-lg font-semibold underline underline-offset-4"
               href={`/projects/${project.slug}`}
             >
               {project.title}
@@ -179,15 +176,15 @@ export function CampaignProjectLinks({
 
 export function CampaignCard({ campaign }: { campaign: PublicCampaign }) {
   return (
-    <li className="border-border border-t py-7">
+    <li className="py-7">
       <article>
-        <p className="text-primary text-sm font-semibold">
+        <p className="text-workshop-green text-sm font-bold">
           {CAMPAIGN_STATUS_LABELS[campaign.campaignStatus]} ·{" "}
           {CAMPAIGN_TYPE_LABELS[campaign.campaignType]}
         </p>
-        <h2 className="mt-2 font-serif text-2xl">
+        <h2 className="text-timber mt-2 font-serif text-3xl font-semibold">
           <Link
-            className="decoration-primary/40 underline underline-offset-4"
+            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
             href={`/campaigns/${campaign.slug}`}
           >
             {campaign.title}
@@ -214,11 +211,11 @@ export function CampaignCard({ campaign }: { campaign: PublicCampaign }) {
 export function CampaignDetail({ campaign }: { campaign: PublicCampaign }) {
   return (
     <>
-      <p className="text-primary text-sm font-semibold">
+      <p className="text-workshop-green text-sm font-bold">
         {CAMPAIGN_STATUS_LABELS[campaign.campaignStatus]} ·{" "}
         {CAMPAIGN_TYPE_LABELS[campaign.campaignType]}
       </p>
-      <h1 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">
+      <h1 className="text-timber mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
         {campaign.title}
       </h1>
       <p className="text-muted-foreground mt-5 max-w-3xl text-xl leading-8">

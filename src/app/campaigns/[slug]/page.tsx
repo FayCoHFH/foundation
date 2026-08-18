@@ -39,12 +39,12 @@ export default async function CampaignPage({
       <SkipLink targetId="campaign-main" />
       <SiteHeader />
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
-      <main
-        id="campaign-main"
-        className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-20"
-      >
-        <p className="mb-8 text-sm">
-          <Link className="underline underline-offset-4" href="/campaigns">
+      <main id="campaign-main" className="public-content-wrap">
+        <p className="mb-10 text-sm">
+          <Link
+            className="text-habitat-blue font-semibold underline underline-offset-4"
+            href="/campaigns"
+          >
             ← All Campaigns
           </Link>
         </p>

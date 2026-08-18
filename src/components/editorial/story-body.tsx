@@ -35,21 +35,23 @@ export function StoryBody({ node }: { node: StoryNode }) {
   switch (node.type) {
     case "paragraph":
       return (
-        <p className="text-foreground/92 mt-6 text-[1.125rem] leading-[1.82] sm:text-[1.2rem]">
+        <p className="text-foreground mt-6 text-[1.125rem] leading-[1.82] sm:text-[1.2rem]">
           {children}
         </p>
       );
     case "heading":
       return node.attrs?.level === 3 ? (
-        <h3 className="mt-10 font-serif text-2xl leading-tight">{children}</h3>
+        <h3 className="text-timber mt-10 font-serif text-3xl leading-tight font-semibold">
+          {children}
+        </h3>
       ) : (
-        <h2 className="mt-14 font-serif text-3xl leading-[1.12] sm:text-4xl">
+        <h2 className="text-timber mt-14 font-serif text-4xl leading-[1.08] font-semibold sm:text-5xl">
           {children}
         </h2>
       );
     case "blockquote":
       return (
-        <blockquote className="border-editorial-paintbrush text-editorial-pecan mt-10 border-l-2 py-1 pl-6 font-serif text-2xl leading-snug sm:text-3xl">
+        <blockquote className="border-texas-clay text-timber mt-10 border-l-2 py-1 pl-6 font-serif text-3xl leading-snug sm:text-4xl">
           {children}
         </blockquote>
       );

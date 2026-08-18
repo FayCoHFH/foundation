@@ -46,21 +46,19 @@ export default async function PublicStoryPage({
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <article>
-          <header className="border-border bg-editorial-sky/45 border-b">
-            <div className="editorial-arrival mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-12">
+          <header className="public-page-header">
+            <div className="editorial-arrival public-page-header-inner">
               <div className="max-w-4xl">
-                <p className="text-foreground text-sm font-bold tracking-[0.16em] uppercase">
-                  A Fayette County Habitat Story
-                </p>
-                <h1 className="text-editorial-pecan mt-5 font-serif text-5xl leading-[0.98] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
+                <p className="public-kicker">A Fayette County Habitat Story</p>
+                <h1 className="public-page-title mt-5 max-w-none">
                   {story.headline}
                 </h1>
                 {story.deck ? (
-                  <p className="text-foreground mt-7 max-w-2xl text-xl leading-8 sm:text-2xl sm:leading-9">
+                  <p className="text-muted-foreground mt-7 max-w-2xl text-xl leading-8 sm:text-2xl sm:leading-9">
                     {story.deck}
                   </p>
                 ) : null}
-                <div className="text-foreground mt-10 flex items-center gap-3 text-sm font-semibold">
+                <div className="text-workshop-green mt-10 flex items-center gap-3 text-sm font-semibold">
                   <span
                     className="bg-editorial-paintbrush h-px w-9"
                     aria-hidden="true"
@@ -72,8 +70,8 @@ export default async function PublicStoryPage({
               </div>
             </div>
           </header>
-          <div className="mx-auto max-w-[43rem] px-5 py-14 sm:px-8 sm:py-20">
-            <p className="border-editorial-oak/40 text-editorial-pecan border-l-2 pl-5 font-serif text-xl leading-8 sm:text-2xl">
+          <div className="mx-auto max-w-[46rem] px-5 py-16 sm:px-8 sm:py-24">
+            <p className="border-habitat-green text-timber border-l-2 pl-5 font-serif text-2xl leading-9 sm:text-3xl">
               {story.excerpt}
             </p>
             <div className="mt-12">

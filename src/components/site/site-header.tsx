@@ -6,36 +6,36 @@ import { prisma } from "@/platform/database/prisma";
 export async function SiteHeader() {
   const donate = await getPublicGlobalDestination(prisma, "GENERAL_DONATE");
   const links = (
-    <ul className="flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center sm:gap-x-5">
+    <ul className="site-nav-links">
       <li>
-        <Link className="hover:text-primary" href="/">
+        <Link className="site-nav-link" href="/">
           Home
         </Link>
       </li>
       <li>
-        <Link className="hover:text-primary" href="/news">
+        <Link className="site-nav-link" href="/news">
           News
         </Link>
       </li>
       <li>
-        <Link className="hover:text-primary" href="/projects">
+        <Link className="site-nav-link" href="/projects">
           Projects
         </Link>
       </li>
       <li>
-        <Link className="hover:text-primary" href="/campaigns">
+        <Link className="site-nav-link" href="/campaigns">
           Campaigns
         </Link>
       </li>
       <li>
-        <Link className="hover:text-primary" href="/volunteer">
+        <Link className="site-nav-link" href="/volunteer">
           Volunteer
         </Link>
       </li>
       {donate ? (
         <li>
           <a
-            className="bg-primary text-primary-foreground inline-flex min-h-11 items-center rounded-sm px-4 py-2 font-bold no-underline hover:brightness-95"
+            className="site-nav-action"
             href={donate.url}
             aria-label="Donate (opens the secure DonorView giving page)"
           >
@@ -46,24 +46,26 @@ export async function SiteHeader() {
     </ul>
   );
   return (
-    <header className="border-border/80 bg-background/95 border-b backdrop-blur-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-4 sm:px-8 lg:px-12">
+    <header className="site-header">
+      <div className="site-header-inner mx-auto max-w-7xl">
         <Link
           href="/"
-          className="text-foreground font-serif text-lg leading-tight font-semibold no-underline sm:text-xl"
+          className="site-wordmark"
+          aria-label="Fayette County Habitat for Humanity home"
         >
-          Fayette County Habitat for Humanity
+          <span className="site-wordmark-copy">
+            <span>Fayette County Habitat</span>
+            <span>for Humanity</span>
+          </span>
         </Link>
         <nav aria-label="Public navigation" className="hidden sm:block">
           {links}
         </nav>
-        <details className="relative sm:hidden">
-          <summary className="border-border min-h-11 cursor-pointer rounded-sm border px-3 py-2 text-sm font-semibold">
-            Menu
-          </summary>
+        <details className="site-mobile-menu sm:hidden">
+          <summary className="site-mobile-trigger">Menu</summary>
           <nav
+            className="site-mobile-nav"
             aria-label="Mobile public navigation"
-            className="border-border bg-background absolute right-0 z-10 mt-2 border p-4 shadow-lg"
           >
             {links}
           </nav>

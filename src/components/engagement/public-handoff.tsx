@@ -12,7 +12,7 @@ export function PublicHandoff({
 }) {
   if (!destination) {
     return (
-      <p className="border-border bg-surface-subtle max-w-2xl border-l-4 p-5">
+      <p className="public-clay-rule max-w-2xl">
         {action === "Donate"
           ? "General giving is not available yet. Please check back soon."
           : "General volunteer registration is not available yet. Please check back soon."}
@@ -23,7 +23,7 @@ export function PublicHandoff({
   return (
     <div>
       <a
-        className="bg-primary text-primary-foreground inline-flex min-h-12 items-center rounded-sm px-5 py-3 font-bold no-underline hover:brightness-95"
+        className="public-action-primary"
         href={destination.url}
         aria-label={`${action} (opens the secure DonorView ${action === "Donate" ? "giving page" : "volunteer registration"})`}
       >

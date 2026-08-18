@@ -1,46 +1,57 @@
-/* Public editorial language: Fayette County materials, light, and restraint. */
+/* Fayette County Habitat public visual system: workshop blue, civic green, paper, and clay. */
 :root {
-  --background: #f5f0e6;
-  --foreground: #32281f;
-  --surface: #fffdf8;
-  --surface-subtle: #e9e0d0;
-  --card: #fffdf8;
-  --card-foreground: #32281f;
-  --popover: #fffdf8;
-  --popover-foreground: #32281f;
-  --border: #cfc1aa;
-  --input: #bfae93;
-  --muted: #eee5d7;
-  --muted-foreground: #675e52;
-  --primary: #355e4b;
+  --habitat-blue: #005697;
+  --habitat-green: #51a667;
+  --deep-blue: #173f59;
+  --workshop-green: #27533b;
+  --charcoal: #252723;
+  --clean-white: #ffffff;
+  --warm-paper: #f8f5ed;
+  --limestone: #d8d0bf;
+  --texas-clay: #a65038;
+  --timber: #604938;
+
+  --background: var(--clean-white);
+  --foreground: var(--charcoal);
+  --surface: var(--warm-paper);
+  --surface-subtle: #e9e4d8;
+  --card: var(--clean-white);
+  --card-foreground: var(--charcoal);
+  --popover: var(--clean-white);
+  --popover-foreground: var(--charcoal);
+  --border: var(--limestone);
+  --input: #b9b09f;
+  --muted: #f1eee7;
+  --muted-foreground: #56605d;
+  --primary: var(--habitat-blue);
   --primary-foreground: #ffffff;
-  --secondary: #dce8e4;
-  --secondary-foreground: #26493b;
-  --accent: #2e6b83;
+  --secondary: #e3eee5;
+  --secondary-foreground: var(--workshop-green);
+  --accent: var(--workshop-green);
   --accent-foreground: #ffffff;
-  --destructive: #9f4332;
+  --destructive: var(--texas-clay);
   --destructive-foreground: #ffffff;
-  --ring: #2e6b83;
-  --success: #355e4b;
+  --ring: var(--habitat-blue);
+  --success: var(--habitat-green);
   --warning: #8a621b;
-  --editorial-sky: #dbe9ec;
-  --editorial-denim: #4a7286;
-  --editorial-paintbrush: #b84c35;
+  --editorial-sky: #e7f0f4;
+  --editorial-denim: var(--habitat-blue);
+  --editorial-paintbrush: var(--texas-clay);
   --editorial-bluebonnet: #485aa4;
-  --editorial-pecan: #4a3427;
-  --editorial-oak: #64714b;
-  --editorial-cream: #fff9ef;
-  --editorial-cream-muted: #eadfce;
+  --editorial-pecan: var(--timber);
+  --editorial-oak: var(--workshop-green);
+  --editorial-cream: var(--warm-paper);
+  --editorial-cream-muted: #e5ddcf;
 
   --habitat-font-sans:
     var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
   --habitat-font-serif:
-    var(--font-literata), Georgia, "Times New Roman", ui-serif, serif;
+    var(--font-zilla-slab), Georgia, "Times New Roman", ui-serif, serif;
 
-  --radius: 0.35rem;
-  --radius-control: 0.18rem;
-  --radius-surface: 0.35rem;
-  --shadow-subtle: 0 1px 2px rgb(74 52 39 / 10%);
+  --radius: 0.2rem;
+  --radius-control: 0.12rem;
+  --radius-surface: 0.18rem;
+  --shadow-subtle: 0 1px 2px rgb(37 39 35 / 10%);
 }
 
 @theme inline {
@@ -67,6 +78,16 @@
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-habitat-blue: var(--habitat-blue);
+  --color-habitat-green: var(--habitat-green);
+  --color-deep-blue: var(--deep-blue);
+  --color-workshop-green: var(--workshop-green);
+  --color-charcoal: var(--charcoal);
+  --color-clean-white: var(--clean-white);
+  --color-warm-paper: var(--warm-paper);
+  --color-limestone: var(--limestone);
+  --color-texas-clay: var(--texas-clay);
+  --color-timber: var(--timber);
   --color-editorial-pecan: var(--editorial-pecan);
   --color-editorial-sky: var(--editorial-sky);
   --color-editorial-oak: var(--editorial-oak);

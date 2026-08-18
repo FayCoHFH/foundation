@@ -49,24 +49,20 @@ export default async function NewsDetail({
       <SiteNoticeRegion targetArea={SiteNoticeTargetArea.SITE_WIDE} />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <article>
-          <header className="border-border bg-editorial-sky/30 border-b">
-            <div className="editorial-arrival mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-18 lg:px-12">
-              <p className="text-foreground text-sm font-bold tracking-[0.16em] uppercase">
-                News &amp; updates
-              </p>
-              <h1 className="text-editorial-pecan mt-4 max-w-4xl font-serif text-4xl leading-[1.02] tracking-[-0.03em] sm:text-6xl">
-                {news.headline}
-              </h1>
+          <header className="public-page-header">
+            <div className="editorial-arrival public-page-header-inner">
+              <p className="public-kicker">News &amp; updates</p>
+              <h1 className="public-page-title">{news.headline}</h1>
               <time
-                className="text-foreground mt-7 block text-sm font-semibold"
+                className="text-workshop-green mt-7 block text-sm font-semibold"
                 dateTime={news.publishedAt.toISOString()}
               >
                 Published {date}
               </time>
             </div>
           </header>
-          <div className="mx-auto max-w-[42rem] px-5 py-12 sm:px-8 sm:py-16">
-            <p className="text-editorial-pecan font-serif text-2xl leading-9">
+          <div className="mx-auto max-w-[46rem] px-5 py-14 sm:px-8 sm:py-20">
+            <p className="text-timber font-serif text-3xl leading-tight">
               {news.summary}
             </p>
             <div className="mt-10">
