@@ -118,10 +118,11 @@ server-only magic-byte/MIME/filename consistency checks, byte/dimension/pixel
 limits, static-image enforcement, orientation normalization, metadata-stripping
 decode/re-encode, and a separately keyed confidential review JPEG derivative.
 It deletes rejected/removed/expired originals and derivatives and uses
-optimistic processing ownership. No malware scanning, public delivery, or
-rights/consent clearance is claimed.
+optimistic processing ownership. C6B-3C adds confidential rights declarations,
+scoped consent, clearance applicability, eligibility, restrictions, and
+revocation history. It does not add public delivery or evidence-file storage.
 
-**Verification:** OWASP upload corpus, oversize/bomb/polyglot tests, private URL tests, object inventory scan, and media withdrawal/consent tests. Select malware and media-processing services before those upload types launch.
+**Verification:** OWASP upload corpus, oversize/bomb/polyglot tests, private URL tests, object inventory scan, and media withdrawal/consent tests. Separate malware scanning is not required for the initial image pipeline; it remains an optional future defense-in-depth enhancement.
 
 ### Applicant/homeowner and participant privacy
 

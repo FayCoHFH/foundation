@@ -31,7 +31,7 @@ Names may be mechanically refined before migrations, but separation must be pres
 - `stories.create`, `stories.read.draft.own`, `stories.read.draft.any`, `stories.edit.own`, `stories.edit.any`, `stories.submit`, `stories.review`, `stories.approve`, `stories.schedule`, `stories.publish`, `stories.withdraw`, `stories.archive`
 - `news.create`, `news.read.draft.own`, `news.read.draft.any`, `news.edit.own`, `news.edit.any`, `news.submit`, `news.review`, `news.approve`, `news.schedule`, `news.publish`, `news.withdraw`, `news.archive`
 - `newsletter.create`, `newsletter.read.draft`, `newsletter.edit`, `newsletter.submit`, `newsletter.review`, `newsletter.approve`, `newsletter.schedule`, `newsletter.publish`, `newsletter.withdraw`, `newsletter.archive`
-- `media.upload`, `media.edit`, `media.rights.clear`, `media.public.use`, with separate `media.private.read` and `media.private.manage` where private assets exist
+- `media.upload`, `media.edit`, `media.rights.clear`, `media.public.use`, with separate `media.private.read` and `media.private.manage` where private assets exist; confidential Story Submission clearance review uses `communications.submissions.review`, while restoring eligibility additionally requires `communications.media.restore_eligibility`
 - `communications.categories.manage`
 - `communications.authors.manage`
 - `communications.requirements.override` for an explicit, audited exceptional publication-requirement override only
@@ -123,7 +123,7 @@ These future capabilities must not be included in broad content-admin roles by d
 - Integration secret managers need not be content publishers or applicant/grant readers.
 - Private grant and applicant exports require narrowly granted capabilities and an audit reason.
 
-A Super Admin may perform an emergency override where the product and owning policy explicitly support a waivable requirement. The override requires a fresh session, explicit reason, prominent audit event, and notification/review path. It cannot bypass authorization, invalid schema/relations, exact-hash approval, unsafe media, or consent/rights evidence that policy or law makes mandatory. “Super Admin” is implemented as a managed capability set plus override policy, not hard-coded bypasses scattered through the application.
+A Super Admin may perform an emergency override where the product and owning policy explicitly support a waivable requirement. The override requires a fresh session, explicit reason, prominent audit event, and notification/review path. It cannot bypass authorization, invalid schema/relations, exact-hash approval, unsafe media, or consent/rights evidence that policy or law makes mandatory. Story Submission media eligibility restoration is a separate seeded capability, not a role-name check, and still requires the underlying eligibility evaluator to pass. “Super Admin” is implemented as a managed capability set plus override policy, not hard-coded bypasses scattered through the application.
 
 ## Suggested initial role presets
 

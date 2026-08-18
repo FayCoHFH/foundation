@@ -103,7 +103,8 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
     capabilities: communicationsCapabilities.filter(
       (capability) =>
         capability !== "communications.requirements.override" &&
-        capability !== "communications.submissions.restore_spam",
+        capability !== "communications.submissions.restore_spam" &&
+        capability !== "communications.media.restore_eligibility",
     ),
   },
   {

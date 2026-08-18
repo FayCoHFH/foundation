@@ -39,7 +39,8 @@ removed, expired, or submitted-media result. Removing ready media and expiry
 cleanup delete both private objects; successful processing deliberately retains
 the original under the unresolved submitted-media retention policy.
 
-There is no malware-scanner integration or claim in this slice. There is no
+Separate malware scanning is not required for the initial image pipeline; it
+remains an optional future defense-in-depth enhancement. There is no
 public route, upload form, admin media UI, download URL, public derivative,
 rights/consent/evidence model, clearance, promotion, or browser work. DTOs
 continue to omit raw or derivative object keys, checksums, bytes, decoder

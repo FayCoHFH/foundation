@@ -47,7 +47,7 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | Analytics/correlation data with IP or stable visitor ID | Confidential until minimized/aggregated | Vendor selection must honor this policy |
 | PublicStorySubmission name, email, relationship, story text, acknowledgements, sensitivity declarations, and internal review note | Confidential | Field-minimum text-only aggregate; never public/search/analytics/logs; manual content retention only until owner, privacy text, consent, and retention profile are approved; spam restoration is audited and preserves content |
 | Public Story intake token hashes, HMAC rate-limit fingerprints, expiry, and bounded counters | Confidential operational security artifact | No raw token, nonce, IP, email, user agent, or request body; expire and clean through the bounded C6B-1B cleanup path; not subject to the unresolved submission-content retention profile |
-| Public Story Submission attempt recovery hashes, upload nonce hashes, raw image metadata, checksums, sensitivity declarations, private quarantine originals, and C6B-3B review derivatives | Confidential | No public URL, cache, search, analytics, or log payload; a raw recovery/upload token is never persisted; unsubmitted attempts are securely cleaned after 24 hours; rejected/removed technical objects are deleted; submitted-media retention remains subject to the unresolved approved retention profile |
+| Public Story Submission attempt recovery hashes, upload nonce hashes, raw image metadata, checksums, sensitivity declarations, private quarantine originals, C6B-3B review derivatives, C6B-3C rights declarations, scoped subjects, clearances, restrictions, and revocation requests | Confidential | No public URL, cache, search, analytics, or log payload; a raw recovery/upload token is never persisted; rights evidence is represented only by bounded type/reference facts; unsubmitted attempts are securely cleaned after 24 hours; rejected/removed technical objects are deleted; submitted-media retention remains subject to the unresolved approved retention profile |
 
 The C6B-2A/2B administrative inbox is a review surface, not a new collection
 or retention policy. It server-renders the minimum list/detail DTOs only after
@@ -103,6 +103,7 @@ No applicant, household, eligibility, supporting-document, or case-note collecti
 - A partner/funder relationship does not imply logo/testimonial permission.
 - Alt text and captions must not reveal private disability, eligibility, address, financial, household, or case information.
 - Consent withdrawal removes future public use promptly while restricted evidence and immutable audit facts follow their retention/legal basis.
+- Story Submission likeness consent is scoped only to the submitter subject; per-image clearances and proposed-use permissions are evaluated before any future promotion.
 - Corrections, access, deletion, and suppression requests are routed to the authoritative owner: Habitat for local data, DonorView for donor/volunteer truth, Stripe for processor data, with coordinated tracking so the requester is not sent in circles.
 
 ## Access and handling

@@ -8,6 +8,7 @@ export const SUGGESTED_TITLE_MAX_LENGTH = 160;
 export const STORY_TEXT_MIN_LENGTH = 50;
 export const STORY_TEXT_MAX_LENGTH = 12_000;
 export const PRIVACY_NOTICE_VERSION_MAX_LENGTH = 64;
+export const RIGHTS_DECLARATION_VERSION_MAX_LENGTH = 64;
 export const INTERNAL_REVIEW_NOTE_MAX_LENGTH = 2_000;
 export const ADMIN_SUBMISSION_PAGE_SIZE = 25;
 export const ADMIN_SUBMISSION_MAX_PAGE_SIZE = 50;
@@ -36,6 +37,12 @@ export type ReceivePublicStorySubmissionInput = Readonly<{
   involvesMinor?: boolean;
   involvesHomeownerOrApplicant?: boolean;
   containsSensitivePersonalCircumstances?: boolean;
+  rightsDeclarationVersion?: string | null;
+  rightsDeclarationAccepted?: boolean | null;
+  rightsDeclarationAcceptedAt?: Date | null;
+  submitterLikenessConsentVersion?: string | null;
+  submitterLikenessConsentAccepted?: boolean | null;
+  submitterLikenessConsentAcceptedAt?: Date | null;
 }>;
 
 export type ValidatedReceivePublicStorySubmissionInput = Readonly<{
@@ -53,6 +60,12 @@ export type ValidatedReceivePublicStorySubmissionInput = Readonly<{
   involvesMinor: boolean;
   involvesHomeownerOrApplicant: boolean;
   containsSensitivePersonalCircumstances: boolean;
+  rightsDeclarationVersion: string | null;
+  rightsDeclarationAccepted: boolean | null;
+  rightsDeclarationAcceptedAt: Date | null;
+  submitterLikenessConsentVersion: string | null;
+  submitterLikenessConsentAccepted: boolean | null;
+  submitterLikenessConsentAcceptedAt: Date | null;
 }>;
 
 export type SubmissionStatusTransition = Readonly<{
@@ -186,6 +199,50 @@ export function validateReceivePublicStorySubmissionInput(
       "Sensitive circumstances declaration",
       false,
     ) as boolean,
+    rightsDeclarationVersion: optionalText(
+      input.rightsDeclarationVersion,
+      "Rights declaration version",
+      RIGHTS_DECLARATION_VERSION_MAX_LENGTH,
+    ),
+    rightsDeclarationAccepted:
+      input.rightsDeclarationAccepted === undefined ||
+      input.rightsDeclarationAccepted === null
+        ? null
+        : optionalBoolean(
+            input.rightsDeclarationAccepted,
+            "Rights declaration acceptance",
+            null,
+          ),
+    rightsDeclarationAcceptedAt:
+      input.rightsDeclarationAcceptedAt === undefined ||
+      input.rightsDeclarationAcceptedAt === null
+        ? null
+        : validDate(
+            input.rightsDeclarationAcceptedAt,
+            "Rights declaration acceptance time",
+          ),
+    submitterLikenessConsentVersion: optionalText(
+      input.submitterLikenessConsentVersion,
+      "Submitter likeness consent version",
+      RIGHTS_DECLARATION_VERSION_MAX_LENGTH,
+    ),
+    submitterLikenessConsentAccepted:
+      input.submitterLikenessConsentAccepted === undefined ||
+      input.submitterLikenessConsentAccepted === null
+        ? null
+        : optionalBoolean(
+            input.submitterLikenessConsentAccepted,
+            "Submitter likeness consent acceptance",
+            null,
+          ),
+    submitterLikenessConsentAcceptedAt:
+      input.submitterLikenessConsentAcceptedAt === undefined ||
+      input.submitterLikenessConsentAcceptedAt === null
+        ? null
+        : validDate(
+            input.submitterLikenessConsentAcceptedAt,
+            "Submitter likeness consent acceptance time",
+          ),
   };
 }
 

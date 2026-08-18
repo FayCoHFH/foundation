@@ -9,3 +9,5 @@ export * from "./submission-media-content";
 export * from "./submission-media-processing";
 export * from "./submission-media-upload-auth";
 export * from "./submission-media-service";
+export * from "./submission-media-clearance-content";
+export * from "./submission-media-clearance-service";

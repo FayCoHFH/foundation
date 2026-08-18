@@ -101,6 +101,69 @@ enum PublicStorySubmissionMediaRejectionReason {
   PROCESSING_FAILED
 }
 
+enum PublicStorySubmissionMediaSubjectType {
+  IDENTIFIABLE_ADULT
+  MINOR
+}
+
+enum PublicStorySubmissionMediaClearanceType {
+  IMAGE_RIGHTS
+  IDENTIFIABLE_ADULT
+  MINOR_GUARDIAN
+  HOMEOWNER_APPLICANT
+  PRIVATE_RESIDENCE
+  SENSITIVE_CIRCUMSTANCES
+  SUBMITTER_LIKENESS
+}
+
+enum PublicStorySubmissionMediaClearanceStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  REVOKED
+}
+
+enum PublicStorySubmissionMediaEvidenceType {
+  EXISTING_HABITAT_RELEASE
+  NEW_RELEASE
+  OTHER_APPROVED_AUTHORIZATION
+  SUBMITTER_LIKENESS_CONSENT
+  STAFF_PRIVACY_REVIEW
+}
+
+enum PublicStorySubmissionMediaClearanceRevocationReason {
+  SUBJECT_REQUEST
+  STAFF_REVIEW
+  EVIDENCE_INVALIDATED
+}
+
+enum PublicStorySubmissionMediaUse {
+  WEBSITE_PUBLICATION
+  SOCIAL_MEDIA
+  PRINT
+  FUNDRAISING_PROMOTIONAL
+  PAID_ADVERTISING
+}
+
+enum PublicStorySubmissionMediaRestrictionState {
+  ACTIVE
+  RESTORED
+}
+
+enum PublicStorySubmissionMediaRestrictionReason {
+  CLEARANCE_EXPIRED
+  CLEARANCE_REVOKED
+  CLEARANCE_INSUFFICIENT
+  PRIVACY_CONCERN
+  SUBJECT_REVOCATION_REQUEST
+  STAFF_REVIEW_REQUIRED
+}
+
+enum PublicStorySubmissionMediaRevocationRequestStatus {
+  OPEN
+  RESOLVED
+}
+
 enum PublicStoryIntakeRateLimitScope {
   NETWORK
   EMAIL
@@ -255,31 +318,36 @@ model AdminUser {
   updatedAt       DateTime        @updatedAt
   authUser        User            @relation(fields: [authUserId], references: [id], onDelete: Restrict)
 
-  externalIdentities            ExternalIdentity[]
-  roleAssignments               UserRole[]
-  createdInvitations            AdminInvitation[]                @relation("InvitationCreator")
-  acceptedInvitations           AdminInvitation[]                @relation("InvitationAcceptor")
-  revokedInvitations            AdminInvitation[]                @relation("InvitationRevoker")
-  grantedRoleAssignments        UserRole[]                       @relation("RoleGrantor")
-  revokedRoleAssignments        UserRole[]                       @relation("RoleRevoker")
-  auditEvents                   AuditEvent[]                     @relation("AuditActor")
-  superAdminGrant               SuperAdminGrant?                 @relation("SuperAdminHolder")
-  grantedSuperAdminRecords      SuperAdminGrant[]                @relation("SuperAdminGrantor")
-  createdPublications           Publication[]                    @relation("PublicationCreator")
-  createdRevisions              PublicationRevision[]            @relation("PublicationRevisionCreator")
-  editorialResponsibilities     PublicationResponsibility[]      @relation("PublicationEditorialOwner")
-  reviewerResponsibilities      PublicationResponsibility[]      @relation("PublicationAssignedReviewer")
-  approverResponsibilities      PublicationResponsibility[]      @relation("PublicationAssignedApprover")
-  changedResponsibilities       PublicationResponsibility[]      @relation("PublicationResponsibilityChanger")
-  publicationTransitions        PublicationLifecycleTransition[] @relation("PublicationTransitionActor")
-  publicationApprovals          PublicationApproval[]            @relation("PublicationApprover")
-  createdContentPlacements      ContentPlacement[]               @relation("ContentPlacementCreator")
-  changedContentPlacements      ContentPlacement[]               @relation("ContentPlacementChanger")
-  createdSiteNotices            SiteNotice[]                     @relation("SiteNoticeCreator")
-  updatedSiteNotices            SiteNotice[]                     @relation("SiteNoticeUpdater")
-  publishedSiteNotices          SiteNotice[]                     @relation("SiteNoticePublisher")
-  withdrawnSiteNotices          SiteNotice[]                     @relation("SiteNoticeWithdrawer")
-  changedPublicStorySubmissions PublicStorySubmission[]          @relation("PublicStorySubmissionStatusChanger")
+  externalIdentities                        ExternalIdentity[]
+  roleAssignments                           UserRole[]
+  createdInvitations                        AdminInvitation[]                             @relation("InvitationCreator")
+  acceptedInvitations                       AdminInvitation[]                             @relation("InvitationAcceptor")
+  revokedInvitations                        AdminInvitation[]                             @relation("InvitationRevoker")
+  grantedRoleAssignments                    UserRole[]                                    @relation("RoleGrantor")
+  revokedRoleAssignments                    UserRole[]                                    @relation("RoleRevoker")
+  auditEvents                               AuditEvent[]                                  @relation("AuditActor")
+  superAdminGrant                           SuperAdminGrant?                              @relation("SuperAdminHolder")
+  grantedSuperAdminRecords                  SuperAdminGrant[]                             @relation("SuperAdminGrantor")
+  createdPublications                       Publication[]                                 @relation("PublicationCreator")
+  createdRevisions                          PublicationRevision[]                         @relation("PublicationRevisionCreator")
+  editorialResponsibilities                 PublicationResponsibility[]                   @relation("PublicationEditorialOwner")
+  reviewerResponsibilities                  PublicationResponsibility[]                   @relation("PublicationAssignedReviewer")
+  approverResponsibilities                  PublicationResponsibility[]                   @relation("PublicationAssignedApprover")
+  changedResponsibilities                   PublicationResponsibility[]                   @relation("PublicationResponsibilityChanger")
+  publicationTransitions                    PublicationLifecycleTransition[]              @relation("PublicationTransitionActor")
+  publicationApprovals                      PublicationApproval[]                         @relation("PublicationApprover")
+  createdContentPlacements                  ContentPlacement[]                            @relation("ContentPlacementCreator")
+  changedContentPlacements                  ContentPlacement[]                            @relation("ContentPlacementChanger")
+  createdSiteNotices                        SiteNotice[]                                  @relation("SiteNoticeCreator")
+  updatedSiteNotices                        SiteNotice[]                                  @relation("SiteNoticeUpdater")
+  publishedSiteNotices                      SiteNotice[]                                  @relation("SiteNoticePublisher")
+  withdrawnSiteNotices                      SiteNotice[]                                  @relation("SiteNoticeWithdrawer")
+  changedPublicStorySubmissions             PublicStorySubmission[]                       @relation("PublicStorySubmissionStatusChanger")
+  verifiedSubmissionMediaClearances         PublicStorySubmissionMediaClearance[]         @relation("SubmissionMediaClearanceVerifier")
+  revokedSubmissionMediaClearances          PublicStorySubmissionMediaClearance[]         @relation("SubmissionMediaClearanceRevoker")
+  restrictedSubmissionMedia                 PublicStorySubmissionMediaRestriction[]       @relation("SubmissionMediaRestrictionCreator")
+  restoredSubmissionMediaRestrictions       PublicStorySubmissionMediaRestriction[]       @relation("SubmissionMediaRestrictionRestorer")
+  resolvedSubmissionMediaRevocationRequests PublicStorySubmissionMediaRevocationRequest[] @relation("SubmissionMediaRevocationRequestResolver")
 
   @@index([status])
   @@map("admin_user")
@@ -632,33 +700,41 @@ model SiteNotice {
 // Confidential, text-only public story intake. This is not a Story,
 // Publication, projection, or media-bearing authoring record.
 model PublicStorySubmission {
-  id                                     String                         @id @default(uuid()) @db.Uuid
-  submitterName                          String                         @db.VarChar(120)
-  submitterEmail                         String                         @db.VarChar(254)
-  relationshipToHabitat                  String                         @db.VarChar(160)
-  suggestedTitle                         String?                        @db.VarChar(160)
-  storyText                              String                         @db.Text
+  id                                     String                                @id @default(uuid()) @db.Uuid
+  submitterName                          String                                @db.VarChar(120)
+  submitterEmail                         String                                @db.VarChar(254)
+  relationshipToHabitat                  String                                @db.VarChar(160)
+  suggestedTitle                         String?                               @db.VarChar(160)
+  storyText                              String                                @db.Text
   contactConsent                         Boolean
-  privacyNoticeVersion                   String                         @db.VarChar(64)
+  privacyNoticeVersion                   String                                @db.VarChar(64)
   privacyNoticeAcceptedAt                DateTime
   editorialReviewAcknowledged            Boolean
   sensitiveDataWarningAcknowledged       Boolean
   publicationInterest                    Boolean?
-  involvesMinor                          Boolean                        @default(false)
-  involvesHomeownerOrApplicant           Boolean                        @default(false)
-  containsSensitivePersonalCircumstances Boolean                        @default(false)
-  status                                 PublicStorySubmissionStatus    @default(RECEIVED)
-  internalReviewNote                     String?                        @db.VarChar(2000)
-  version                                Int                            @default(1)
-  receivedAt                             DateTime                       @default(now())
-  statusChangedAt                        DateTime                       @default(now())
-  statusChangedByAdminUserId             String?                        @db.Uuid
-  createdAt                              DateTime                       @default(now())
-  updatedAt                              DateTime                       @updatedAt
-  statusChangedBy                        AdminUser?                     @relation("PublicStorySubmissionStatusChanger", fields: [statusChangedByAdminUserId], references: [id], onDelete: SetNull)
+  rightsDeclarationVersion               String?                               @db.VarChar(64)
+  rightsDeclarationAccepted              Boolean?
+  rightsDeclarationAcceptedAt            DateTime?
+  submitterLikenessConsentVersion        String?                               @db.VarChar(64)
+  submitterLikenessConsentAccepted       Boolean?
+  submitterLikenessConsentAcceptedAt     DateTime?
+  involvesMinor                          Boolean                               @default(false)
+  involvesHomeownerOrApplicant           Boolean                               @default(false)
+  containsSensitivePersonalCircumstances Boolean                               @default(false)
+  status                                 PublicStorySubmissionStatus           @default(RECEIVED)
+  internalReviewNote                     String?                               @db.VarChar(2000)
+  version                                Int                                   @default(1)
+  receivedAt                             DateTime                              @default(now())
+  statusChangedAt                        DateTime                              @default(now())
+  statusChangedByAdminUserId             String?                               @db.Uuid
+  createdAt                              DateTime                              @default(now())
+  updatedAt                              DateTime                              @updatedAt
+  statusChangedBy                        AdminUser?                            @relation("PublicStorySubmissionStatusChanger", fields: [statusChangedByAdminUserId], references: [id], onDelete: SetNull)
   intakeTokenUse                         PublicStoryIntakeTokenUse?
   submissionAttempts                     PublicStorySubmissionAttempt[]
   submissionMedia                        PublicStorySubmissionMedia[]
+  mediaSubjects                          PublicStorySubmissionMediaSubject[]
+  mediaClearances                        PublicStorySubmissionMediaClearance[]
 
   @@unique([id, version])
   @@index([status, receivedAt, id])
@@ -720,42 +796,46 @@ model PublicStorySubmissionAttempt {
 // Private quarantine record. It is intentionally not a MediaAsset, MediaUsage,
 // Publication, projection, or public library record.
 model PublicStorySubmissionMedia {
-  id                                     String                                     @id @default(uuid()) @db.Uuid
-  attemptId                              String                                     @db.Uuid
-  submissionId                           String?                                    @db.Uuid
-  originalFilename                       String?                                    @db.VarChar(255)
-  declaredMimeType                       String?                                    @db.VarChar(127)
+  id                                     String                                             @id @default(uuid()) @db.Uuid
+  attemptId                              String                                             @db.Uuid
+  submissionId                           String?                                            @db.Uuid
+  originalFilename                       String?                                            @db.VarChar(255)
+  declaredMimeType                       String?                                            @db.VarChar(127)
   originalByteSize                       Int?
   ordinal                                Int?
-  description                            String?                                    @db.VarChar(300)
-  suggestedPhotoCredit                   String?                                    @db.VarChar(160)
-  involvesMinor                          Boolean                                    @default(false)
-  involvesHomeownerOrApplicant           Boolean                                    @default(false)
-  involvesOtherIdentifiablePerson        Boolean                                    @default(false)
-  depictsPrivateResidence                Boolean                                    @default(false)
-  containsSensitivePersonalCircumstances Boolean                                    @default(false)
-  technicalStatus                        PublicStorySubmissionMediaStatus           @default(PENDING_UPLOAD)
+  description                            String?                                            @db.VarChar(300)
+  suggestedPhotoCredit                   String?                                            @db.VarChar(160)
+  involvesMinor                          Boolean                                            @default(false)
+  involvesHomeownerOrApplicant           Boolean                                            @default(false)
+  involvesOtherIdentifiablePerson        Boolean                                            @default(false)
+  depictsPrivateResidence                Boolean                                            @default(false)
+  containsSensitivePersonalCircumstances Boolean                                            @default(false)
+  technicalStatus                        PublicStorySubmissionMediaStatus                   @default(PENDING_UPLOAD)
   rejectionReason                        PublicStorySubmissionMediaRejectionReason?
-  quarantineStorageKey                   String?                                    @db.VarChar(240)
-  detectedFormat                         String?                                    @db.VarChar(16)
+  quarantineStorageKey                   String?                                            @db.VarChar(240)
+  detectedFormat                         String?                                            @db.VarChar(16)
   sourceWidth                            Int?
   sourceHeight                           Int?
-  reviewDerivativeStorageKey             String?                                    @db.VarChar(240)
-  reviewDerivativeFormat                 String?                                    @db.VarChar(16)
+  reviewDerivativeStorageKey             String?                                            @db.VarChar(240)
+  reviewDerivativeFormat                 String?                                            @db.VarChar(16)
   reviewDerivativeWidth                  Int?
   reviewDerivativeHeight                 Int?
   reviewDerivativeByteSize               Int?
   processedAt                            DateTime?
-  originalSha256                         String?                                    @db.Char(64)
-  uploadAuthorizationNonceHash           String                                     @unique @db.Char(64)
+  originalSha256                         String?                                            @db.Char(64)
+  uploadAuthorizationNonceHash           String                                             @unique @db.Char(64)
   removedAt                              DateTime?
   rejectedAt                             DateTime?
   binaryDeletedAt                        DateTime?
-  version                                Int                                        @default(1)
-  createdAt                              DateTime                                   @default(now())
-  updatedAt                              DateTime                                   @updatedAt
-  attempt                                PublicStorySubmissionAttempt               @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  submission                             PublicStorySubmission?                     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  version                                Int                                                @default(1)
+  createdAt                              DateTime                                           @default(now())
+  updatedAt                              DateTime                                           @updatedAt
+  attempt                                PublicStorySubmissionAttempt                       @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  submission                             PublicStorySubmission?                             @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  subjectApplicability                   PublicStorySubmissionMediaSubjectApplicability[]
+  clearances                             PublicStorySubmissionMediaClearanceApplicability[]
+  restrictions                           PublicStorySubmissionMediaRestriction[]
+  revocationRequests                     PublicStorySubmissionMediaRevocationRequest[]
 
   @@unique([id, version])
   @@unique([attemptId, ordinal])
@@ -764,6 +844,138 @@ model PublicStorySubmissionMedia {
   @@index([submissionId, ordinal])
   @@index([technicalStatus, binaryDeletedAt])
   @@map("public_story_submission_media")
+}
+
+// Confidential person labels are deliberately bounded and scoped to one
+// submission. They are not a constituent, applicant, or general CRM record.
+model PublicStorySubmissionMediaSubject {
+  id                 String                                           @id @default(uuid()) @db.Uuid
+  submissionId       String                                           @db.Uuid
+  displayLabel       String                                           @db.VarChar(160)
+  subjectType        PublicStorySubmissionMediaSubjectType
+  isSubmitter        Boolean                                          @default(false)
+  version            Int                                              @default(1)
+  createdAt          DateTime                                         @default(now())
+  updatedAt          DateTime                                         @updatedAt
+  submission         PublicStorySubmission                            @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  media              PublicStorySubmissionMediaSubjectApplicability[]
+  clearances         PublicStorySubmissionMediaClearance[]
+  revocationRequests PublicStorySubmissionMediaRevocationRequest[]
+
+  @@unique([id, version])
+  @@index([submissionId, subjectType])
+  @@map("public_story_submission_media_subject")
+}
+
+model PublicStorySubmissionMediaSubjectApplicability {
+  subjectId String                            @db.Uuid
+  mediaId   String                            @db.Uuid
+  createdAt DateTime                          @default(now())
+  subject   PublicStorySubmissionMediaSubject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  media     PublicStorySubmissionMedia        @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([subjectId, mediaId])
+  @@index([mediaId, subjectId])
+  @@map("public_story_submission_media_subject_applicability")
+}
+
+// A clearance is a versioned, confidential fact. EXPIRED is derived from
+// expiresAt so expiration does not require a background mutation.
+model PublicStorySubmissionMediaClearance {
+  id                            String                                               @id @default(uuid()) @db.Uuid
+  submissionId                  String                                               @db.Uuid
+  clearanceType                 PublicStorySubmissionMediaClearanceType
+  status                        PublicStorySubmissionMediaClearanceStatus            @default(PENDING)
+  subjectId                     String?                                              @db.Uuid
+  dateObtained                  DateTime?
+  dateVerified                  DateTime?
+  verifiedByAdminUserId         String?                                              @db.Uuid
+  expiresAt                     DateTime?
+  evidenceType                  PublicStorySubmissionMediaEvidenceType?
+  existingEvidenceReference     String?                                              @db.VarChar(240)
+  existingEvidenceVersion       String?                                              @db.VarChar(64)
+  confidentialNote              String?                                              @db.VarChar(1000)
+  websitePublicationAllowed     Boolean                                              @default(false)
+  socialMediaAllowed            Boolean                                              @default(false)
+  printAllowed                  Boolean                                              @default(false)
+  fundraisingPromotionalAllowed Boolean                                              @default(false)
+  paidAdvertisingAllowed        Boolean                                              @default(false)
+  otherRestrictionsPresent      Boolean                                              @default(false)
+  confidentialRestrictionsNote  String?                                              @db.VarChar(1000)
+  revokedAt                     DateTime?
+  revokedByAdminUserId          String?                                              @db.Uuid
+  revocationReason              PublicStorySubmissionMediaClearanceRevocationReason?
+  version                       Int                                                  @default(1)
+  createdAt                     DateTime                                             @default(now())
+  updatedAt                     DateTime                                             @updatedAt
+  submission                    PublicStorySubmission                                @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  subject                       PublicStorySubmissionMediaSubject?                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  verifiedBy                    AdminUser?                                           @relation("SubmissionMediaClearanceVerifier", fields: [verifiedByAdminUserId], references: [id], onDelete: SetNull)
+  revokedBy                     AdminUser?                                           @relation("SubmissionMediaClearanceRevoker", fields: [revokedByAdminUserId], references: [id], onDelete: SetNull)
+  applicability                 PublicStorySubmissionMediaClearanceApplicability[]
+
+  @@unique([id, version])
+  @@index([submissionId, clearanceType, status])
+  @@index([subjectId, clearanceType, status])
+  @@map("public_story_submission_media_clearance")
+}
+
+model PublicStorySubmissionMediaClearanceApplicability {
+  clearanceId String                              @db.Uuid
+  mediaId     String                              @db.Uuid
+  createdAt   DateTime                            @default(now())
+  clearance   PublicStorySubmissionMediaClearance @relation(fields: [clearanceId], references: [id], onDelete: Cascade)
+  media       PublicStorySubmissionMedia          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([clearanceId, mediaId])
+  @@index([mediaId, clearanceId])
+  @@map("public_story_submission_media_clearance_applicability")
+}
+
+model PublicStorySubmissionMediaRestriction {
+  id                      String                                      @id @default(uuid()) @db.Uuid
+  mediaId                 String                                      @db.Uuid
+  state                   PublicStorySubmissionMediaRestrictionState  @default(ACTIVE)
+  reason                  PublicStorySubmissionMediaRestrictionReason
+  restrictedAt            DateTime                                    @default(now())
+  restrictedByAdminUserId String                                      @db.Uuid
+  confidentialNote        String?                                     @db.VarChar(1000)
+  restoredAt              DateTime?
+  restoredByAdminUserId   String?                                     @db.Uuid
+  version                 Int                                         @default(1)
+  createdAt               DateTime                                    @default(now())
+  updatedAt               DateTime                                    @updatedAt
+  media                   PublicStorySubmissionMedia                  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  restrictedBy            AdminUser                                   @relation("SubmissionMediaRestrictionCreator", fields: [restrictedByAdminUserId], references: [id], onDelete: Restrict)
+  restoredBy              AdminUser?                                  @relation("SubmissionMediaRestrictionRestorer", fields: [restoredByAdminUserId], references: [id], onDelete: SetNull)
+
+  @@unique([id, version])
+  @@index([mediaId, state])
+  @@map("public_story_submission_media_restriction")
+}
+
+// A bounded confidential request preserves a subject's request to withdraw
+// consent without introducing a general case-management or CRM record.
+model PublicStorySubmissionMediaRevocationRequest {
+  id                    String                                            @id @default(uuid()) @db.Uuid
+  mediaId               String                                            @db.Uuid
+  subjectId             String?                                           @db.Uuid
+  status                PublicStorySubmissionMediaRevocationRequestStatus @default(OPEN)
+  requestedAt           DateTime                                          @default(now())
+  resolvedAt            DateTime?
+  resolvedByAdminUserId String?                                           @db.Uuid
+  confidentialNote      String?                                           @db.VarChar(1000)
+  version               Int                                               @default(1)
+  createdAt             DateTime                                          @default(now())
+  updatedAt             DateTime                                          @updatedAt
+  media                 PublicStorySubmissionMedia                        @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  subject               PublicStorySubmissionMediaSubject?                @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  resolvedBy            AdminUser?                                        @relation("SubmissionMediaRevocationRequestResolver", fields: [resolvedByAdminUserId], references: [id], onDelete: SetNull)
+
+  @@unique([id, version])
+  @@index([mediaId, status])
+  @@index([subjectId, status])
+  @@map("public_story_submission_media_revocation_request")
 }
 
 // Private work-management assignment. This never supplies a public byline.

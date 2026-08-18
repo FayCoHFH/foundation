@@ -6,6 +6,7 @@ export const CAPABILITIES = [
   "communications.notices.manage",
   "communications.submissions.review",
   "communications.submissions.restore_spam",
+  "communications.media.restore_eligibility",
   "stories.create",
   "stories.read.draft.own",
   "stories.read.draft.any",

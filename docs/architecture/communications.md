@@ -313,6 +313,11 @@ retained `READY` rows may attach atomically to the final submission. Private
 quarantine and review-derivative storage have no public URL, listing, or client
 read path. This is
 technical intake state only, not consent, rights clearance, or public media.
+C6B-3C adds versioned rights declarations, submitter-only likeness consent,
+bounded submission subjects, exact per-image clearance applicability, derived
+use eligibility, and confidential restriction/revocation history. The domain
+does not store evidence files or create a public MediaAsset; explicit future
+promotion must still pass the normal public rights and contextual-use gates.
 The future public boundary still requires the upload, rate-limit, challenge,
 duplicate/throttle, CSRF/origin, and generic response controls described below
 before launch.

@@ -174,6 +174,18 @@ handles cleanup/concurrency without public delivery or clearance. The detailed
 record is [C6B-3B secure image processing](../development/c6b3b-secure-image-processing.md).
 C6B remains incomplete pending G-07 and later rights/consent/clearance work.
 
+**C6B-3C — Story Submission image rights and clearance domain: complete locally
+on 2026-08-17.** Versioned rights declarations, submitter-only likeness
+consent, bounded confidential subjects, exact subject/image and
+clearance/image applicability, per-use permissions, derived eligibility,
+expiration/revocation, active/restored restrictions, revocation requests,
+restore authority, optimistic concurrency, redacted audit atomicity, and
+PostgreSQL regression are complete. No evidence-file storage, public delivery,
+MediaAsset promotion, UI, or browser validation is included. The public form,
+production collection, named owner, retention profile, and legal/policy launch
+gate remain open under G-07. The detailed record is [the C6B-3C image rights
+clearance record](../development/c6b3c-image-rights-clearance-domain.md).
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

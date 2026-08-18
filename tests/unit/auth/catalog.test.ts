@@ -5,7 +5,7 @@ import { ROLE_PRESETS } from "@/platform/auth/role-presets";
 
 describe("capability catalog", () => {
   it("is stable and duplicate free", () => {
-    expect(CAPABILITIES).toHaveLength(97);
+    expect(CAPABILITIES).toHaveLength(98);
     expect(new Set(CAPABILITIES).size).toBe(CAPABILITIES.length);
   });
 
@@ -18,7 +18,7 @@ describe("capability catalog", () => {
         capability.startsWith("newsletter.") ||
         capability.startsWith("media."),
     );
-    expect(communications).toHaveLength(50);
+    expect(communications).toHaveLength(51);
   });
 
   it("does not put future sensitive capabilities in Super Admin", () => {
@@ -26,5 +26,14 @@ describe("capability catalog", () => {
     expect(superAdmin).toBeDefined();
     expect(superAdmin?.capabilities).not.toContain("applicants.export");
     expect(superAdmin?.capabilities).not.toContain("grants.private.read");
+    expect(superAdmin?.capabilities).toContain(
+      "communications.media.restore_eligibility",
+    );
+    const communicationsManager = ROLE_PRESETS.find(
+      (role) => role.key === "communications-manager",
+    );
+    expect(communicationsManager?.capabilities).not.toContain(
+      "communications.media.restore_eligibility",
+    );
   });
 });
