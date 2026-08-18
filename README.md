@@ -16,10 +16,11 @@ Current Communications routes include `/`, `/stories/[slug]`, `/news`, and
 `/news/[slug]`; authorized curation is available at
 `/admin/communications`, `/admin/communications/queue`, and
 `/admin/communications/homepage`, and the capability-protected Story
-Submission inbox at `/admin/communications/submissions`. The gated public
-`/share-your-story` route is present but unavailable by default. The C4 placement
-surface is limited to its implemented Story/News keys and does not add
-Project/Campaign placements.
+Submission inbox at `/admin/communications/submissions`, including the nested
+media review route at `/admin/communications/submissions/[id]/media/[mediaId]`.
+The public `/share-your-story` intake is implemented but gated and unavailable
+by default. The C4 placement surface is limited to its implemented Story/News
+keys and does not add Project/Campaign placements.
 
 The submission inbox is an authorized confidential review surface; the public
 form remains disabled until its approved configuration is explicitly enabled.
@@ -52,7 +53,7 @@ domain and a Google OAuth client whose callback is
 [local setup guide](docs/development/local-setup.md) and
 [authentication spike record](docs/development/auth-spike.md).
 
-The future public Story Submission intake is disabled by default. Its
+The public Story Submission intake is disabled by default. Its
 server-only `PUBLIC_STORY_SUBMISSIONS_ENABLED`, dedicated secret, and approved
 privacy-notice version must be configured before an isolated test or approved
 deployment may enable the boundary. See the
@@ -75,7 +76,9 @@ database whose name matches the documented disposable-test allowlist, plus the
 exact `ALLOW_DESTRUCTIVE_TEST_DATABASE=true` opt-in. The end-to-end suite uses a
 narrowly guarded test-session endpoint; that endpoint refuses to operate outside
 local/CI `APP_ENV=test` and is never a production authentication path. See
-[testing](docs/testing/README.md).
+[testing](docs/testing/README.md). Run the enabled Share Your Story and
+submission-media admin suites only with separate disposable test configuration;
+the repository/default browser run keeps public intake disabled.
 
 ## Foundation map
 

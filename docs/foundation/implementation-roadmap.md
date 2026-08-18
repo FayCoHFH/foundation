@@ -1,9 +1,20 @@
 # Delivery roadmap
 
 Status: **Accepted as sequencing guidance**
-Last reviewed: 2026-08-15
+Last reviewed: 2026-08-18
 
 This roadmap organizes independently testable outcomes. It is not a promise that conceptual product groups become routes or code directories. Every slice must preserve the data-ownership, security, privacy, accessibility, and legacy-independence rules in this foundation.
+
+## Current Communications closure status
+
+**C1, C2, C3, C4, C5, C6A, and C6B functional implementation: complete locally
+on 2026-08-18.** The Communications engineering foundation is implemented,
+migrated, authorized, projection-safe, browser/accessibility validated, and
+documented through the C6B-6 Story conversion handoff. Public Story collection
+remains disabled by default and is not considered enabled until G-07 owners
+approve the privacy, consent, ownership, contact, and retention controls.
+Manual retention is an intentional current policy posture, not an unfinished
+engineering feature.
 
 ## Gate C — Communications Domain Product & Architecture Review — completed
 
@@ -25,7 +36,7 @@ Gate C is resolved by the [accepted Communications architecture](../architecture
 
 ### Communications delivery overlay
 
-The detailed C1–C8 acceptance criteria remain in the Communications architecture. They map onto the platform sequence as follows: C1 publishing kernel and C2 authoring/media safety begin in Slices 2–3; C3 Stories, C4 News/placements, and C5 Queue/Dashboard form the core of Slice 4; C6 Notices/submissions follows only when its collection controls are approved; C7 Newsletter Edition is V1.1 unless explicitly pulled forward; C8 derived calendar and evaluated extensions remains later work. One coordinator owns shared migrations.
+The detailed C1–C8 acceptance criteria remain in the Communications architecture. They map onto the platform sequence as follows: C1 publishing kernel and C2 authoring/media safety begin in Slices 2–3; C3 Stories, C4 News/placements, and C5 Queue/Dashboard form the core of Slice 4; C6 Notices/submissions is implemented locally with public collection still gated by its approved controls; C7 Newsletter Edition is V1.1 unless explicitly pulled forward; C8 derived calendar and evaluated extensions remains later work. One coordinator owns shared migrations.
 
 C1’s private Story persistence increment is implemented locally; its delivery
 record is [C1 Story persistence](../development/c1-story-persistence.md). The
@@ -118,7 +129,8 @@ allowlisted DTOs, optimistic concurrency, atomic redacted audit behavior,
 PostgreSQL constraints, and regression evidence are documented in
 [the C6B-1A delivery record](../development/c6b1a-public-story-submission-domain.md).
 Public intake security, UI, uploads, email, conversion, and final retention
-policy remain later C6B slices; C6B as a whole is not complete.
+policy are covered by the subsequent C6B delivery records; G-07 remains the
+enablement gate.
 
 **C6B-1B — Public Story Submission intake security: complete locally on
 2026-08-17.** The disabled-by-default server-only boundary, signed token,
@@ -145,8 +157,8 @@ workflows, lifecycle and terminal-state journeys, review-note concurrency,
 axe/manual accessibility review, four-viewport visual review, no-store/prefetch
 checks, and full regression are documented in
 [the C6B-2B validation record](../development/c6b2b-public-story-submission-inbox-validation.md).
-C6B as a whole is not complete; the visible public form remains gated by G-07
-and the human decisions recorded in that validation record.
+The visible public form remains gated by G-07 and the human decisions recorded
+in that validation record; the combined C6B implementation closes below.
 
 **C6B-2C — Public Story Submission policy alignment: complete locally on
 2026-08-17.** Controlled spam restoration, explicit spam confirmation,
@@ -164,7 +176,8 @@ expiry cleanup, exact same-attempt duplicate handling, `READY`-only atomic
 submission association, and allowlisted recovery/review DTOs are documented in
 [the C6B-3A delivery record](../development/c6b3a-private-submission-media.md).
 No public upload/form/UI, processing, scanning, clearance, promotion, Story
-conversion, or public media delivery is included; C6B remains incomplete.
+conversion, or public media delivery is included in this bounded record; later
+C6B records cover those concerns.
 
 **C6B-3B — Secure Story Submission image processing: complete locally on
 2026-08-17.** Confidential server-only processing now verifies signatures and
@@ -172,7 +185,8 @@ MIME/extension consistency, enforces bounded static image decode, normalizes
 orientation, strips metadata, creates one private review JPEG derivative, and
 handles cleanup/concurrency without public delivery or clearance. The detailed
 record is [C6B-3B secure image processing](../development/c6b3b-secure-image-processing.md).
-C6B remains incomplete pending G-07 and later rights/consent/clearance work.
+G-07 remains the enablement gate while later C6B records cover rights,
+consent, clearance, evidence, administration, and conversion.
 
 **C6B-3C — Story Submission image rights and clearance domain: complete locally
 on 2026-08-17.** Versioned rights declarations, submitter-only likeness
@@ -224,8 +238,9 @@ failure, metadata/declarations, rights/likeness controls, reorder/removal,
 READY gate, replay, opaque recovery/expiry, axe/manual accessibility, four
 responsive viewports, browser storage/network privacy, strict CSP, and full
 regression are documented in [the C6B-4B validation record](../development/c6b4b-public-story-submission-validation.md).
-C6B-4A/4B public-form implementation and validation are complete locally, but
-C6B as a whole is not complete: G-07 remains open; public intake enablement and later Story-conversion work remain deferred.
+C6B-4A/4B public-form implementation and validation are complete locally. G-07
+remains open for public intake enablement; the C6B-6 record below closes the
+accepted-submission conversion handoff.
 
 **C6B-5A — Administrative Story Submission media, clearance, evidence, and
 promotion UI: complete locally on 2026-08-17.** The existing confidential
@@ -236,8 +251,9 @@ actions, private evidence review/upload/replacement/removal/original access,
 per-use eligibility, restriction/restoration, explicit public credit, sanitized
 Media Library promotion, and existing-use review. The implementation is
 documented in [the C6B-5A delivery record](../development/c6b5a-submission-media-admin-ui.md).
-Public intake remains disabled by default; browser, axe, screenshot, bulk, and
-Story-conversion work remains deferred.
+Public intake remains disabled by default; bulk operation and public Media
+Library redesign remain deferred. Browser/accessibility validation is recorded
+in C6B-5B and accepted-submission conversion in C6B-6.
 
 **C6B-6 — Story Submission conversion handoff: complete locally on
 2026-08-18.** An accepted confidential submission can now be converted once,

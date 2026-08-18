@@ -77,6 +77,7 @@ function tokenAt(now: Date) {
 describe("C6B-4A public Share Your Story PostgreSQL boundary", () => {
   beforeAll(async () => {
     await prisma.publicStoryIntakeTokenUse.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotion.deleteMany();
     await prisma.publicStorySubmissionMedia.deleteMany();
     await prisma.publicStorySubmissionAttempt.deleteMany();
     await prisma.publicStorySubmission.deleteMany();
@@ -85,6 +86,7 @@ describe("C6B-4A public Share Your Story PostgreSQL boundary", () => {
   });
 
   afterAll(async () => {
+    await prisma.publicStorySubmissionMediaPromotion.deleteMany();
     await prisma.publicStorySubmissionMedia.deleteMany();
     await prisma.publicStorySubmissionAttempt.deleteMany();
     await prisma.publicStorySubmission.deleteMany();
