@@ -307,6 +307,13 @@ external G-05 acceptance action and was not performed without account authority.
 
 ## Slice 5 — Organizational proof: pages, people, programs, projects, and impact
 
+Projects P1 (typed publication domain and publishing-kernel integration) is
+complete locally on 2026-08-18. It establishes the bounded Project root,
+revision/status/type/facts/geography contract, capability-checked authoring and
+release services, immutable snapshots, public/admin read models, concurrency,
+audit, and PostgreSQL regression. Project routes, media, placements, Campaign
+relationships, and operational construction features remain later slices.
+
 - **Scope:** verified flexible site pages; leadership/governance presentation; Programs; Projects; Partners; attributable impact observations; relevant relationships to Communications; approved navigation and redirects required for these areas.
 - **Dependencies:** Slices 1–4; verified content can be added incrementally and is not required to create the structures.
 - **Acceptance:** public data transfer objects exclude private participant/applicant data; metrics show source/methodology/period or as-of date; contextual media rights apply; project history can be represented without copying the legacy IA; unverified claims remain draft/unavailable.

@@ -72,7 +72,11 @@ async function eligible(
     where: { id: publicationId },
     include: { publicProjection: true, publicNewsProjection: true },
   });
-  if (!publication || !allowsPlacementTarget(placement, publication.kind))
+  if (
+    !publication ||
+    publication.kind === "PROJECT" ||
+    !allowsPlacementTarget(placement, publication.kind)
+  )
     throw new PreconditionError(
       "This content type cannot occupy that placement.",
     );

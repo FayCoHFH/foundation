@@ -20,6 +20,7 @@ Security objectives, in order:
 
 - Admin identities, sessions, invitations, capability grants, and audit events.
 - Drafts, revisions, approval hashes, publication snapshots, schedules, and curated placements.
+- Project drafts/revisions and public Project projections, including the risk of accidentally collecting homeowner/applicant, address, coordinate, construction, or financial data.
 - Public media plus private grant/applicant documents and consent/license evidence.
 - Applicant/household/eligibility/case data when that future domain exists.
 - Private grant proposals, agreements, budgets, reports, deadlines, and notes.
@@ -78,6 +79,16 @@ retention, abuse, rights, and future private-media gates.
 **Verification:** The ADR-0002 spike plus negative E2E tests for every rejection state. Review Better Auth advisories on each dependency update.
 
 ### Broken authorization and IDOR
+
+Project administration is capability-checked at every service operation. Own/any
+draft scope comes only from internal `PublicationResponsibility`, while approval
+rejects the creator, owner, and material revision contributor. Release requires
+the exact current revision hash and writes the immutable snapshot and public
+projection transactionally. Public Project reads select the projection only;
+they never expose revision IDs, approval actors, audit summaries, responsibility,
+or unpublished fields. P1 validation omits the prohibited address, coordinate,
+homeowner/applicant, case, construction-schedule, and financial boundaries from
+the typed candidate contract.
 
 **Threats:** guessing another record ID; hidden UI mistaken for authorization; broad admin roles accessing grants/applicants/secrets; background commands bypassing policy.
 

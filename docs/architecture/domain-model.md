@@ -46,7 +46,7 @@ The relational direction uses a narrow shared publication spine plus typed domai
 - `PublicationLifecycleTransition`: append-only lifecycle event with an explicit candidate-workflow, release/snapshot, shared discovery-disposition, or derived News-availability dimension; action and from/to state where applicable; subject revision/hash/snapshot/schedule; actor or service principal; reason where required; and correlation/idempotency/audit reference. `SUBMITTED` is an action selecting a candidate, not a workflow state, and expiry is an idempotent derived observation rather than mutable availability truth. The record is authoritative history while current aggregate state and immutable snapshots remain the operational sources used by Queue/Dashboard projections.
 - `PublicationRequirement`: an evaluated, typed approval/publication requirement for an exact revision (for example, standard independent approval, consent clearance, second approval, or legal review). It is a small extensibility seam, not a general BPM engine.
 
-`Publication.kind` is a discriminator with a closed set. Each kind must have exactly one typed detail record and typed validation. This shared spine is intentionally narrower than a generic `Content` table.
+`Publication.kind` is a discriminator with a closed set. Each kind must have exactly one typed detail record and typed validation. The implemented set includes `STORY`, `NEWS`, and `PROJECT`; this shared spine is intentionally narrower than a generic `Content` table.
 
 The candidate-revision workflow is `DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `PENDING_APPROVAL`, and `APPROVED`; requested changes return responsibility to the author/editor, and `SUBMITTED` is the event that moves the selected candidate into review. `SCHEDULED` and `PUBLISHED` belong to the approved release/snapshot lifecycle, not this workflow. Publishing activates a snapshot and does not destroy the candidate; later activation can mark a prior public release `SUPERSEDED`, while `WITHDRAWN` records its deliberate removal. A material edit produces a successor revision and invalidates exact-revision approvals as determined by the revision-diff policy.
 
@@ -63,6 +63,21 @@ The candidate-revision workflow is `DRAFT`, `IN_REVIEW`, `CHANGES_REQUESTED`, `P
 - News availability is `CURRENT` until the optional relevance end time, then derives `EXPIRED`; expired News is no longer eligible for current/latest/featured placement and is presented as no longer current where it remains directly addressable. Expiry does not change the shared `ACTIVE`/`ARCHIVED` disposition. The system preserves snapshots and audit records. Withdrawal removes a public release and requires a reason.
 - Urgency, pinning, and priority are not V1 fields. “Latest” is derived from publication time and “featured” is a managed placement.
 - Relations to Project, Program, Campaign, Event, Grant, Partner, and media are optional and independently validated.
+
+### Aggregate: Project
+
+- `Project`: typed public publication root for verified project facts. Revision
+  data is limited to bounded title, summary, structured body, code-owned
+  type/status, community/county/public-area labels, optional start/completion
+  dates, and ordered impact facts.
+- Project status is independent from candidate workflow, approval, release, and
+  discovery disposition. `PLANNED`, `IN_PROGRESS`, and `PAUSED` are current
+  informational statuses; `COMPLETED` and `CANCELLED` remain historical when
+  publicly released.
+- Project public projections contain only safe editorial fields. Exact
+  addresses, coordinates, homeowner/applicant identity, case data, finances,
+  construction scheduling, media, placements, and Story/News conversion are
+  outside P1. Public reads never fall back to a draft.
 
 ### Aggregate: PlacementDefinition and ContentPlacement
 

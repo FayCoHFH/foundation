@@ -5,7 +5,7 @@ import { ROLE_PRESETS } from "@/platform/auth/role-presets";
 
 describe("capability catalog", () => {
   it("is stable and duplicate free", () => {
-    expect(CAPABILITIES).toHaveLength(99);
+    expect(CAPABILITIES).toHaveLength(110);
     expect(new Set(CAPABILITIES).size).toBe(CAPABILITIES.length);
   });
 

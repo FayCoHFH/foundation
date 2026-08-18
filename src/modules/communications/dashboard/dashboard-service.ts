@@ -1,4 +1,8 @@
-import { Prisma, type PrismaClient } from "@/generated/prisma/client";
+import {
+  Prisma,
+  type PrismaClient,
+  type PublicationKind,
+} from "@/generated/prisma/client";
 import type { Capability } from "@/platform/auth/capabilities";
 import type { AdminPrincipal } from "@/platform/auth/principal";
 import { AuthorizationError } from "@/platform/errors/app-error";
@@ -133,7 +137,8 @@ function has(actor: DashboardActor, capability: Capability) {
   return actor.capabilities.includes(capability);
 }
 
-function canInspectAnyPublished(actor: DashboardActor, kind: "STORY" | "NEWS") {
+function canInspectAnyPublished(actor: DashboardActor, kind: PublicationKind) {
+  if (kind === "PROJECT") return false;
   const capabilities =
     kind === "STORY" ? STORY_CAPABILITIES : NEWS_CAPABILITIES;
   return capabilities.some((capability) => has(actor, capability));
@@ -141,9 +146,10 @@ function canInspectAnyPublished(actor: DashboardActor, kind: "STORY" | "NEWS") {
 
 function canInspectDraft(
   actor: DashboardActor,
-  kind: "STORY" | "NEWS",
+  kind: PublicationKind,
   ownerId: string | null,
 ) {
+  if (kind === "PROJECT") return false;
   const anyDraft = has(
     actor,
     kind === "STORY" ? "stories.read.draft.any" : "news.read.draft.any",
@@ -175,6 +181,7 @@ function projectionFor(
     "kind" | "publicProjection" | "publicNewsProjection"
   >,
 ) {
+  if (publication.kind === "PROJECT") return null;
   const projection =
     publication.kind === "STORY"
       ? publication.publicProjection
@@ -202,6 +209,7 @@ function isPubliclyEligible(
   >,
   at: Date,
 ) {
+  if (publication.kind === "PROJECT") return false;
   const projection = projectionFor(publication);
   return Boolean(
     publication.releaseState === "PUBLISHED" &&
@@ -230,6 +238,7 @@ function publicationAdminPath(kind: "STORY" | "NEWS", id: string) {
 }
 
 function placementTargetId(row: PlacementRow) {
+  if (row.publication.kind === "PROJECT") return undefined;
   return row.publication.kind === "STORY"
     ? row.publication.story?.id
     : row.publication.newsItem?.id;
@@ -240,6 +249,7 @@ function placementAssignment(
   actor: DashboardActor,
   at: Date,
 ): DashboardPlacementAssignment | null {
+  if (row.publication.kind === "PROJECT") return null;
   const targetId = placementTargetId(row);
   if (!targetId || !canInspectAnyPublished(actor, row.publication.kind)) {
     return null;

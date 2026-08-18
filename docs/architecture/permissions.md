@@ -77,7 +77,18 @@ and Site Notice capabilities did not imply confidential submission access.
 ### Projects, programs, and public impact
 
 - `programs.manage`
-- `projects.manage`
+- `projects.create`, `projects.read.draft.own`, `projects.read.draft.any`,
+  `projects.edit.own`, `projects.edit.any`, `projects.submit_review`,
+  `projects.review`, `projects.approve`, `projects.release`,
+  `projects.archive`, `projects.withdraw`
+- Project services enforce active-administrator state, capability checks,
+  internal `PublicationResponsibility` ownership, exact revision hashes,
+  optimistic version checks, and creator/owner/material-editor self-approval
+  prevention. Public Project reads are projection-only and do not require an
+  admin capability.
+- P1 does not authorize Project placements, media, Campaign relationships,
+  addresses, homeowner/applicant data, operational construction work, or
+  financial records.
 - `partners.manage`
 - `impact.manage`, `impact.verify`, `impact.publish`
 - `grants.public.manage`, `grants.public.publish`

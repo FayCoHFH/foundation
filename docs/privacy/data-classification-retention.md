@@ -35,6 +35,8 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | Roles/capabilities/audit metadata | Internal/Confidential | Habitat platform |
 | Session/invitation bearer tokens, any persisted OAuth access/refresh/ID tokens, and integration secrets | Restricted | Better Auth/platform secret store; minimize or avoid OAuth-token persistence, encrypt any required token, and never place token values in responses or audit logs |
 | Public Projects/Programs/Impact/GrantImpact | Public after verification | Habitat platform projection |
+| Project drafts, revisions, approval evidence, and internal responsibility | Internal; Confidential where unpublished content is sensitive | Habitat platform; never a public fallback or public DTO |
+| Project community/county/public-area labels, dates, bounded body, status, type, and impact facts | Public after approved release | Habitat platform public Project projection; P1 excludes exact address, coordinates, homeowner/applicant identity, case, construction schedule, and financial data |
 | Participant name/story/photo/address | Confidential source; Public only as specifically consented projection | Never infer consent; avoid public home address/geolocation |
 | Donor, gift, recurring agreement, receipt | Confidential | DonorView; local copy prohibited by default |
 | Volunteer application/waiver/registration/attendance/hours | Confidential, potentially Restricted by field | DonorView; local individual copy prohibited by default |
