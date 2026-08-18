@@ -75,6 +75,8 @@ test.describe("Campaigns C2 admin and public experience", () => {
     await expect(
       contributorPage.getByRole("heading", { name: "Create a Campaign" }),
     ).toBeVisible();
+    await contributorPage.setViewportSize({ width: 768, height: 1024 });
+    await expectNoOverflow(contributorPage);
     await expectAxe(contributorPage);
     await contributorPage.getByLabel("Campaign title").fill("Community Build");
     await contributorPage

@@ -590,7 +590,7 @@ export function CampaignFields({
           destinations should point to the approved DonorView experience. No
           donor or volunteer data is collected here.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-[12rem_1fr_1.5fr_auto]">
+        <div className="mt-4 grid gap-3 sm:grid-cols-[12rem_minmax(0,1fr)_minmax(0,1.5fr)_auto]">
           <select
             aria-label="Action type"
             className="border-input bg-surface min-h-11 rounded-sm border px-3 py-2"
