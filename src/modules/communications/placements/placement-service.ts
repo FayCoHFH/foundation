@@ -74,7 +74,7 @@ async function eligible(
   });
   if (
     !publication ||
-    publication.kind === "PROJECT" ||
+    (publication.kind !== "STORY" && publication.kind !== "NEWS") ||
     !allowsPlacementTarget(placement, publication.kind)
   )
     throw new PreconditionError(

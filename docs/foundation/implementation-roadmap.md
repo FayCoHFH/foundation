@@ -322,6 +322,14 @@ relationships, and operational construction features remain later slices.
 
 ## Slice 6 — Campaigns, events, and DonorView handoffs
 
+- Campaigns C1 (typed publication domain and publishing-kernel integration) is
+  complete locally on 2026-08-18. It establishes the bounded Campaign root,
+  typed revision facts/goals and integer-cent progress fields, explicit
+  revision-scoped Project links, immutable public projections, capability
+  authorization, workflow/concurrency/audit behavior, migration safety, and
+  PostgreSQL regression. Public Campaign routes, admin UI, DonorView handoffs,
+  payment, volunteer registration, events, and integrations remain later
+  slices.
 - **Scope:** Habitat-owned Campaign and Event marketing records, editions/updates/relationships, DonorView-hosted donation/volunteer/registration handoffs, provider-neutral designation references, graceful aggregate projections only where supported, and reconciliation visibility for any approved integration.
 - **Dependencies:** Slices 2–5; DonorView account/vendor questionnaire answered for every integration mechanism used; campaign donation-destination workflow demonstrated.
 - **Acceptance:** DonorView remains gift/constituent/volunteer system of record; no broad constituent mirror exists; handoffs are accessible and attributable; inactive vendor forms cannot be promoted; any imports/events are idempotent, auditable, redacted, and recoverable; campaign totals show provenance and freshness.

@@ -14,6 +14,7 @@ This document resolves Gate C for the Communications scope. It applies the accep
 - **Story** is the internal name for a generally evergreen, narrative, rich-media editorial record. The public label (`Stories`, `Journal`, or `The Habitat Journal`) remains a content/design choice.
 - **News** is a distinct, concise, dated announcement or operational update. It can expire, be withdrawn, and be deliberately archived without deletion.
 - **Project** is a typed public publication record for verified, non-operational project facts. It is not a homeowner, applicant, construction-management, financial, or address record.
+- **Campaign** is a typed public publication record for a bounded Habitat initiative. It is not a donation ledger, donor record, volunteer-registration system, or payment workflow.
 - Public reads use only active, eligible immutable snapshots. Mutable authoring data, review notes, submission records, and quality diagnostics are never a public fallback.
 - A new working revision can coexist with a current public snapshot. Approval and schedules bind to a canonical hash of one exact revision.
 - **Content Placement** is the managed curation mechanism. “Featured” is a placement, never a permanent boolean on Story, News, or another domain record.
@@ -56,7 +57,7 @@ automatic Story media. The source remains confidential and unchanged.
 
 ## 2. Typed editorial aggregates
 
-`Publication` is a narrow shared spine, not a user-facing content type. A publication has exactly one typed root (`Story`, `NewsItem`, or `Project`) and a closed `kind` discriminator. Its revision, approval, scheduling, snapshot, workflow, quality, authorship, media, SEO, and relation records remain type-aware through the root and validation service.
+`Publication` is a narrow shared spine, not a user-facing content type. A publication has exactly one typed root (`Story`, `NewsItem`, `Project`, or `Campaign`) and a closed `kind` discriminator. Its revision, approval, scheduling, snapshot, workflow, quality, authorship, media, SEO, and relation records remain type-aware through the root and validation service.
 
 ### 2.1 Story
 
@@ -112,6 +113,30 @@ without creating a case-management or construction system.
   revision, approval, audit, or internal responsibility metadata. P1 provides
   domain services and read models; public/admin routes, placements, media,
   Campaign, and operational relationships remain later slices.
+
+### 2.4 Campaign
+
+**Purpose:** publish a bounded, verified public account of a Habitat campaign or
+initiative without creating a fundraising, donor, payment, or volunteer ledger.
+
+- `Campaign` is a typed root for `Publication` kind `CAMPAIGN`. Each immutable
+  revision carries a code-owned type (`FUNDRAISING`, `MATCHING_GIFT`,
+  `VOLUNTEER`, `AWARENESS`, `SPONSORSHIP`, `SPECIAL_INITIATIVE`, or `OTHER`)
+  and an informational status (`PLANNED`, `ACTIVE`, `COMPLETED`, `PAUSED`, or
+  `CANCELLED`).
+- A revision contains bounded title, summary, structured body, optional launch
+  window, goal statement, optional non-negative integer-cent monetary goal and
+  progress values, currency, at most ten ordered facts, and explicit ordered
+  links to public-safe Project publications. It collects no donor, gift,
+  constituent, payment, checkout, or volunteer-registration data.
+- Campaign status and dates are independent from editorial workflow and release
+  state. Release creates an immutable snapshot and a detached public Campaign
+  projection; public reads use that projection only. Project links are resolved
+  at release and filtered again at read time when the linked Project is no longer
+  publicly eligible.
+- C1 provides the domain, workflow, projections, authorization, audit, and
+  PostgreSQL constraints. Public Campaign routes, admin UI, donation/volunteer
+  handoffs, media, placements, and progress integrations remain later slices.
 
 ## 3. News lifecycle and public behavior
 

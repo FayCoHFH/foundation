@@ -148,3 +148,18 @@ existing 24-hour cleanup path. C6B-4A does not create public assets or a Story.
 C6B-6 adds only an explicit authorized administrative conversion into an
 independent private draft; it does not change the public intake gate or
 retention disposition under G-07.
+# Campaign C1 privacy boundary
+
+Campaigns store Habitat-owned public editorial initiative content: bounded
+title, summary, structured body, code-owned type/status, optional timing,
+ordered facts, optional aggregate display goal/progress, and safe references to
+public Projects. They do not store donor identity, payment credentials,
+transactions, receipts, volunteer applications/hours, applicant/household
+details, private Project operations, or Story Submission confidential material.
+
+Goal/progress values are editorial display facts, not authoritative accounting
+records. They use integer cents and remain separate from DonorView and Stripe.
+Campaign public projections exclude responsibility, owner IDs, approvals, audit
+metadata, mutable draft content, and unavailable Project details. Existing
+publication snapshots and audit retention rules apply; C1 introduces no new
+personal-data retention schedule.

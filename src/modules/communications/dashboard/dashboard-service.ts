@@ -138,7 +138,7 @@ function has(actor: DashboardActor, capability: Capability) {
 }
 
 function canInspectAnyPublished(actor: DashboardActor, kind: PublicationKind) {
-  if (kind === "PROJECT") return false;
+  if (kind !== "STORY" && kind !== "NEWS") return false;
   const capabilities =
     kind === "STORY" ? STORY_CAPABILITIES : NEWS_CAPABILITIES;
   return capabilities.some((capability) => has(actor, capability));
@@ -149,7 +149,7 @@ function canInspectDraft(
   kind: PublicationKind,
   ownerId: string | null,
 ) {
-  if (kind === "PROJECT") return false;
+  if (kind !== "STORY" && kind !== "NEWS") return false;
   const anyDraft = has(
     actor,
     kind === "STORY" ? "stories.read.draft.any" : "news.read.draft.any",
@@ -181,7 +181,7 @@ function projectionFor(
     "kind" | "publicProjection" | "publicNewsProjection"
   >,
 ) {
-  if (publication.kind === "PROJECT") return null;
+  if (publication.kind !== "STORY" && publication.kind !== "NEWS") return null;
   const projection =
     publication.kind === "STORY"
       ? publication.publicProjection
@@ -209,7 +209,7 @@ function isPubliclyEligible(
   >,
   at: Date,
 ) {
-  if (publication.kind === "PROJECT") return false;
+  if (publication.kind !== "STORY" && publication.kind !== "NEWS") return false;
   const projection = projectionFor(publication);
   return Boolean(
     publication.releaseState === "PUBLISHED" &&
@@ -238,7 +238,8 @@ function publicationAdminPath(kind: "STORY" | "NEWS", id: string) {
 }
 
 function placementTargetId(row: PlacementRow) {
-  if (row.publication.kind === "PROJECT") return undefined;
+  if (row.publication.kind !== "STORY" && row.publication.kind !== "NEWS")
+    return undefined;
   return row.publication.kind === "STORY"
     ? row.publication.story?.id
     : row.publication.newsItem?.id;
@@ -249,7 +250,8 @@ function placementAssignment(
   actor: DashboardActor,
   at: Date,
 ): DashboardPlacementAssignment | null {
-  if (row.publication.kind === "PROJECT") return null;
+  if (row.publication.kind !== "STORY" && row.publication.kind !== "NEWS")
+    return null;
   const targetId = placementTargetId(row);
   if (!targetId || !canInspectAnyPublished(actor, row.publication.kind)) {
     return null;

@@ -304,3 +304,22 @@ submission, replay safety, opaque recovery expiry, and no console/page/CSP
 violations. CSP permits only the local `blob:` object-preview requirement in
 the image/connect sources; production still excludes `unsafe-eval` and has no
 arbitrary third-party script origin.
+# Campaign C1 security boundary
+
+Campaign C1 is a typed public-editorial domain, not a financial or constituent
+system. Its goal/progress values are bounded integer-cent USD display facts and
+must never be interpreted as payment truth. C1 creates no donor, gift, payment,
+Stripe, checkout, receipt, volunteer-registration, or provider credential data.
+
+Campaign–Project links are revision-scoped. Release copies only a safe Project
+title/slug reference when the Project has an active public projection. Public
+Campaign reads filter references against current Project eligibility, so a later
+Project withdrawal or archive cannot expose unavailable Project details. Draft
+Campaign revisions, responsibility, approval, audit, and Project operational
+fields remain outside public DTOs.
+
+Campaign mutations require active-admin, database-backed capabilities,
+optimistic version checks, exact approved content hashes, and creator/owner/
+material-editor self-approval separation. Public reads use only the released
+Campaign projection; no route or read model falls back to mutable authoring
+records.

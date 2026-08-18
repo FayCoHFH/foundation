@@ -11,6 +11,7 @@ ADRs record consequential decisions and their rationale. An accepted ADR changes
 | [ADR-0005](./0005-public-private-object-storage.md) | Separate public/private object storage behind an adapter | Accepted |
 | [ADR-0006](./0006-stripe-commerce-and-donation-optionality.md) | Stripe Checkout for commerce; donations remain conditional | Accepted |
 | [ADR-0007](./0007-structured-rich-text.md) | Schema-versioned Tiptap/ProseMirror JSON | Accepted |
+| [ADR-0008](./0008-campaign-publication-boundary.md) | Typed Campaign publication boundary | Accepted |
 
 ## Lightweight process
 

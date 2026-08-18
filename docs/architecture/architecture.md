@@ -67,6 +67,14 @@ The implementation-ready Communications decisions are maintained in [Communicati
 - Public calls to volunteer and approved external registration destinations.
 - DonorView owns volunteer applications, waivers, registrations, attendance, and hours unless a later supported integration changes the mechanism, not the ownership.
 
+Campaigns are typed Habitat-owned public engagement initiatives. A Campaign is
+not a Project, Story, News item, DonorView appeal, payment transaction, donor
+record, volunteer schedule, or accounting ledger. It uses the shared Publication
+revision/approval/release/snapshot kernel, has an independent factual status
+and optional public timing, and may have ordered revision-scoped relationships
+to zero or more Projects. Editorial goal/progress values, when present, are
+integer-cent display facts rather than authoritative financial totals.
+
 ### Development
 
 - Donation destination selection, DonorView integration, public Grant Impact, and a future private Grant Administration module.
@@ -99,7 +107,7 @@ Private Grant Administration is also deferred. Internal grant applications, agre
 
 ## Publication architecture
 
-Every publishable Story or News item has a typed aggregate and participates in shared publication infrastructure:
+Every publishable Story, News item, Project, or Campaign has a typed aggregate and participates in shared publication infrastructure:
 
 1. An authoring save produces a new immutable working revision; later saves produce successors rather than mutating persisted history.
 2. Submission designates one exact revision for review; subsequent edits create another revision.

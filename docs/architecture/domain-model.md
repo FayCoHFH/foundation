@@ -159,12 +159,12 @@ Impact presentation is based on verified snapshots, not counters recomputed from
 
 ### Aggregate: Campaign
 
-- `Campaign`: Habitat-owned narrative, goal, dates, relationships, public status, updates, and final impact reporting.
+- `Campaign`: Habitat-owned narrative, bounded editorial goal/progress display facts, dates, public status, and ordered revision-scoped relationships to public-safe Projects. It is a typed `Publication` root, not a DonorView campaign, appeal, payment, donor, volunteer, or accounting record.
 - `CampaignUpdate` and `CampaignMetric`: dated, attributable progress or impact records.
 - `DonationDestination`: provider-neutral call-to-action configuration with provider, hosted URL or integration reference, designation label, active dates, verification state, and last verification time.
 - `ExternalSystemReference` may map a Campaign to a DonorView designation/page/campaign or Stripe object without asserting semantic identity.
 
-Financial progress is imported or entered only from an authoritative source with an as-of time and provenance. It must not be inferred from page visits or unverified widget output.
+C1 implements only the typed Campaign root/revision, code-owned type/status, validated timing, ordered facts, optional integer-cent USD display goal/progress, public projection, administrative read model, and Campaign–Project relation. Financial progress is not derived from payment systems, page visits, or unverified widgets. Donation destinations, updates, metrics, and provider references remain later work.
 
 ### Aggregate: Event
 

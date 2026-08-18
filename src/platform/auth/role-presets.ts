@@ -6,6 +6,7 @@ const communicationsCapabilities = CAPABILITIES.filter(
     capability.startsWith("stories.") ||
     capability.startsWith("news.") ||
     capability.startsWith("projects.") ||
+    capability.startsWith("campaigns.") ||
     capability.startsWith("newsletter.") ||
     capability.startsWith("media."),
 );
@@ -49,6 +50,10 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       "projects.read.draft.own",
       "projects.edit.own",
       "projects.submit_review",
+      "campaigns.create",
+      "campaigns.read.draft.own",
+      "campaigns.edit.own",
+      "campaigns.submit_review",
       "media.upload",
     ],
   },
@@ -69,6 +74,9 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       "projects.read.draft.any",
       "projects.edit.any",
       "projects.review",
+      "campaigns.read.draft.any",
+      "campaigns.edit.any",
+      "campaigns.review",
       "newsletter.read.draft",
       "newsletter.edit",
       "newsletter.review",
@@ -100,6 +108,9 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       "projects.release",
       "projects.withdraw",
       "projects.archive",
+      "campaigns.release",
+      "campaigns.withdraw",
+      "campaigns.archive",
       "newsletter.schedule",
       "newsletter.publish",
       "newsletter.withdraw",

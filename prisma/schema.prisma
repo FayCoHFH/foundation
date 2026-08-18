@@ -40,6 +40,7 @@ enum PublicationKind {
   STORY
   NEWS
   PROJECT
+  CAMPAIGN
 }
 
 enum ProjectType {
@@ -54,6 +55,24 @@ enum ProjectType {
 enum ProjectStatus {
   PLANNED
   IN_PROGRESS
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+
+enum CampaignType {
+  FUNDRAISING
+  MATCHING_GIFT
+  VOLUNTEER
+  AWARENESS
+  SPONSORSHIP
+  SPECIAL_INITIATIVE
+  OTHER
+}
+
+enum CampaignStatus {
+  PLANNED
+  ACTIVE
   COMPLETED
   PAUSED
   CANCELLED
@@ -600,36 +619,38 @@ model AuditEvent {
 // The shared spine for typed Communications authoring. Each discriminator has
 // its own typed root and revision details; public content is projection-only.
 model Publication {
-  id                      String                           @id @default(uuid()) @db.Uuid
-  kind                    PublicationKind
-  workflowState           PublicationWorkflowState         @default(DRAFT)
-  version                 Int                              @default(1)
-  currentRevisionId       String?                          @unique @db.Uuid
-  approvedRevisionId      String?                          @unique @db.Uuid
-  approvedContentHash     String?                          @db.Char(64)
-  slug                    String?                          @unique
-  releaseState            PublicationReleaseState          @default(UNPUBLISHED)
-  discoveryDisposition    PublicationDiscoveryDisposition  @default(ACTIVE)
-  activeSnapshotId        String?                          @unique @db.Uuid
-  createdById             String                           @db.Uuid
-  createdAt               DateTime                         @default(now())
-  updatedAt               DateTime                         @updatedAt
-  createdBy               AdminUser                        @relation("PublicationCreator", fields: [createdById], references: [id], onDelete: Restrict)
-  story                   Story?
-  newsItem                NewsItem?
-  project                 Project?
-  responsibility          PublicationResponsibility?
-  revisions               PublicationRevision[]            @relation("PublicationRevisions")
-  currentRevision         PublicationRevision?             @relation("PublicationCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
-  approvedRevision        PublicationRevision?             @relation("PublicationApprovedRevision", fields: [approvedRevisionId], references: [id], onDelete: SetNull)
-  transitions             PublicationLifecycleTransition[]
-  approvals               PublicationApproval[]
-  snapshots               PublicationSnapshot[]            @relation("PublicationSnapshots")
-  activeSnapshot          PublicationSnapshot?             @relation("PublicationActiveSnapshot", fields: [activeSnapshotId], references: [id], onDelete: SetNull)
-  publicProjection        PublicStoryProjection?
-  publicNewsProjection    PublicNewsProjection?
-  publicProjectProjection PublicProjectProjection?
-  contentPlacements       ContentPlacement[]
+  id                       String                           @id @default(uuid()) @db.Uuid
+  kind                     PublicationKind
+  workflowState            PublicationWorkflowState         @default(DRAFT)
+  version                  Int                              @default(1)
+  currentRevisionId        String?                          @unique @db.Uuid
+  approvedRevisionId       String?                          @unique @db.Uuid
+  approvedContentHash      String?                          @db.Char(64)
+  slug                     String?                          @unique
+  releaseState             PublicationReleaseState          @default(UNPUBLISHED)
+  discoveryDisposition     PublicationDiscoveryDisposition  @default(ACTIVE)
+  activeSnapshotId         String?                          @unique @db.Uuid
+  createdById              String                           @db.Uuid
+  createdAt                DateTime                         @default(now())
+  updatedAt                DateTime                         @updatedAt
+  createdBy                AdminUser                        @relation("PublicationCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  story                    Story?
+  newsItem                 NewsItem?
+  project                  Project?
+  campaign                 Campaign?
+  responsibility           PublicationResponsibility?
+  revisions                PublicationRevision[]            @relation("PublicationRevisions")
+  currentRevision          PublicationRevision?             @relation("PublicationCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
+  approvedRevision         PublicationRevision?             @relation("PublicationApprovedRevision", fields: [approvedRevisionId], references: [id], onDelete: SetNull)
+  transitions              PublicationLifecycleTransition[]
+  approvals                PublicationApproval[]
+  snapshots                PublicationSnapshot[]            @relation("PublicationSnapshots")
+  activeSnapshot           PublicationSnapshot?             @relation("PublicationActiveSnapshot", fields: [activeSnapshotId], references: [id], onDelete: SetNull)
+  publicProjection         PublicStoryProjection?
+  publicNewsProjection     PublicNewsProjection?
+  publicProjectProjection  PublicProjectProjection?
+  publicCampaignProjection PublicCampaignProjection?
+  contentPlacements        ContentPlacement[]
 
   @@unique([id, version])
   @@index([kind, workflowState])
@@ -640,20 +661,21 @@ model Publication {
 
 // Immutable public evidence generated only by an approved release command.
 model PublicationSnapshot {
-  id                      String                   @id @default(uuid()) @db.Uuid
-  publicationId           String                   @db.Uuid
-  sourceRevisionId        String                   @db.Uuid
-  sourceContentHash       String                   @db.Char(64)
-  slug                    String                   @db.VarChar(160)
-  payload                 Json
-  activatedAt             DateTime                 @default(now())
-  state                   PublicationSnapshotState @default(PUBLISHED)
-  publication             Publication              @relation("PublicationSnapshots", fields: [publicationId], references: [id], onDelete: Restrict)
-  sourceRevision          PublicationRevision      @relation(fields: [sourceRevisionId], references: [id], onDelete: Restrict)
-  activeFor               Publication[]            @relation("PublicationActiveSnapshot")
-  publicProjection        PublicStoryProjection?
-  publicNewsProjection    PublicNewsProjection?
-  publicProjectProjection PublicProjectProjection?
+  id                       String                    @id @default(uuid()) @db.Uuid
+  publicationId            String                    @db.Uuid
+  sourceRevisionId         String                    @db.Uuid
+  sourceContentHash        String                    @db.Char(64)
+  slug                     String                    @db.VarChar(160)
+  payload                  Json
+  activatedAt              DateTime                  @default(now())
+  state                    PublicationSnapshotState  @default(PUBLISHED)
+  publication              Publication               @relation("PublicationSnapshots", fields: [publicationId], references: [id], onDelete: Restrict)
+  sourceRevision           PublicationRevision       @relation(fields: [sourceRevisionId], references: [id], onDelete: Restrict)
+  activeFor                Publication[]             @relation("PublicationActiveSnapshot")
+  publicProjection         PublicStoryProjection?
+  publicNewsProjection     PublicNewsProjection?
+  publicProjectProjection  PublicProjectProjection?
+  publicCampaignProjection PublicCampaignProjection?
 
   @@index([publicationId, activatedAt])
   @@index([state])
@@ -742,6 +764,69 @@ model PublicProjectImpactFact {
   @@map("public_project_impact_fact")
 }
 
+// Read model for public Campaign detail and future index routes. It is
+// populated only by an approved release transaction.
+model PublicCampaignProjection {
+  id                  String                           @id @default(uuid()) @db.Uuid
+  publicationId       String                           @unique @db.Uuid
+  snapshotId          String                           @unique @db.Uuid
+  slug                String                           @unique @db.VarChar(160)
+  title               String                           @db.VarChar(160)
+  summary             String                           @db.VarChar(320)
+  body                Json
+  campaignType        CampaignType
+  campaignStatus      CampaignStatus
+  startsAt            DateTime?
+  endsAt              DateTime?
+  goalStatement       String?                          @db.VarChar(240)
+  goalAmountCents     BigInt?
+  progressAmountCents BigInt?
+  currencyCode        String?                          @db.Char(3)
+  publishedAt         DateTime
+  updatedAt           DateTime                         @updatedAt
+  publication         Publication                      @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  snapshot            PublicationSnapshot              @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+  facts               PublicCampaignFact[]
+  projectReferences   PublicCampaignProjectReference[]
+
+  @@index([campaignType, publishedAt])
+  @@index([campaignStatus, publishedAt])
+  @@index([publishedAt])
+  @@map("public_campaign_projection")
+}
+
+model PublicCampaignFact {
+  id           String                   @id @default(uuid()) @db.Uuid
+  projectionId String                   @db.Uuid
+  label        String                   @db.VarChar(120)
+  value        String                   @db.VarChar(240)
+  unit         String?                  @db.VarChar(80)
+  sortOrder    Int
+  projection   PublicCampaignProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectionId, sortOrder])
+  @@index([projectionId, sortOrder])
+  @@map("public_campaign_fact")
+}
+
+// Release-time safe Project references. Public reads filter these through
+// the current Project publication state before returning them.
+model PublicCampaignProjectReference {
+  id           String                   @id @default(uuid()) @db.Uuid
+  projectionId String                   @db.Uuid
+  projectId    String                   @db.Uuid
+  title        String                   @db.VarChar(160)
+  slug         String                   @db.VarChar(160)
+  sortOrder    Int
+  projection   PublicCampaignProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+  project      Project                  @relation("PublicCampaignProjectReferences", fields: [projectId], references: [id], onDelete: Restrict)
+
+  @@unique([projectionId, projectId])
+  @@unique([projectionId, sortOrder])
+  @@index([projectId])
+  @@map("public_campaign_project_reference")
+}
+
 // Typed Story root. Public content lives in the released projection.
 model Story {
   id              String                                @id @default(uuid()) @db.Uuid
@@ -756,12 +841,25 @@ model Story {
 // Typed Project root. Project facts are revision-scoped and never operational
 // construction, applicant, homeowner, or accounting records.
 model Project {
+  id                              String                           @id @default(uuid()) @db.Uuid
+  publicationId                   String                           @unique @db.Uuid
+  createdAt                       DateTime                         @default(now())
+  publication                     Publication                      @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  campaignProjects                CampaignProject[]                @relation("CampaignProjects")
+  publicCampaignProjectReferences PublicCampaignProjectReference[] @relation("PublicCampaignProjectReferences")
+
+  @@map("project")
+}
+
+// Typed Campaign root. Campaigns describe public engagement initiatives and
+// remain distinct from Projects, Stories, News, and donor/payment records.
+model Campaign {
   id            String      @id @default(uuid()) @db.Uuid
   publicationId String      @unique @db.Uuid
   createdAt     DateTime    @default(now())
   publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
 
-  @@map("project")
+  @@map("campaign")
 }
 
 // Typed News root. Public content continues to live only in projections.
@@ -1334,6 +1432,7 @@ model PublicationRevision {
   approval             PublicationApproval?
   publicationSnapshots PublicationSnapshot[]
   projectRevision      ProjectRevision?
+  campaignRevision     CampaignRevision?
 
   @@unique([publicationId, number])
   @@index([publicationId, createdAt])
@@ -1371,6 +1470,55 @@ model ProjectImpactFact {
   @@unique([projectRevisionId, sortOrder])
   @@index([projectRevisionId, sortOrder])
   @@map("project_impact_fact")
+}
+
+// Typed Campaign content attached one-to-one to a shared immutable revision.
+model CampaignRevision {
+  id                    String              @id @default(uuid()) @db.Uuid
+  publicationRevisionId String              @unique @db.Uuid
+  campaignType          CampaignType
+  campaignStatus        CampaignStatus
+  startsAt              DateTime?
+  endsAt                DateTime?
+  goalStatement         String?             @db.VarChar(240)
+  goalAmountCents       BigInt?
+  progressAmountCents   BigInt?
+  currencyCode          String?             @db.Char(3)
+  publicationRevision   PublicationRevision @relation(fields: [publicationRevisionId], references: [id], onDelete: Restrict)
+  facts                 CampaignFact[]
+  projects              CampaignProject[]
+
+  @@map("campaign_revision")
+}
+
+model CampaignFact {
+  id                 String           @id @default(uuid()) @db.Uuid
+  campaignRevisionId String           @db.Uuid
+  label              String           @db.VarChar(120)
+  value              String           @db.VarChar(240)
+  unit               String?          @db.VarChar(80)
+  sortOrder          Int
+  campaignRevision   CampaignRevision @relation(fields: [campaignRevisionId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignRevisionId, sortOrder])
+  @@index([campaignRevisionId, sortOrder])
+  @@map("campaign_fact")
+}
+
+// Relationships are revision-scoped so successor Campaigns can change their
+// supported Projects without mutating an earlier released snapshot.
+model CampaignProject {
+  id                 String           @id @default(uuid()) @db.Uuid
+  campaignRevisionId String           @db.Uuid
+  projectId          String           @db.Uuid
+  sortOrder          Int
+  campaignRevision   CampaignRevision @relation(fields: [campaignRevisionId], references: [id], onDelete: Cascade)
+  project            Project          @relation("CampaignProjects", fields: [projectId], references: [id], onDelete: Restrict)
+
+  @@unique([campaignRevisionId, projectId])
+  @@unique([campaignRevisionId, sortOrder])
+  @@index([projectId])
+  @@map("campaign_project")
 }
 
 model PublicationLifecycleTransition {
