@@ -32,9 +32,11 @@ import {
   type MediaEligibilityResult,
   type RecordRightsDeclarationInput,
   type SubjectFact,
+  type UpdateMediaClearanceInput,
   validateMediaClearanceInput,
   validateMediaSubjectInput,
   validateRightsDeclarationInput,
+  validateMediaClearanceUpdateInput,
 } from "./submission-media-clearance-content";
 
 type Transaction = Prisma.TransactionClient;
@@ -532,6 +534,46 @@ export async function setPublicStorySubmissionMediaClearanceApplicability(
       applicableMediaIds: mediaIds,
     };
   });
+}
+
+export async function updatePublicStorySubmissionMediaClearance(
+  prisma: PrismaClient,
+  actor: ClearanceActor,
+  input: UpdateMediaClearanceInput,
+  dependencies: SubmissionMediaClearanceMutationDependencies = {},
+) {
+  const validated = validateMediaClearanceUpdateInput(input);
+  return updateClearance(
+    prisma,
+    actor,
+    validated,
+    {
+      dateObtained: validated.dateObtained ?? null,
+      expiresAt: validated.expiresAt ?? null,
+      evidenceType: validated.evidenceType,
+      existingEvidenceReference: validated.existingEvidenceReference,
+      existingEvidenceVersion: validated.existingEvidenceVersion,
+      confidentialNote: validated.confidentialNote,
+      websitePublicationAllowed: validated.websitePublicationAllowed,
+      socialMediaAllowed: validated.socialMediaAllowed,
+      printAllowed: validated.printAllowed,
+      fundraisingPromotionalAllowed: validated.fundraisingPromotionalAllowed,
+      paidAdvertisingAllowed: validated.paidAdvertisingAllowed,
+      otherRestrictionsPresent: validated.otherRestrictionsPresent,
+      confidentialRestrictionsNote: validated.confidentialRestrictionsNote,
+    },
+    "public_story_submission_media.clearance_updated",
+    {
+      evidenceType: validated.evidenceType ?? "NONE",
+      websitePublicationAllowed: validated.websitePublicationAllowed,
+      socialMediaAllowed: validated.socialMediaAllowed,
+      printAllowed: validated.printAllowed,
+      fundraisingPromotionalAllowed: validated.fundraisingPromotionalAllowed,
+      paidAdvertisingAllowed: validated.paidAdvertisingAllowed,
+      otherRestrictionsPresent: validated.otherRestrictionsPresent,
+    },
+    dependencies,
+  );
 }
 
 async function updateClearance(

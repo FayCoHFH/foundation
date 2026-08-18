@@ -19,6 +19,8 @@ import {
 } from "./status";
 import { SubmissionReviewNoteForm } from "./review-note-form";
 import { SubmissionWorkflowControls } from "./workflow-controls";
+import { SubmissionMediaSummarySection } from "./media-ui";
+import type { SubmissionMediaAdminSummary } from "@/modules/communications/submissions/submission-media-admin-service";
 
 const SENSITIVITY_LABELS = [
   ["involvesMinor", "Minor involved"],
@@ -341,10 +343,12 @@ export function StorySubmissionDetailContent({
   submission,
   statusCode,
   canRestoreSpam = false,
+  mediaSummaries = [],
 }: {
   submission: PublicStorySubmissionAdminDetail;
   statusCode?: SubmissionStatusCode;
   canRestoreSpam?: boolean;
+  mediaSummaries?: readonly SubmissionMediaAdminSummary[];
 }) {
   const hasSensitivity =
     submission.involvesMinor ||
@@ -502,6 +506,11 @@ export function StorySubmissionDetailContent({
           </div>
         </dl>
       </section>
+
+      <SubmissionMediaSummarySection
+        submissionId={submission.id}
+        summaries={mediaSummaries}
+      />
 
       <section
         aria-labelledby="submission-sensitivity-heading"

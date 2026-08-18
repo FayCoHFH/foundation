@@ -225,8 +225,19 @@ READY gate, replay, opaque recovery/expiry, axe/manual accessibility, four
 responsive viewports, browser storage/network privacy, strict CSP, and full
 regression are documented in [the C6B-4B validation record](../development/c6b4b-public-story-submission-validation.md).
 C6B-4A/4B public-form implementation and validation are complete locally, but
-C6B as a whole is not complete: G-07 and the later administrative media,
-clearance, evidence, and promotion UI remain outstanding.
+C6B as a whole is not complete: G-07 remains open; public intake enablement and later Story-conversion work remain deferred.
+
+**C6B-5A — Administrative Story Submission media, clearance, evidence, and
+promotion UI: complete locally on 2026-08-17.** The existing confidential
+submission detail now links to a capability-protected media review surface with
+private derivatives, technical/context/sensitivity summaries, authoritative
+clearance requirements, subjects and exact applicability, clearance lifecycle
+actions, private evidence review/upload/replacement/removal/original access,
+per-use eligibility, restriction/restoration, explicit public credit, sanitized
+Media Library promotion, and existing-use review. The implementation is
+documented in [the C6B-5A delivery record](../development/c6b5a-submission-media-admin-ui.md).
+Public intake remains disabled by default; browser, axe, screenshot, bulk, and
+Story-conversion work remains deferred.
 
 ## Slice 1 — Application Foundation and Scaffold
 

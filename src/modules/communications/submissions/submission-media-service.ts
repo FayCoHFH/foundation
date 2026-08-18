@@ -82,6 +82,7 @@ export type SubmissionMediaRecoveryItem = Readonly<{
 
 export type SubmissionMediaAdminItem = Readonly<{
   id: string;
+  version: number;
   ordinal: number | null;
   originalFilename: string | null;
   declaredMimeType: string | null;
@@ -101,6 +102,12 @@ export type SubmissionMediaAdminItem = Readonly<{
   processedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+}>;
+
+export type SubmissionMediaReviewDelivery = Readonly<{
+  body: Uint8Array;
+  contentType: "image/jpeg";
+  contentDisposition: "inline";
 }>;
 
 type AttemptRecord = Awaited<ReturnType<typeof findAttempt>>;
@@ -198,6 +205,7 @@ function recoveryItem(media: MediaRecord): SubmissionMediaRecoveryItem {
 function adminItem(media: MediaRecord): SubmissionMediaAdminItem {
   return {
     id: media.id,
+    version: media.version,
     ordinal: media.ordinal,
     originalFilename: media.originalFilename,
     declaredMimeType: media.declaredMimeType,
@@ -1289,4 +1297,52 @@ export async function getPublicStorySubmissionMediaForAdministrativeReview(
     select: mediaSelect,
   });
   return media.map(adminItem);
+}
+
+export async function deliverPublicStorySubmissionMediaReviewDerivative(
+  prisma: PrismaClient,
+  storage: SubmissionQuarantineStoragePort,
+  actor: SubmissionReviewActor,
+  mediaId: string,
+  submissionId?: string,
+): Promise<SubmissionMediaReviewDelivery> {
+  await requireSubmissionReviewAdmin(prisma, actor);
+  const media = await prisma.publicStorySubmissionMedia.findUnique({
+    where: { id: mediaId },
+    select: {
+      technicalStatus: true,
+      submissionId: true,
+      reviewDerivativeStorageKey: true,
+      reviewDerivativeFormat: true,
+      reviewDerivativeByteSize: true,
+    },
+  });
+  if (!media) throw new NotFoundError("Submission image was not found.");
+  if (submissionId !== undefined && media.submissionId !== submissionId)
+    throw new NotFoundError("Submission image was not found.");
+  if (
+    media.technicalStatus !== PublicStorySubmissionMediaStatus.READY ||
+    media.reviewDerivativeFormat !== "JPEG" ||
+    !media.reviewDerivativeStorageKey ||
+    media.reviewDerivativeByteSize === null
+  ) {
+    throw new ValidationError("This image is not ready for private review.");
+  }
+  const review = await storage.readForProcessing(
+    media.reviewDerivativeStorageKey,
+  );
+  if (
+    !review ||
+    review.metadata.scope !== "PRIVATE" ||
+    review.metadata.classification !== "CONFIDENTIAL" ||
+    review.metadata.contentType !== "image/jpeg" ||
+    review.metadata.byteSize !== media.reviewDerivativeByteSize
+  ) {
+    throw new ValidationError("The private review image is unavailable.");
+  }
+  return {
+    body: review.body,
+    contentType: "image/jpeg",
+    contentDisposition: "inline",
+  };
 }

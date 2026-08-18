@@ -5,6 +5,7 @@ import { signOutAdmin } from "@/app/admin/actions";
 import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import { getPublicStorySubmissionDetail } from "@/modules/communications/submissions";
+import { listPublicStorySubmissionMediaAdminSummaries } from "@/modules/communications/submissions/submission-media-admin-service";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
 import { AppError } from "@/platform/errors/app-error";
@@ -41,11 +42,17 @@ export default async function StorySubmissionDetailPage({
   }
 
   let submission;
+  let mediaSummaries = [];
   try {
     submission = await getPublicStorySubmissionDetail(
       prisma,
       access.principal,
       id,
+    );
+    mediaSummaries = await listPublicStorySubmissionMediaAdminSummaries(
+      prisma,
+      access.principal,
+      submission.id,
     );
   } catch (error) {
     if (error instanceof AppError && error.code === "NOT_FOUND") notFound();
@@ -73,6 +80,7 @@ export default async function StorySubmissionDetailPage({
     >
       <StorySubmissionDetailContent
         submission={submission}
+        mediaSummaries={mediaSummaries}
         canRestoreSpam={hasCapability(
           access.principal,
           "communications.submissions.restore_spam",

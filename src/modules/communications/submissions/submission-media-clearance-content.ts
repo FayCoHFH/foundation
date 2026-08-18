@@ -90,6 +90,24 @@ export type CreateMediaClearanceInput = Readonly<{
   confidentialRestrictionsNote?: string | null;
 }>;
 
+export type UpdateMediaClearanceInput = Readonly<{
+  clearanceId: string;
+  expectedClearanceVersion: number;
+  dateObtained?: Date | null;
+  expiresAt?: Date | null;
+  evidenceType?: PublicStorySubmissionMediaEvidenceType | null;
+  existingEvidenceReference?: string | null;
+  existingEvidenceVersion?: string | null;
+  confidentialNote?: string | null;
+  websitePublicationAllowed?: boolean;
+  socialMediaAllowed?: boolean;
+  printAllowed?: boolean;
+  fundraisingPromotionalAllowed?: boolean;
+  paidAdvertisingAllowed?: boolean;
+  otherRestrictionsPresent?: boolean;
+  confidentialRestrictionsNote?: string | null;
+}>;
+
 export type RecordRightsDeclarationInput = Readonly<{
   submissionId: string;
   expectedSubmissionVersion: number;
@@ -196,6 +214,59 @@ export function validateMediaClearanceInput(input: CreateMediaClearanceInput) {
     subjectId: input.subjectId ?? null,
     dateObtained: input.dateObtained ?? null,
     expiresAt: input.expiresAt ?? null,
+    evidenceType: input.evidenceType ?? null,
+    existingEvidenceReference,
+    existingEvidenceVersion,
+    confidentialNote: boundedText(
+      input.confidentialNote,
+      "Confidential note",
+      CLEARANCE_NOTE_MAX_LENGTH,
+    ),
+    confidentialRestrictionsNote: boundedText(
+      input.confidentialRestrictionsNote,
+      "Confidential restrictions note",
+      CLEARANCE_NOTE_MAX_LENGTH,
+    ),
+    websitePublicationAllowed: input.websitePublicationAllowed ?? false,
+    socialMediaAllowed: input.socialMediaAllowed ?? false,
+    printAllowed: input.printAllowed ?? false,
+    fundraisingPromotionalAllowed: input.fundraisingPromotionalAllowed ?? false,
+    paidAdvertisingAllowed: input.paidAdvertisingAllowed ?? false,
+    otherRestrictionsPresent: input.otherRestrictionsPresent ?? false,
+  };
+}
+
+export function validateMediaClearanceUpdateInput(
+  input: UpdateMediaClearanceInput,
+) {
+  assertMediaIdentifier(input.clearanceId, "Clearance ID");
+  assertPositiveVersion(input.expectedClearanceVersion, "Clearance version");
+  if (
+    input.evidenceType &&
+    !MEDIA_EVIDENCE_TYPES.includes(input.evidenceType)
+  ) {
+    throw new ValidationError("Evidence type is not supported.");
+  }
+  const existingEvidenceReference = boundedText(
+    input.existingEvidenceReference,
+    "Existing evidence reference",
+    EXISTING_EVIDENCE_REFERENCE_MAX_LENGTH,
+  );
+  const existingEvidenceVersion = boundedText(
+    input.existingEvidenceVersion,
+    "Existing evidence version",
+    EXISTING_EVIDENCE_VERSION_MAX_LENGTH,
+  );
+  if (
+    input.evidenceType === "EXISTING_HABITAT_RELEASE" &&
+    !existingEvidenceReference
+  ) {
+    throw new ValidationError(
+      "An existing Habitat release requires a reference.",
+    );
+  }
+  return {
+    ...input,
     evidenceType: input.evidenceType ?? null,
     existingEvidenceReference,
     existingEvidenceVersion,
