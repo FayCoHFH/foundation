@@ -135,8 +135,10 @@ initiative without creating a fundraising, donor, payment, or volunteer ledger.
   at release and filtered again at read time when the linked Project is no longer
   publicly eligible.
 - C1 provides the domain, workflow, projections, authorization, audit, and
-  PostgreSQL constraints. Public Campaign routes, admin UI, donation/volunteer
-  handoffs, media, placements, and progress integrations remain later slices.
+  PostgreSQL constraints. C2 adds the bounded admin/public experience and
+  reviewed HTTPS-only Donate, Volunteer, and Learn More handoffs. Campaign
+  remains outside donor/payment/volunteer records, media, placements, and
+  progress integrations.
 
 ## 3. News lifecycle and public behavior
 

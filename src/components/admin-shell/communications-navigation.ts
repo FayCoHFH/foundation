@@ -68,6 +68,17 @@ export function communicationsNavigation(
     });
   }
   if (
+    hasCapability(principal, "campaigns.create") ||
+    hasCapability(principal, "campaigns.read.draft.own") ||
+    hasCapability(principal, "campaigns.read.draft.any")
+  ) {
+    navigation.push({
+      href: "/admin/campaigns",
+      label: "Campaigns",
+      current: currentRoute(currentHref, "/admin/campaigns"),
+    });
+  }
+  if (
     hasCapability(principal, "news.create") ||
     hasCapability(principal, "news.read.draft.own") ||
     hasCapability(principal, "news.read.draft.any")

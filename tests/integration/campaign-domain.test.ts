@@ -123,6 +123,20 @@ function campaignCandidate(
       },
     ],
     projectIds: [],
+    actions: [
+      {
+        actionType: "DONATE",
+        label: "Give through DonorView",
+        destination: "https://giving.example.org/campaigns/community",
+        sortOrder: 0,
+      },
+      {
+        actionType: "VOLUNTEER",
+        label: "Volunteer",
+        destination: "https://volunteer.example.org/register",
+        sortOrder: 1,
+      },
+    ],
     ...overrides,
   };
 }
@@ -302,7 +316,7 @@ describe("Campaign C1 PostgreSQL domain", () => {
     });
     const projection = await prisma.publicCampaignProjection.findUniqueOrThrow({
       where: { publicationId: released.publicationId },
-      include: { facts: true, projectReferences: true },
+      include: { facts: true, projectReferences: true, actions: true },
     });
     const snapshot = await prisma.publicationSnapshot.findUniqueOrThrow({
       where: { id: projection.snapshotId },
@@ -319,6 +333,10 @@ describe("Campaign C1 PostgreSQL domain", () => {
     expect(snapshot.payload).not.toHaveProperty("ownerId");
     expect(projection).not.toHaveProperty("responsibility");
     expect(projection).not.toHaveProperty("donor");
+    expect(projection.actions.map(({ actionType }) => actionType)).toEqual([
+      "DONATE",
+      "VOLUNTEER",
+    ]);
     const publicCampaign = await getPublicCampaignBySlug(
       prisma,
       released.slug!,

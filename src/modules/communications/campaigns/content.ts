@@ -1,6 +1,10 @@
 import { canonicalValueHash } from "@/modules/publishing/hash";
 import { ValidationError } from "@/platform/errors/app-error";
-import type { CampaignStatus, CampaignType } from "@/generated/prisma/client";
+import type {
+  CampaignActionType,
+  CampaignStatus,
+  CampaignType,
+} from "@/generated/prisma/client";
 
 import {
   storyDocumentFromPlainText,
@@ -11,6 +15,7 @@ import {
 export const CAMPAIGN_CONTENT_HASH_VERSION = 1;
 export const CAMPAIGN_BODY_SCHEMA_VERSION = 1;
 export const CAMPAIGN_MAX_FACTS = 10;
+export const CAMPAIGN_MAX_ACTIONS = 5;
 export const CAMPAIGN_MAX_AMOUNT_CENTS = 100_000_000_000_000;
 
 export const CAMPAIGN_TYPES = [
@@ -30,6 +35,12 @@ export const CAMPAIGN_STATUSES = [
   "PAUSED",
   "CANCELLED",
 ] as const satisfies readonly CampaignStatus[];
+
+export const CAMPAIGN_ACTION_TYPES = [
+  "DONATE",
+  "VOLUNTEER",
+  "LEARN_MORE",
+] as const satisfies readonly CampaignActionType[];
 
 export const CAMPAIGN_CURRENT_STATUSES = [
   "PLANNED",
@@ -51,6 +62,13 @@ export type CampaignFactInput = Readonly<{
   sortOrder: number;
 }>;
 
+export type CampaignActionInput = Readonly<{
+  actionType: CampaignActionType;
+  label: string;
+  destination: string;
+  sortOrder: number;
+}>;
+
 export type CampaignCandidate = Readonly<{
   title: string;
   summary: string;
@@ -65,6 +83,7 @@ export type CampaignCandidate = Readonly<{
   currencyCode?: string | null;
   facts: readonly CampaignFactInput[];
   projectIds?: readonly string[];
+  actions?: readonly CampaignActionInput[];
 }>;
 
 type ValidatedCampaignCandidate = Omit<
@@ -84,6 +103,7 @@ type ValidatedCampaignCandidate = Omit<
   progressAmountCents: number | null;
   currencyCode: string | null;
   projectIds: readonly string[];
+  actions: readonly CampaignActionInput[];
 };
 
 function reject(message: string): never {
@@ -181,6 +201,63 @@ function validateFacts(facts: readonly CampaignFactInput[]) {
   return normalized.sort((left, right) => left.sortOrder - right.sortOrder);
 }
 
+function validateActions(actions: readonly CampaignActionInput[] | undefined) {
+  const values = actions ?? [];
+  if (!Array.isArray(values)) reject("Campaign actions must be a list.");
+  if (values.length > CAMPAIGN_MAX_ACTIONS) {
+    reject(`A Campaign may contain at most ${CAMPAIGN_MAX_ACTIONS} actions.`);
+  }
+  const seen = new Set<number>();
+  return values
+    .map((action) => {
+      if (!action || typeof action !== "object")
+        reject("Campaign action is invalid.");
+      if (!CAMPAIGN_ACTION_TYPES.includes(action.actionType)) {
+        reject("Campaign action type is invalid.");
+      }
+      if (
+        !Number.isInteger(action.sortOrder) ||
+        action.sortOrder < 0 ||
+        action.sortOrder > 999
+      ) {
+        reject("Campaign action order must be a non-negative integer.");
+      }
+      if (seen.has(action.sortOrder)) {
+        reject("Campaign action order must be unique.");
+      }
+      seen.add(action.sortOrder);
+      const label = text(action.label, "Campaign action label", 80)!;
+      const destination = text(
+        action.destination,
+        "Campaign action destination",
+        2_048,
+      )!;
+      let url: URL;
+      try {
+        url = new URL(destination);
+      } catch {
+        reject("Campaign action destination must be a valid HTTPS URL.");
+      }
+      if (
+        url.protocol !== "https:" ||
+        url.username ||
+        url.password ||
+        url.hostname.length === 0
+      ) {
+        reject(
+          "Campaign action destination must use HTTPS without credentials.",
+        );
+      }
+      return {
+        actionType: action.actionType,
+        label,
+        destination: url.toString(),
+        sortOrder: action.sortOrder,
+      };
+    })
+    .sort((left, right) => left.sortOrder - right.sortOrder);
+}
+
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === "object") {
     for (const child of Object.values(value)) deepFreeze(child);
@@ -259,6 +336,7 @@ export function validateCampaignCandidate(
     currencyCode,
     facts: validateFacts(value.facts),
     projectIds: validateProjectIds(value.projectIds),
+    actions: validateActions(value.actions),
   });
 }
 
@@ -279,6 +357,7 @@ export function hashCampaignCandidate(candidate: CampaignCandidate): string {
     currencyCode: validated.currencyCode,
     facts: validated.facts,
     projectIds: validated.projectIds,
+    actions: validated.actions,
   });
 }
 

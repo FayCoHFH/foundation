@@ -78,6 +78,12 @@ enum CampaignStatus {
   CANCELLED
 }
 
+enum CampaignActionType {
+  DONATE
+  VOLUNTEER
+  LEARN_MORE
+}
+
 enum PlacementKey {
   HOME_HERO
   HOME_FEATURED_STORY
@@ -788,11 +794,26 @@ model PublicCampaignProjection {
   snapshot            PublicationSnapshot              @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
   facts               PublicCampaignFact[]
   projectReferences   PublicCampaignProjectReference[]
+  actions             PublicCampaignAction[]
 
   @@index([campaignType, publishedAt])
   @@index([campaignStatus, publishedAt])
   @@index([publishedAt])
   @@map("public_campaign_projection")
+}
+
+model PublicCampaignAction {
+  id           String                   @id @default(uuid()) @db.Uuid
+  projectionId String                   @db.Uuid
+  actionType   CampaignActionType
+  label        String                   @db.VarChar(80)
+  destination  String                   @db.VarChar(2048)
+  sortOrder    Int
+  projection   PublicCampaignProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectionId, sortOrder])
+  @@index([projectionId, actionType])
+  @@map("public_campaign_action")
 }
 
 model PublicCampaignFact {
@@ -1487,8 +1508,23 @@ model CampaignRevision {
   publicationRevision   PublicationRevision @relation(fields: [publicationRevisionId], references: [id], onDelete: Restrict)
   facts                 CampaignFact[]
   projects              CampaignProject[]
+  actions               CampaignAction[]
 
   @@map("campaign_revision")
+}
+
+model CampaignAction {
+  id                 String             @id @default(uuid()) @db.Uuid
+  campaignRevisionId String             @db.Uuid
+  actionType         CampaignActionType
+  label              String             @db.VarChar(80)
+  destination        String             @db.VarChar(2048)
+  sortOrder          Int
+  campaignRevision   CampaignRevision   @relation(fields: [campaignRevisionId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignRevisionId, sortOrder])
+  @@index([campaignRevisionId, actionType])
+  @@map("campaign_action")
 }
 
 model CampaignFact {

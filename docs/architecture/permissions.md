@@ -102,10 +102,12 @@ and Site Notice capabilities did not imply confidential submission access.
 - Campaign services enforce active-admin state, owner-scoped own/any reads and
   edits, exact revision hashes, optimistic versions, and creator/owner/material
   editor self-approval prevention. Public Campaign reads are projection-only.
-- Campaign capabilities do not authorize donor, payment, Stripe, checkout,
+- Campaign capabilities authorize only Campaign editorial content, Project
+  relationship selection, reviewed outbound action configuration, and the C1
+  workflow. They do not authorize donor, payment, Stripe, checkout,
   volunteer-registration, media-upload, or homepage-placement work. The older
   `campaigns.manage`/`campaigns.publish` placeholders remain reserved for later
-  destination/integration work and are not used by C1.
+  destination/integration work and are not used by C2.
 - `events.manage`, `events.publish`, `events.registrations.configure`
 - `integrations.donorview.read`, `integrations.donorview.configure`, `integrations.donorview.sync`
 

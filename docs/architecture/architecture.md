@@ -75,6 +75,11 @@ and optional public timing, and may have ordered revision-scoped relationships
 to zero or more Projects. Editorial goal/progress values, when present, are
 integer-cent display facts rather than authoritative financial totals.
 
+C2 adds only a bounded Campaign action configuration: reviewed HTTPS links with
+`DONATE`, `VOLUNTEER`, or `LEARN_MORE` intent and public labels. These links are
+plain outbound handoffs; the platform does not collect donor or volunteer data,
+embed DonorView, process payments, or synchronize provider records.
+
 ### Development
 
 - Donation destination selection, DonorView integration, public Grant Impact, and a future private Grant Administration module.

@@ -13,7 +13,7 @@ content. It is marked `noindex` until verified content and an approved launch
 replace the scaffold.
 
 Current public routes include `/`, `/stories/[slug]`, `/news`, `/news/[slug]`,
-`/projects`, and `/projects/[slug]`; authorized curation is available at
+`/projects`, `/projects/[slug]`, `/campaigns`, and `/campaigns/[slug]`; authorized curation is available at
 `/admin/communications`, `/admin/communications/queue`, and
 `/admin/communications/homepage`, and the capability-protected Story
 Submission inbox at `/admin/communications/submissions`, including the nested
@@ -61,6 +61,12 @@ deployment may enable the boundary. See the
 
 Projects administration is available at `/admin/projects` for authorized
 Project authors, reviewers, and publishers. See the [Projects P2 UI record](docs/development/p2-projects-ui.md).
+
+Campaigns administration is available at `/admin/campaigns` for authorized
+Campaign authors, reviewers, approvers, and publishers. Campaign Donate and
+Volunteer actions are outbound HTTPS handoffs; DonorView remains the current
+external system of record for donation and volunteer management. See the
+[Campaigns C2 UI record](docs/development/campaigns-c2-ui.md).
 
 ## Validate the foundation
 

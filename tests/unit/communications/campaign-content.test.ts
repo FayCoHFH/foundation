@@ -110,4 +110,52 @@ describe("Campaign content contract", () => {
     expect(validated.progressAmountCents).toBe(200_000);
     expect(validated.campaignStatus).toBe("COMPLETED");
   });
+
+  it("validates bounded outbound actions and includes them in the content hash", () => {
+    const actions = [
+      {
+        actionType: "DONATE" as const,
+        label: "Give through DonorView",
+        destination: "https://giving.example.org/campaigns/community",
+        sortOrder: 1,
+      },
+      {
+        actionType: "VOLUNTEER" as const,
+        label: "Volunteer",
+        destination: "https://volunteer.example.org/register",
+        sortOrder: 0,
+      },
+    ];
+    const donateAction = actions[0]!;
+    const validated = validateCampaignCandidate({ ...candidate, actions });
+    expect(validated.actions.map(({ sortOrder }) => sortOrder)).toEqual([0, 1]);
+    expect(validated.actions[0]?.destination).toBe(
+      "https://volunteer.example.org/register",
+    );
+    expect(hashCampaignCandidate({ ...candidate, actions })).not.toBe(
+      hashCampaignCandidate(candidate),
+    );
+    expect(() =>
+      validateCampaignCandidate({
+        ...candidate,
+        actions: [
+          {
+            ...donateAction,
+            destination: "javascript:alert(1)",
+          },
+        ],
+      }),
+    ).toThrow(ValidationError);
+    expect(() =>
+      validateCampaignCandidate({
+        ...candidate,
+        actions: [
+          {
+            ...donateAction,
+            destination: "https://user:secret@example.org/give",
+          },
+        ],
+      }),
+    ).toThrow(ValidationError);
+  });
 });

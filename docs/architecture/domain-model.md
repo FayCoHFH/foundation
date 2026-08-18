@@ -164,7 +164,7 @@ Impact presentation is based on verified snapshots, not counters recomputed from
 - `DonationDestination`: provider-neutral call-to-action configuration with provider, hosted URL or integration reference, designation label, active dates, verification state, and last verification time.
 - `ExternalSystemReference` may map a Campaign to a DonorView designation/page/campaign or Stripe object without asserting semantic identity.
 
-C1 implements only the typed Campaign root/revision, code-owned type/status, validated timing, ordered facts, optional integer-cent USD display goal/progress, public projection, administrative read model, and Campaign–Project relation. Financial progress is not derived from payment systems, page visits, or unverified widgets. Donation destinations, updates, metrics, and provider references remain later work.
+C1 implements the typed Campaign root/revision, code-owned type/status, validated timing, ordered facts, optional integer-cent USD display goal/progress, public projection, administrative read model, and Campaign–Project relation. C2 adds a bounded revision-scoped action model for reviewed HTTPS Donate, Volunteer, and Learn More handoffs. Financial progress is not derived from payment systems, page visits, or unverified widgets. DonorView execution and records remain external; deep integration, updates, metrics, and provider references remain later work.
 
 ### Aggregate: Event
 

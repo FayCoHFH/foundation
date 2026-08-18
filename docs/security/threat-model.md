@@ -323,3 +323,19 @@ optimistic version checks, exact approved content hashes, and creator/owner/
 material-editor self-approval separation. Public reads use only the released
 Campaign projection; no route or read model falls back to mutable authoring
 records.
+# Campaigns C2 security boundary
+
+Campaign action configuration is limited to a closed action type and a bounded
+HTTPS destination. Credentials, non-HTTPS schemes, arbitrary HTML, iframes,
+third-party scripts, tracking injection, payment SDKs, and provider secrets are
+rejected. Public Campaign pages render plain outbound links only.
+
+Campaign public pages read only PublicCampaignProjection. Linked Projects are
+filtered through current public release and discovery state, so a private,
+withdrawn, or archived Project is not disclosed through a Campaign.
+
+Campaign admin routes and Server Actions enforce the existing granular Campaign
+capabilities and exact revision version/hash. Donate and Volunteer actions do
+not create local donor, payment, constituent, or volunteer records. DonorView
+remains the external system of record; no API or synchronization capability is
+assumed by C2.

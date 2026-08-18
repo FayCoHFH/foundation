@@ -30,6 +30,10 @@ const requestSchema = z.object({
     "project-editor",
     "project-manager",
     "project-publisher",
+    "campaign-contributor",
+    "campaign-reviewer",
+    "campaign-approver",
+    "campaign-publisher",
     "denied",
   ]),
 });
@@ -47,6 +51,10 @@ const fixtureRoleKeys = {
   "project-editor": "editor",
   "project-manager": "communications-manager",
   "project-publisher": "publisher",
+  "campaign-contributor": "contributor",
+  "campaign-reviewer": "editor",
+  "campaign-approver": "communications-manager",
+  "campaign-publisher": "publisher",
 } as const;
 
 const testOnlyFixtureCapabilities = {

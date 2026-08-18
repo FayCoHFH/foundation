@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import type { Prisma, PrismaClient } from "@/generated/prisma/client";
 import type {
+  CampaignActionType,
   CampaignStatus,
   CampaignType,
   PublicationLifecycleAction,
@@ -23,6 +24,7 @@ import {
   CAMPAIGN_CURRENT_STATUSES,
   CAMPAIGN_HISTORICAL_STATUSES,
   hashCampaignCandidate,
+  type CampaignActionInput,
   type CampaignCandidate,
   type CampaignFactInput,
   validateCampaignCandidate,
@@ -46,6 +48,7 @@ const campaignDraftInclude = {
                 orderBy: { sortOrder: "asc" },
                 select: { projectId: true, sortOrder: true },
               },
+              actions: { orderBy: { sortOrder: "asc" } },
             },
           },
         },
@@ -60,6 +63,7 @@ const campaignDraftInclude = {
                 orderBy: { sortOrder: "asc" },
                 select: { projectId: true, sortOrder: true },
               },
+              actions: { orderBy: { sortOrder: "asc" } },
             },
           },
         },
@@ -90,6 +94,14 @@ const campaignListInclude = {
               progressAmountCents: true,
               currencyCode: true,
               projects: { select: { projectId: true } },
+              actions: {
+                select: {
+                  actionType: true,
+                  label: true,
+                  destination: true,
+                  sortOrder: true,
+                },
+              },
             },
           },
         },
@@ -133,6 +145,7 @@ export type CampaignAdminDetail = Readonly<{
     currencyCode: string | null;
     facts: readonly CampaignFactInput[];
     projectIds: readonly string[];
+    actions: readonly CampaignActionInput[];
     contentHash: string;
     createdAt: Date;
   }>;
@@ -162,13 +175,31 @@ export type CampaignAdminListItem = Readonly<{
   progressAmountCents: number | null;
   currencyCode: string | null;
   linkedProjectCount: number;
+  actionCount: number;
   updatedAt: Date;
   hasSuccessorDraft: boolean;
+}>;
+
+export type CampaignProjectCandidate = Readonly<{
+  projectId: string;
+  title: string;
+  projectType: string;
+  projectStatus: string;
+  releaseState: string;
+  discoveryDisposition: string;
+  publicSlug: string | null;
 }>;
 
 export type PublicCampaignProject = Readonly<{
   title: string;
   slug: string;
+  sortOrder: number;
+}>;
+
+export type PublicCampaignAction = Readonly<{
+  actionType: CampaignActionType;
+  label: string;
+  destination: string;
   sortOrder: number;
 }>;
 
@@ -187,6 +218,7 @@ export type PublicCampaign = Readonly<{
   currencyCode: string | null;
   facts: readonly CampaignFactInput[];
   projects: readonly PublicCampaignProject[];
+  actions: readonly PublicCampaignAction[];
   publishedAt: Date;
 }>;
 
@@ -348,6 +380,22 @@ function toFacts(
   }));
 }
 
+function toActions(
+  actions: readonly {
+    actionType: CampaignActionType;
+    label: string;
+    destination: string;
+    sortOrder: number;
+  }[],
+) {
+  return actions.map((action) => ({
+    actionType: action.actionType,
+    label: action.label,
+    destination: action.destination,
+    sortOrder: action.sortOrder,
+  }));
+}
+
 function detail(record: CampaignRecord): CampaignAdminDetail {
   const revision = currentRevision(record);
   const campaign = revision.campaignRevision;
@@ -378,6 +426,7 @@ function detail(record: CampaignRecord): CampaignAdminDetail {
       currencyCode: campaign.currencyCode,
       facts: toFacts(campaign.facts),
       projectIds: campaign.projects.map(({ projectId }) => projectId),
+      actions: toActions(campaign.actions),
       contentHash: revision.contentHash,
       createdAt: revision.createdAt,
     },
@@ -417,6 +466,7 @@ function listItem(record: CampaignListRecord): CampaignAdminListItem {
     progressAmountCents: fromDbAmount(campaign.progressAmountCents),
     currencyCode: campaign.currencyCode,
     linkedProjectCount: campaign.projects.length,
+    actionCount: campaign.actions.length,
     updatedAt: record.publication.updatedAt,
     hasSuccessorDraft:
       record.publication.releaseState === "PUBLISHED" &&
@@ -515,26 +565,50 @@ async function run<T>(db: PrismaClient, fn: (tx: Transaction) => Promise<T>) {
 async function assertProjectsExist(
   tx: Transaction,
   projectIds: readonly string[],
+  actor: CampaignActor,
 ) {
   if (projectIds.length === 0) return;
   const projects = await tx.project.findMany({
     where: { id: { in: [...projectIds] } },
-    select: { id: true },
+    select: {
+      id: true,
+      publication: {
+        select: {
+          responsibility: { select: { editorialOwnerAdminUserId: true } },
+        },
+      },
+    },
   });
   if (projects.length !== projectIds.length)
     throw new NotFoundError("One or more linked Projects were not found.");
+  if (actor.capabilities.includes("projects.read.draft.any")) return;
+  if (!actor.capabilities.includes("projects.read.draft.own"))
+    throw new AuthorizationError(
+      "Project relationship access is not available to this administrator.",
+    );
+  if (
+    projects.some(
+      (project) =>
+        project.publication.responsibility?.editorialOwnerAdminUserId !==
+        actor.adminUserId,
+    )
+  )
+    throw new AuthorizationError(
+      "You may link only Projects you are authorized to read.",
+    );
 }
 
 async function createRevision(
   tx: Transaction,
   publicationId: string,
   actorId: string,
+  actor: CampaignActor,
   number: number,
   parentRevisionId: string | null,
   candidate: CampaignCandidate,
 ) {
   const contentHash = hashCampaignCandidate(candidate);
-  await assertProjectsExist(tx, candidate.projectIds ?? []);
+  await assertProjectsExist(tx, candidate.projectIds ?? [], actor);
   const revision = await tx.publicationRevision.create({
     data: {
       publicationId,
@@ -568,6 +642,7 @@ async function createRevision(
           sortOrder,
         })),
       },
+      actions: { create: [...(candidate.actions ?? [])] },
     },
   });
   return { revision, contentHash };
@@ -607,6 +682,7 @@ export async function createCampaign(
       tx,
       publication.id,
       actor.adminUserId,
+      actor,
       1,
       null,
       candidate,
@@ -682,6 +758,70 @@ export async function listCampaignDrafts(
   });
 }
 
+export async function listCampaignProjectCandidates(
+  db: PrismaClient,
+  actor: CampaignActor,
+) {
+  return run(db, async (tx) => {
+    await active(tx, actor.adminUserId);
+    if (
+      !actor.capabilities.includes("projects.read.draft.any") &&
+      !actor.capabilities.includes("projects.read.draft.own")
+    )
+      return [];
+    const projectWhere: Prisma.ProjectWhereInput = actor.capabilities.includes(
+      "projects.read.draft.any",
+    )
+      ? {}
+      : {
+          publication: {
+            responsibility: {
+              editorialOwnerAdminUserId: actor.adminUserId,
+            },
+          },
+        };
+    const projectSelect = {
+      id: true,
+      publication: {
+        select: {
+          releaseState: true,
+          discoveryDisposition: true,
+          publicProjectProjection: { select: { slug: true } },
+          currentRevision: {
+            select: {
+              headline: true,
+              projectRevision: {
+                select: { projectType: true, projectStatus: true },
+              },
+            },
+          },
+        },
+      },
+    } satisfies Prisma.ProjectSelect;
+    const records = await tx.project.findMany({
+      where: projectWhere,
+      select: projectSelect,
+      orderBy: { publication: { updatedAt: "desc" } },
+    });
+    return records.flatMap((record) => {
+      const revision = record.publication.currentRevision?.projectRevision;
+      const title = record.publication.currentRevision?.headline;
+      if (!revision || !title) return [];
+      return [
+        {
+          projectId: record.id,
+          title,
+          projectType: revision.projectType,
+          projectStatus: revision.projectStatus,
+          releaseState: record.publication.releaseState,
+          discoveryDisposition: record.publication.discoveryDisposition,
+          publicSlug: record.publication.publicProjectProjection?.slug ?? null,
+        } satisfies CampaignProjectCandidate,
+      ];
+    });
+  });
+}
+
 export async function saveCampaignRevision(
   db: PrismaClient,
   actor: CampaignActor,
@@ -698,6 +838,7 @@ export async function saveCampaignRevision(
       tx,
       record.publicationId,
       actor.adminUserId,
+      actor,
       prior.number + 1,
       prior.id,
       candidate,
@@ -954,6 +1095,7 @@ export async function releaseCampaign(
         "Release requires approval of this exact current Campaign revision.",
       );
     const facts = toFacts(campaign.facts);
+    const actions = toActions(campaign.actions);
     const projectReferences = await releaseProjectReferences(tx, campaign.id);
     const goalAmountCents = fromDbAmount(campaign.goalAmountCents);
     const progressAmountCents = fromDbAmount(campaign.progressAmountCents);
@@ -977,6 +1119,7 @@ export async function releaseCampaign(
           currencyCode: campaign.currencyCode,
           facts,
           projectReferences,
+          actions,
         },
       },
     });
@@ -1000,6 +1143,7 @@ export async function releaseCampaign(
         publishedAt: snapshot.activatedAt,
         facts: { create: facts },
         projectReferences: { create: projectReferences },
+        actions: { create: actions },
       },
       update: {
         snapshotId: snapshot.id,
@@ -1018,6 +1162,7 @@ export async function releaseCampaign(
         publishedAt: snapshot.activatedAt,
         facts: { deleteMany: {}, create: facts },
         projectReferences: { deleteMany: {}, create: projectReferences },
+        actions: { deleteMany: {}, create: actions },
       },
     });
     await updatePublication(tx, record.publicationId, input.expectedVersion, {
@@ -1165,6 +1310,12 @@ function publicCampaign(row: {
     slug: string;
     sortOrder: number;
   }[];
+  actions: readonly {
+    actionType: CampaignActionType;
+    label: string;
+    destination: string;
+    sortOrder: number;
+  }[];
 }): PublicCampaign {
   return {
     slug: row.slug,
@@ -1181,6 +1332,7 @@ function publicCampaign(row: {
     currencyCode: row.currencyCode,
     facts: toFacts(row.facts),
     projects: row.projectReferences,
+    actions: toActions(row.actions),
     publishedAt: row.publishedAt,
   };
 }
@@ -1214,6 +1366,15 @@ const publicSelect = {
     },
     orderBy: { sortOrder: "asc" as const },
     select: { title: true, slug: true, sortOrder: true },
+  },
+  actions: {
+    orderBy: { sortOrder: "asc" as const },
+    select: {
+      actionType: true,
+      label: true,
+      destination: true,
+      sortOrder: true,
+    },
   },
 } satisfies Prisma.PublicCampaignProjectionSelect;
 

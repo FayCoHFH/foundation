@@ -322,6 +322,14 @@ relationships, and operational construction features remain later slices.
 
 ## Slice 6 — Campaigns, events, and DonorView handoffs
 
+- Campaigns C2 (admin/public experience and safe DonorView handoff boundary) is
+  complete locally on 2026-08-18. It adds protected Campaign list/create/detail
+  routes, facts/goals/Project/action editing, workflow and successor UI, public
+  Campaign index/detail routes, current/historical presentation, accessible
+  outbound HTTPS actions, public navigation, browser/axe/responsive validation,
+  and explicit DonorView ownership documentation. Payment, donor/volunteer
+  records, deep provider integration, reconciliation, email, media, and
+  homepage Campaign placements remain deferred.
 - Campaigns C1 (typed publication domain and publishing-kernel integration) is
   complete locally on 2026-08-18. It establishes the bounded Campaign root,
   typed revision facts/goals and integer-cent progress fields, explicit

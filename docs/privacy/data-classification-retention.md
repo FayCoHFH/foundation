@@ -163,3 +163,16 @@ Campaign public projections exclude responsibility, owner IDs, approvals, audit
 metadata, mutable draft content, and unavailable Project details. Existing
 publication snapshots and audit retention rules apply; C1 introduces no new
 personal-data retention schedule.
+# Campaigns C2 privacy boundary
+
+Campaign editorial fields, public progress display values, Project references,
+and approved action labels/destinations are Habitat-owned public-content data.
+Action destinations are reviewed HTTPS links and contain no credentials or
+embedded provider state. Campaign pages do not collect donor identity, payment
+details, volunteer contact information, availability, registration, or history.
+
+Campaign public reads expose only released projection fields. Internal owner,
+workflow, revision, approval, audit, and private Project fields remain absent
+from public DTOs and metadata. No local constituent or transaction profile is
+created. DonorView remains the current external system of record for donation
+and volunteer management.
