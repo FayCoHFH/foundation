@@ -34,6 +34,15 @@ public projection, MediaAsset, or public URL; final ready-media association is
 atomic with intake receipt. The route remains disabled by default and has no
 global navigation entry while disabled.
 
+C6B-4B completes the local browser contract for that boundary. Chromium validates
+the disabled and enabled states, text-only and image intake, JPEG/PNG/WebP/HEIC
+processing, partial rejection, versioned metadata/declarations, rights and
+likeness controls, READY-only finalization, replay, opaque same-browser
+recovery, four responsive viewports, axe/manual accessibility, browser storage
+privacy, first-party network routing, and strict production CSP. This evidence
+does not authorize production collection, change the confidential/public media
+boundary, or add administrative media/clearance/evidence/promotion UI.
+
 ## 2. Typed editorial aggregates
 
 `Publication` is a narrow shared spine, not a user-facing content type. A publication has exactly one typed root (`Story` or `NewsItem`) and a closed `kind` discriminator. Its revision, approval, scheduling, snapshot, workflow, quality, authorship, media, SEO, and relation records remain type-aware through the root and validation service.

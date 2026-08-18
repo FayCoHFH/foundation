@@ -213,8 +213,20 @@ metadata/declarations, rights/likeness controls, reorder/remove behavior,
 READY-only final gate, atomic intake/media association, focused tests, and
 PostgreSQL regression are documented in
 [the C6B-4A delivery record](../development/c6b4a-public-story-submission-form.md).
-Browser, accessibility, responsive, and visual validation remain C6B-4B work;
+Browser, accessibility, responsive, and visual validation are complete in
+[the C6B-4B validation record](../development/c6b4b-public-story-submission-validation.md).
 G-07 still gates production collection and final policy approval.
+
+**C6B-4B — Public Share Your Story browser, accessibility, responsive, and
+visual validation: complete locally on 2026-08-17.** The disabled and enabled
+route states, text-only and JPEG/PNG/WebP/HEIC browser journeys, partial image
+failure, metadata/declarations, rights/likeness controls, reorder/removal,
+READY gate, replay, opaque recovery/expiry, axe/manual accessibility, four
+responsive viewports, browser storage/network privacy, strict CSP, and full
+regression are documented in [the C6B-4B validation record](../development/c6b4b-public-story-submission-validation.md).
+C6B-4A/4B public-form implementation and validation are complete locally, but
+C6B as a whole is not complete: G-07 and the later administrative media,
+clearance, evidence, and promotion UI remain outstanding.
 
 ## Slice 1 — Application Foundation and Scaffold
 

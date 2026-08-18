@@ -265,7 +265,7 @@ Applicant intake and private Grant Administration additionally require a dedicat
 - [Next.js authentication/authorization guidance](https://nextjs.org/docs/app/guides/authentication)
 - [Better Auth security reference](https://better-auth.com/docs/reference/security)
 - [Stripe webhook security and delivery behavior](https://docs.stripe.com/webhooks)
-# C6B-4A public intake controls
+# C6B-4A/4B public intake controls
 
 The public `/share-your-story` form is disabled by default and fails closed
 without the signed intake secret/privacy configuration. Enabled media requests
@@ -283,3 +283,13 @@ secure processing, READY-only finalization, conditional image rights
 declaration, replay protection, and rate/security controls. No CAPTCHA, email,
 third-party uploader, public object, Story conversion, or admin authorization
 is introduced by C6B-4A.
+
+C6B-4B verifies these controls through the real Chromium browser path. The
+disabled default creates no token or attempt; the enabled path keeps all
+submission content out of browser storage, URLs, logs, third-party requests,
+and public editorial/media records. The browser matrix verifies generic
+honeypot/rejection responses, image signature processing, READY-only final
+submission, replay safety, opaque recovery expiry, and no console/page/CSP
+violations. CSP permits only the local `blob:` object-preview requirement in
+the image/connect sources; production still excludes `unsafe-eval` and has no
+arbitrary third-party script origin.

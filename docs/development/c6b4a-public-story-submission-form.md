@@ -1,6 +1,6 @@
 # C6B-4A Public Share Your Story intake form
 
-Status: **implemented locally; browser, accessibility, responsive, and visual validation deferred to C6B-4B**
+Status: **implemented and validated locally on 2026-08-17; production intake remains disabled by default**
 
 ## Boundary
 
@@ -22,4 +22,4 @@ Final submission requires every retained image to be `READY`, the image rights d
 
 ## Validation
 
-Focused unit coverage checks the route/content/limits/formats/privacy/acknowledgment/rejection matrix and final READY gate. PostgreSQL coverage checks the final media gate, atomic rollback, ready-media association, text-only intake, and absence of public editorial/media records. Existing intake, media, processing, clearance, and promotion suites remain part of the regression set. Browser automation, axe, and formal visual QA are intentionally C6B-4B work.
+Focused unit coverage checks the route/content/limits/formats/privacy/acknowledgment/rejection matrix and final READY gate. PostgreSQL coverage checks the final media gate, atomic rollback, ready-media association, text-only intake, and absence of public editorial/media records. Browser automation, axe, accessibility, responsive, and formal visual QA are complete in [C6B-4B](./c6b4b-public-story-submission-validation.md).

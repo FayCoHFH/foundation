@@ -17,6 +17,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
   workers: 1,
+  outputDir: "output/playwright",
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL,

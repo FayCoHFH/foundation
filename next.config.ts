@@ -12,7 +12,7 @@ export function buildContentSecurityPolicy() {
     "form-action 'self'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    "connect-src 'self'",
+    "connect-src 'self' blob:",
     // Next.js emits small framework bootstrap scripts and Turbopack's React
     // development tooling requires eval only in the development runtime.
     `script-src 'self' 'unsafe-inline'${developmentScriptSource}`,

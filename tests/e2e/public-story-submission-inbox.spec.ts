@@ -728,9 +728,10 @@ test.describe("C6B-2B Public Story Submission inbox browser validation", () => {
     await session.page.goto("/share-your-story");
     await expect(
       session.page.getByRole("heading", {
-        name: "This page is not available.",
+        name: "Share Your Story is not accepting submissions right now.",
       }),
     ).toBeVisible();
+    await expect(session.page.locator("#storyImages")).toHaveCount(0);
     await session.page.goto("/admin/communications");
     await expect(session.page.locator("main")).not.toContainText("C6B2B");
     await session.page.goto("/admin/communications/queue");
