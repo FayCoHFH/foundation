@@ -219,6 +219,10 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  await prisma.mediaUsage.deleteMany();
+  await prisma.publicStorySubmissionMediaPromotionClearance.deleteMany();
+  await prisma.publicStorySubmissionMediaPromotion.deleteMany();
+  await prisma.mediaAsset.deleteMany();
   await prisma.publicStorySubmission.deleteMany();
 });
 

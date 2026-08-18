@@ -195,6 +195,16 @@ evidence is selected for verification. It creates no public URL, form,
 promotion, or retention worker; G-07 remains open. The detailed record is
 [the C6B-3D private clearance evidence record](../development/c6b3d-private-clearance-evidence.md).
 
+**C6B-3E — Media Library promotion and rights restriction integration: complete
+locally on 2026-08-17.** Explicit promotion now copies only a Ready sanitized
+private derivative, records unique source provenance and immutable clearance
+snapshots, requires an explicit credit decision and
+`communications.media.promote`, and compensates public storage on failed
+database/audit paths. MediaUsage is explicit, category-specific, and rechecks
+current source restrictions. No public form, Story conversion, or automatic
+attachment is included. G-07 remains open. The detailed record is
+[the C6B-3E Media Library promotion record](../development/c6b3e-media-promotion-rights-integration.md).
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

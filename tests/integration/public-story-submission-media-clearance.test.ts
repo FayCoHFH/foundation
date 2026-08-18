@@ -189,6 +189,10 @@ describe("C6B-3C confidential Story Submission image rights clearance PostgreSQL
   });
 
   beforeEach(async () => {
+    await prisma.mediaUsage.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotionClearance.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotion.deleteMany();
+    await prisma.mediaAsset.deleteMany();
     await prisma.publicStorySubmission.deleteMany();
   });
 

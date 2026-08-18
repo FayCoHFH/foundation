@@ -325,6 +325,13 @@ there is no public URL or public reading path. A `READY` document is technical
 state only. When clearance verification relies on an uploaded document, the
 exact document must be Ready and is recorded; legacy C6B-3C release references
 remain valid. Evidence does not alter public media promotion or G-07.
+ C6B-3E adds the explicit public Media Library bridge: only a Ready private
+ sanitized JPEG review derivative may be promoted by
+ `communications.media.promote`, with unique source provenance, immutable
+ clearance snapshots, explicit credit treatment, and public-storage
+ compensation. Promotion establishes only the `WEBSITE_PUBLICATION` baseline;
+ each later `MediaUsage` re-evaluates current source restrictions and use
+ permission, and no Story/News attachment or other use is automatic.
 The future public boundary still requires the upload, rate-limit, challenge,
 duplicate/throttle, CSRF/origin, and generic response controls described below
 before launch.

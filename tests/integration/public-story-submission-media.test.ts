@@ -183,6 +183,10 @@ beforeAll(async () => {
       .jpeg()
       .toBuffer(),
   );
+  await prisma.mediaUsage.deleteMany();
+  await prisma.publicStorySubmissionMediaPromotionClearance.deleteMany();
+  await prisma.publicStorySubmissionMediaPromotion.deleteMany();
+  await prisma.mediaAsset.deleteMany();
   await prisma.publicStorySubmissionMedia.deleteMany();
   await prisma.publicStorySubmissionAttempt.deleteMany();
 });

@@ -105,6 +105,10 @@ describe("C6B-1B Public Story Submission intake security PostgreSQL boundary", (
   beforeAll(async () => {
     await prisma.publicStoryIntakeTokenUse.deleteMany();
     await prisma.publicStoryIntakeRateLimitBucket.deleteMany();
+    await prisma.mediaUsage.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotionClearance.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotion.deleteMany();
+    await prisma.mediaAsset.deleteMany();
     await prisma.publicStorySubmission.deleteMany();
   });
 

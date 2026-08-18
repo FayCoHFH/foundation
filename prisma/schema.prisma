@@ -178,6 +178,27 @@ enum PublicStorySubmissionMediaUse {
   PAID_ADVERTISING
 }
 
+enum MediaAssetLifecycle {
+  ACTIVE
+  ARCHIVED
+}
+
+enum MediaAssetFormat {
+  JPEG
+}
+
+enum MediaAssetCreditTreatment {
+  VERIFIED_CREDIT
+  ORGANIZATIONAL_CREDIT
+  NO_PUBLIC_CREDIT
+}
+
+enum MediaUsageSubjectType {
+  STORY_REVISION
+  NEWS_REVISION
+  PUBLICATION
+}
+
 enum PublicStorySubmissionMediaRestrictionState {
   ACTIVE
   RESTORED
@@ -381,6 +402,8 @@ model AdminUser {
   restrictedSubmissionMedia                 PublicStorySubmissionMediaRestriction[]       @relation("SubmissionMediaRestrictionCreator")
   restoredSubmissionMediaRestrictions       PublicStorySubmissionMediaRestriction[]       @relation("SubmissionMediaRestrictionRestorer")
   resolvedSubmissionMediaRevocationRequests PublicStorySubmissionMediaRevocationRequest[] @relation("SubmissionMediaRevocationRequestResolver")
+  createdMediaAssets                        MediaAsset[]                                  @relation("MediaAssetCreator")
+  promotedSubmissionMedia                   PublicStorySubmissionMediaPromotion[]         @relation("MediaPromotionActor")
 
   @@index([status])
   @@map("admin_user")
@@ -768,6 +791,7 @@ model PublicStorySubmission {
   submissionMedia                        PublicStorySubmissionMedia[]
   mediaSubjects                          PublicStorySubmissionMediaSubject[]
   mediaClearances                        PublicStorySubmissionMediaClearance[]
+  mediaPromotions                        PublicStorySubmissionMediaPromotion[]
 
   @@unique([id, version])
   @@index([status, receivedAt, id])
@@ -869,6 +893,7 @@ model PublicStorySubmissionMedia {
   clearances                             PublicStorySubmissionMediaClearanceApplicability[]
   restrictions                           PublicStorySubmissionMediaRestriction[]
   revocationRequests                     PublicStorySubmissionMediaRevocationRequest[]
+  libraryPromotion                       PublicStorySubmissionMediaPromotion?
 
   @@unique([id, version])
   @@unique([attemptId, ordinal])
@@ -877,6 +902,99 @@ model PublicStorySubmissionMedia {
   @@index([submissionId, ordinal])
   @@index([technicalStatus, binaryDeletedAt])
   @@map("public_story_submission_media")
+}
+
+// Public library assets are immutable, sanitized derivatives. They never
+// retain the private source filename, quarantine key, clearance text, or
+// confidential submission content.
+model MediaAsset {
+  id                   String                               @id @default(uuid()) @db.Uuid
+  publicStorageKey     String                               @unique @db.VarChar(240)
+  contentType          String                               @db.VarChar(127)
+  byteSize             Int
+  checksumSha256       String                               @db.Char(64)
+  format               MediaAssetFormat
+  width                Int
+  height               Int
+  creditTreatment      MediaAssetCreditTreatment
+  publicCredit         String?                              @db.VarChar(240)
+  lifecycle            MediaAssetLifecycle                  @default(ACTIVE)
+  version              Int                                  @default(1)
+  createdByAdminUserId String                               @db.Uuid
+  createdAt            DateTime                             @default(now())
+  updatedAt            DateTime                             @updatedAt
+  createdBy            AdminUser                            @relation("MediaAssetCreator", fields: [createdByAdminUserId], references: [id], onDelete: Restrict)
+  promotion            PublicStorySubmissionMediaPromotion?
+  usages               MediaUsage[]
+
+  @@index([lifecycle, createdAt])
+  @@map("media_asset")
+}
+
+model PublicStorySubmissionMediaPromotion {
+  id                    String                                         @id @default(uuid()) @db.Uuid
+  mediaAssetId          String                                         @unique @db.Uuid
+  sourceMediaId         String                                         @unique @db.Uuid
+  sourceSubmissionId    String                                         @db.Uuid
+  promotedByAdminUserId String                                         @db.Uuid
+  promotedAt            DateTime
+  sourceMediaVersion    Int
+  sourceProcessedAt     DateTime
+  sourceDetectedFormat  String                                         @db.VarChar(16)
+  baselineUse           PublicStorySubmissionMediaUse                  @default(WEBSITE_PUBLICATION)
+  creditTreatment       MediaAssetCreditTreatment
+  publicCredit          String?                                        @db.VarChar(240)
+  version               Int                                            @default(1)
+  createdAt             DateTime                                       @default(now())
+  updatedAt             DateTime                                       @updatedAt
+  mediaAsset            MediaAsset                                     @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+  sourceMedia           PublicStorySubmissionMedia                     @relation(fields: [sourceMediaId], references: [id], onDelete: Restrict)
+  sourceSubmission      PublicStorySubmission                          @relation(fields: [sourceSubmissionId], references: [id], onDelete: Restrict)
+  promotedBy            AdminUser                                      @relation("MediaPromotionActor", fields: [promotedByAdminUserId], references: [id], onDelete: Restrict)
+  clearanceSnapshots    PublicStorySubmissionMediaPromotionClearance[]
+
+  @@index([sourceSubmissionId, sourceMediaId])
+  @@map("public_story_submission_media_promotion")
+}
+
+model PublicStorySubmissionMediaPromotionClearance {
+  id                            String                                    @id @default(uuid()) @db.Uuid
+  promotionId                   String                                    @db.Uuid
+  clearanceId                   String                                    @db.Uuid
+  clearanceVersion              Int
+  clearanceType                 PublicStorySubmissionMediaClearanceType
+  status                        PublicStorySubmissionMediaClearanceStatus
+  websitePublicationAllowed     Boolean
+  socialMediaAllowed            Boolean
+  printAllowed                  Boolean
+  fundraisingPromotionalAllowed Boolean
+  paidAdvertisingAllowed        Boolean
+  otherRestrictionsPresent      Boolean
+  expiresAt                     DateTime?
+  evidenceDocumentId            String?                                   @db.Uuid
+  createdAt                     DateTime                                  @default(now())
+  promotion                     PublicStorySubmissionMediaPromotion       @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  @@unique([promotionId, clearanceId])
+  @@index([clearanceId])
+  @@map("public_story_submission_media_promotion_clearance")
+}
+
+model MediaUsage {
+  id           String                        @id @default(uuid()) @db.Uuid
+  mediaAssetId String                        @db.Uuid
+  usageType    PublicStorySubmissionMediaUse
+  subjectType  MediaUsageSubjectType
+  subjectId    String                        @db.Uuid
+  version      Int                           @default(1)
+  createdAt    DateTime                      @default(now())
+  updatedAt    DateTime                      @updatedAt
+  mediaAsset   MediaAsset                    @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaAssetId, usageType, subjectType, subjectId])
+  @@index([mediaAssetId, usageType])
+  @@index([subjectType, subjectId])
+  @@map("media_usage")
 }
 
 // Confidential person labels are deliberately bounded and scoped to one

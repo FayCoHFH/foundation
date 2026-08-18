@@ -88,6 +88,10 @@ describe("C6B-1A Public Story Submission PostgreSQL domain", () => {
   let denied: Actor;
 
   beforeAll(async () => {
+    await prisma.mediaUsage.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotionClearance.deleteMany();
+    await prisma.publicStorySubmissionMediaPromotion.deleteMany();
+    await prisma.mediaAsset.deleteMany();
     await prisma.publicStorySubmission.deleteMany();
     manager = await actor("communications-manager");
     superAdmin = await actor("super-admin");

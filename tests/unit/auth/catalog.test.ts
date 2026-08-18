@@ -5,7 +5,7 @@ import { ROLE_PRESETS } from "@/platform/auth/role-presets";
 
 describe("capability catalog", () => {
   it("is stable and duplicate free", () => {
-    expect(CAPABILITIES).toHaveLength(98);
+    expect(CAPABILITIES).toHaveLength(99);
     expect(new Set(CAPABILITIES).size).toBe(CAPABILITIES.length);
   });
 
@@ -18,7 +18,7 @@ describe("capability catalog", () => {
         capability.startsWith("newsletter.") ||
         capability.startsWith("media."),
     );
-    expect(communications).toHaveLength(51);
+    expect(communications).toHaveLength(52);
   });
 
   it("does not put future sensitive capabilities in Super Admin", () => {

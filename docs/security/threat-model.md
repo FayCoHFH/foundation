@@ -130,6 +130,15 @@ Every original/review delivery requires fresh reviewer capability and a redacted
 audit record; no PDF is delivered inline by default. It still adds no public
 delivery or evidence-file route.
 
+C6B-3E adds the public boundary as an explicit promotion only: the source must
+be Ready and website-eligible under the C6B-3C evaluator, the public object is
+copied from the sanitized derivative, provenance and clearance snapshots are
+transactional, and failed database/audit paths delete the just-written object.
+Unique source provenance and serializable transactions prevent duplicate
+assets. Later restrictions remain authoritative for public reads and new
+MediaUsage; existing uses are surfaced for review without silent historical
+rewrites. Public DTOs exclude private source metadata, evidence, and notes.
+
 **Verification:** OWASP upload corpus, oversize/bomb/polyglot tests, private URL tests, object inventory scan, and media withdrawal/consent tests. Separate malware scanning is not required for the initial image pipeline; it remains an optional future defense-in-depth enhancement.
 
 ### Applicant/homeowner and participant privacy

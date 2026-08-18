@@ -10,6 +10,7 @@ import path from "node:path";
 import type {
   ObjectMetadata,
   ObjectStorePort,
+  PublicObjectStorePort,
   ObjectStoreScope,
   ObjectStores,
   PrivateDownloadGrant,
@@ -92,7 +93,9 @@ function timingSafeSignatureMatches(actual: string, expected: string): boolean {
   );
 }
 
-export class LocalObjectStore implements ObjectStorePort {
+export class LocalObjectStore
+  implements ObjectStorePort, PublicObjectStorePort
+{
   readonly scope: ObjectStoreScope;
   protected readonly rootDirectory: string;
   protected readonly now: () => Date;
@@ -179,6 +182,15 @@ export class LocalObjectStore implements ObjectStorePort {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
     this.metadataByKey.delete(key);
+  }
+
+  async deleteForCleanup(key: string): Promise<void> {
+    if (this.scope !== "PUBLIC") {
+      throw new InvalidObjectKeyError(
+        "Only public promotion objects support cleanup deletion.",
+      );
+    }
+    await this.deleteObject(key);
   }
 
   protected destinationFor(key: string): string {

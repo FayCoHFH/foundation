@@ -729,7 +729,7 @@ type EligibilityClearance = {
   otherRestrictionsPresent: boolean;
 };
 
-async function evaluateMediaEligibility(
+export async function evaluatePublicStorySubmissionMediaEligibilityInTransaction(
   transaction: Transaction,
   mediaId: string,
   proposedUse: PublicStorySubmissionMediaUse,
@@ -864,7 +864,7 @@ export async function evaluatePublicStorySubmissionMediaEligibility(
   if (!Object.values(PublicStorySubmissionMediaUse).includes(input.proposedUse))
     throw new ValidationError("Proposed use is not supported.");
   return prisma.$transaction((transaction) =>
-    evaluateMediaEligibility(
+    evaluatePublicStorySubmissionMediaEligibilityInTransaction(
       transaction,
       input.mediaId,
       input.proposedUse,
@@ -1061,13 +1061,14 @@ export async function restorePublicStorySubmissionMediaEligibility(
       throw new NotFoundError("Active media restriction was not found.");
     if (restriction.version !== input.expectedRestrictionVersion)
       throw new ConcurrencyError();
-    const eligibility = await evaluateMediaEligibility(
-      transaction,
-      input.mediaId,
-      input.proposedUse,
-      dependencies.now?.() ?? new Date(),
-      true,
-    );
+    const eligibility =
+      await evaluatePublicStorySubmissionMediaEligibilityInTransaction(
+        transaction,
+        input.mediaId,
+        input.proposedUse,
+        dependencies.now?.() ?? new Date(),
+        true,
+      );
     if (!eligibility.eligible)
       throw new PreconditionError(
         "Media cannot be restored until its clearance requirements are satisfied.",

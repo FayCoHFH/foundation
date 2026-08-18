@@ -46,6 +46,12 @@ export interface ObjectStorePort {
   read(key: string): Promise<StoredObject | null>;
 }
 
+/** Public promotion is the only bounded domain operation that may remove a
+ * just-written object, and only for database/audit compensation. */
+export interface PublicObjectStorePort extends ObjectStorePort {
+  deleteForCleanup(key: string): Promise<void>;
+}
+
 export interface PrivateDownloadGrant {
   /** Opaque, signed, short-lived grant for an authenticated server route. */
   readonly token: string;
@@ -96,6 +102,6 @@ export interface SubmissionClearanceEvidenceStoragePort {
 }
 
 export interface ObjectStores {
-  readonly publicStore: ObjectStorePort;
+  readonly publicStore: PublicObjectStorePort;
   readonly privateStore: PrivateObjectStorePort;
 }
