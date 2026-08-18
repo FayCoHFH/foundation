@@ -68,6 +68,11 @@ Media ownership is split intentionally: `MediaAsset` owns immutable byte/provena
 
 ## DonorView boundary
 
+G2 public `/give`, `/volunteer`, homepage, and Campaign handoff surfaces remain
+presentation-only. They read Habitat-owned public projections and the current
+verified destination read model; they do not collect or persist donor or
+volunteer identity, payment, registration, waiver, attendance, or hours.
+
 The preferred donation flow is:
 
 `Habitat Campaign -> approved DonorView designated destination -> donor contributes -> DonorView owns constituent/gift/receipt`

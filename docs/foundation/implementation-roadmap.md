@@ -338,6 +338,11 @@ relationships, and operational construction features remain later slices.
   browser coverage. Donations, payments, donor/volunteer records, API,
   webhooks, embeds, scraping, analytics, and aggregate synchronization remain
   deferred.
+- Giving & Volunteer G2 public experience is complete locally on 2026-08-18.
+  It adds `/give` and `/volunteer` context pages, public shell actions,
+  Campaign handoff context, current Project/Campaign homepage composition,
+  responsive/accessibility/browser coverage, and safe unavailable states. No
+  local donor/volunteer collection or provider synchronization is introduced.
 - Campaigns C1 (typed publication domain and publishing-kernel integration) is
   complete locally on 2026-08-18. It establishes the bounded Campaign root,
   typed revision facts/goals and integer-cent progress fields, explicit

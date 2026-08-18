@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CampaignDetail } from "@/components/campaigns/campaign-presentation";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -42,6 +43,11 @@ export default async function CampaignPage({
         id="campaign-main"
         className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-20"
       >
+        <p className="mb-8 text-sm">
+          <Link className="underline underline-offset-4" href="/campaigns">
+            ← All Campaigns
+          </Link>
+        </p>
         <CampaignDetail campaign={campaign} />
       </main>
       <SiteFooter />

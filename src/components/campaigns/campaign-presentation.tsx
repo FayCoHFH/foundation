@@ -25,24 +25,42 @@ function CampaignPeriod({ campaign }: { campaign: PublicCampaign }) {
 }
 
 export function CampaignActions({ campaign }: { campaign: PublicCampaign }) {
-  return campaign.actions.length ? (
-    <ul className="mt-7 flex flex-wrap gap-3" aria-label="Campaign actions">
-      {campaign.actions.map((action) => (
-        <li key={`${action.actionType}-${action.sortOrder}`}>
-          <a
-            className="bg-primary text-primary-foreground inline-flex min-h-11 items-center rounded-sm px-4 py-2 font-semibold underline-offset-4 hover:underline"
-            href={action.destination}
-            aria-label={`${action.label} (${CAMPAIGN_ACTION_LABELS[action.actionType]} opens an external destination)`}
-          >
-            {action.label}
-            <span aria-hidden="true" className="ml-2">
-              ↗
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  ) : null;
+  if (!campaign.actions.length) return null;
+  const hasDonate = campaign.actions.some(
+    (action) => action.actionType === "DONATE",
+  );
+  const hasVolunteer = campaign.actions.some(
+    (action) => action.actionType === "VOLUNTEER",
+  );
+  return (
+    <div className="mt-7">
+      <ul className="flex flex-wrap gap-3" aria-label="Campaign actions">
+        {campaign.actions.map((action) => (
+          <li key={`${action.actionType}-${action.sortOrder}`}>
+            <a
+              className="bg-primary text-primary-foreground inline-flex min-h-11 items-center rounded-sm px-4 py-2 font-semibold underline-offset-4 hover:underline"
+              href={action.destination}
+              aria-label={`${action.label} (${CAMPAIGN_ACTION_LABELS[action.actionType]} opens an external destination)`}
+            >
+              {action.label}
+              <span aria-hidden="true" className="ml-2">
+                ↗
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className="text-muted-foreground mt-3 max-w-2xl text-sm leading-6">
+        {hasDonate && hasVolunteer
+          ? "Donation processing and volunteer registration continue securely through DonorView."
+          : hasDonate
+            ? "Donation processing continues securely through DonorView."
+            : hasVolunteer
+              ? "Volunteer registration continues securely through DonorView."
+              : "Learn more opens the linked external destination."}
+      </p>
+    </div>
+  );
 }
 
 export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {

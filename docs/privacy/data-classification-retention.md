@@ -26,6 +26,11 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 
 ## Domain classification
 
+The G2 public Giving and Volunteer pages collect no local donor or volunteer
+fields. They display Habitat-owned public context and link to the current
+verified DonorView destination; donor, gift, volunteer application, waiver,
+registration, attendance, and hours records remain with DonorView.
+
 | Domain/data | Class | Authoritative owner / notes |
 | --- | --- | --- |
 | Published Story/News snapshot and approved public media | Public | Habitat platform |

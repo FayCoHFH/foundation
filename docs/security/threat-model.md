@@ -325,6 +325,13 @@ Campaign projection; no route or read model falls back to mutable authoring
 records.
 # Campaigns C2 security boundary
 
+G2 public Giving and Volunteer pages use only server-resolved, verified
+DonorView destinations. They do not accept a destination from the browser,
+embed provider content, load third-party scripts, send donor/volunteer payloads,
+or add click analytics. If a destination is unavailable, the UI renders a
+truthful unavailable state or omits the action rather than creating a broken or
+unreviewed link.
+
 Campaign action configuration is limited to a closed action type and a bounded
 HTTPS destination. Credentials, non-HTTPS schemes, arbitrary HTML, iframes,
 third-party scripts, tracking injection, payment SDKs, and provider secrets are

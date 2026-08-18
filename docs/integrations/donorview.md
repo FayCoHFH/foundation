@@ -10,6 +10,13 @@ redirect, or custom-domain feature exists.
 
 ## Decision
 
+The public G2 experience uses a deliberate Habitat context page before the
+provider handoff. `/give` explains general versus Campaign-specific giving;
+`/volunteer` explains general interest versus Campaign/event registration. The
+pages and Campaign detail call-to-actions use same-tab links resolved from the
+verified destination read model. They do not collect local fields, embed
+DonorView, or claim a donation/registration result.
+
 DonorView remains the constituent, donor, gift, pledge, recurring-gift, receipt, newsletter-subscriber/consent/suppression and mailing-list, volunteer-application/waiver, volunteer-registration, attendance, hours, and DonorView event-registrant system of record. The Habitat platform owns the public experience, newsletter editorial content, Campaign narrative, and selection of an approved donation/registration destination.
 
 The preferred initial donation flow is:

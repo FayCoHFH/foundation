@@ -39,6 +39,13 @@ Four kinds of actors or systems interact with the platform:
 
 ## Domain boundaries
 
+The public Giving and Volunteer experience is presentation around existing
+governed handoffs. `/give` and `/volunteer` provide local Habitat context, while
+donation and volunteer execution remain in DonorView. Homepage Projects and
+Campaign sections read existing published public projections and do not add
+homepage-specific domain data, donor/volunteer tables, local forms, provider
+scripts, or iframes.
+
 The following map describes product ownership, not final navigation or directory names.
 
 ### Communications

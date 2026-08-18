@@ -142,6 +142,9 @@ describe("Campaign UI", () => {
     expect(html).toContain("Campaign progress");
     expect(html).toContain("Give through DonorView");
     expect(html).toContain("https://giving.example.org/community-build");
+    expect(html).toContain(
+      "Donation processing continues securely through DonorView.",
+    );
     expect(html).toContain("East Side Home");
     expect(html).not.toContain("editorialOwnerAdminUserId");
     expect(html).not.toContain("donor");

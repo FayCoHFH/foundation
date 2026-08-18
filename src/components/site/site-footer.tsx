@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPublicGlobalDestination } from "@/modules/engagement";
 import { prisma } from "@/platform/database/prisma";
 
@@ -19,19 +20,21 @@ export async function SiteFooter() {
         </div>
         <div className="text-editorial-cream-muted text-sm leading-6 md:text-right">
           <div className="flex flex-wrap justify-start gap-x-5 gap-y-2 md:justify-end">
+            <Link href="/give">Why give</Link>
+            <Link href="/volunteer">Volunteer</Link>
             {donate ? (
-              <a href={donate.url} aria-label="Donate (opens DonorView)">
+              <a
+                href={donate.url}
+                aria-label="Donate (opens the secure DonorView giving page)"
+              >
                 Donate ↗
               </a>
             ) : null}
-            {volunteer ? (
-              <a href={volunteer.url} aria-label="Volunteer (opens DonorView)">
-                Volunteer ↗
-              </a>
-            ) : null}
+            {volunteer ? null : null}
             {!donate && !volunteer ? (
               <p id="giving-status">
-                Giving and volunteer destinations are not configured yet.
+                General giving and volunteer destinations are not configured
+                yet.
               </p>
             ) : null}
           </div>

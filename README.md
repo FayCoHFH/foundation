@@ -73,6 +73,12 @@ authorized administrators. The public shell exposes only active, verified
 canonical Donate and Volunteer destinations; no local donation or volunteer
 records are created. See the [G1 handoff record](docs/development/g1-donorview-handoff.md).
 
+The public Giving and Volunteer experience is available at `/give` and
+`/volunteer`. These pages provide local Habitat context and hand off donation
+and volunteer execution to the currently verified DonorView destinations. The
+homepage also presents current Projects, Campaigns, and ways to help. See the
+[G2 public experience record](docs/development/g2-public-giving-volunteer-experience.md).
+
 ## Validate the foundation
 
 ```bash
