@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:clean": "rm -rf .next && pnpm db:generate && pnpm build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
