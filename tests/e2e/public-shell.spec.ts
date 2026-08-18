@@ -23,6 +23,48 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
       name: "Building and repairing homes with neighbors across Fayette County.",
     }),
   ).toBeVisible();
+  const logo = page.getByRole("img", {
+    name: "Fayette County Habitat for Humanity",
+  });
+  await expect(logo).toBeVisible();
+  const logoMetrics = await logo.evaluate((element) => {
+    const image = element as HTMLImageElement;
+    const rect = image.getBoundingClientRect();
+    return {
+      naturalWidth: image.naturalWidth,
+      naturalHeight: image.naturalHeight,
+      renderedWidth: rect.width,
+      renderedHeight: rect.height,
+    };
+  });
+  expect(logoMetrics.naturalWidth).toBe(562);
+  expect(logoMetrics.naturalHeight).toBe(190);
+  expect(logoMetrics.renderedWidth).toBeGreaterThan(0);
+  expect(logoMetrics.renderedHeight).toBeGreaterThan(0);
+  expect(logoMetrics.renderedWidth / logoMetrics.renderedHeight).toBeCloseTo(
+    562 / 190,
+    1,
+  );
+  const typography = await page.evaluate(() => ({
+    display: getComputedStyle(document.querySelector("h1")!).fontFamily,
+    section: getComputedStyle(document.querySelector("#home-work")!).fontFamily,
+    body: getComputedStyle(
+      document.querySelector("main p.text-muted-foreground")!,
+    ).fontFamily,
+  }));
+  expect(typography.display.toLowerCase()).toContain("zilla slab");
+  expect(typography.section.toLowerCase()).toContain("zilla slab");
+  expect(typography.body.toLowerCase()).toContain("source sans 3");
+  await expect(page.locator(".public-hero-structure")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
+  await expect(page.locator(".public-hero-structure img")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText(
+    "Public experience foundation",
+  );
+  await expect(page.getByText("Place", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Work", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("contentinfo")).toBeVisible();
   await expect
     .poll(() =>
@@ -41,13 +83,36 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
   const accessibilityResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityResults.violations).toEqual([]);
 
-  await page.setViewportSize({ width: 320, height: 800 });
-  const hasPageOverflow = await page.evaluate(
-    () =>
-      document.documentElement.scrollWidth >
-      document.documentElement.clientWidth,
-  );
-  expect(hasPageOverflow).toBe(false);
+  for (const [width, height] of [
+    [320, 700],
+    [375, 812],
+    [390, 844],
+    [768, 1024],
+  ] as const) {
+    await page.setViewportSize({ width, height });
+    expect(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth >
+          document.documentElement.clientWidth,
+      ),
+    ).toBe(false);
+  }
+});
+
+test("public display headings use Zilla Slab across core routes", async ({
+  page,
+}) => {
+  for (const route of ["/", "/projects", "/campaigns", "/give", "/volunteer"]) {
+    await page.goto(route);
+    const heading = page.getByRole("heading", { level: 1 });
+    await expect(heading).toBeVisible();
+    await expect
+      .poll(() =>
+        heading.evaluate((element) => getComputedStyle(element).fontFamily),
+      )
+      .toContain("Zilla Slab");
+  }
 });
 
 test("@smoke not-found state is semantic and has no automated accessibility violations", async ({

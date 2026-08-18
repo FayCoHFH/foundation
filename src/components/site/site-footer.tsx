@@ -37,7 +37,7 @@ export async function SiteFooter() {
             ) : null}
           </div>
           <p className="text-clean-white/60 mt-5 text-xs tracking-[0.12em] uppercase">
-            Public experience foundation
+            Serving neighbors across Fayette County
           </p>
         </div>
       </div>

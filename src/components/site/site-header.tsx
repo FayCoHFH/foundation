@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { getPublicGlobalDestination } from "@/modules/engagement";
 import { prisma } from "@/platform/database/prisma";
@@ -48,15 +49,15 @@ export async function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner mx-auto max-w-7xl">
-        <Link
-          href="/"
-          className="site-wordmark"
-          aria-label="Fayette County Habitat for Humanity home"
-        >
-          <span className="site-wordmark-copy">
-            <span>Fayette County Habitat</span>
-            <span>for Humanity</span>
-          </span>
+        <Link href="/" className="site-wordmark">
+          <Image
+            className="site-wordmark-logo"
+            src="/brand/fayette-county-habitat-logo-2clr.avif"
+            alt="Fayette County Habitat for Humanity"
+            width={562}
+            height={190}
+            priority
+          />
         </Link>
         <nav aria-label="Public navigation" className="hidden sm:block">
           {links}

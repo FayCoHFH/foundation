@@ -11,6 +11,10 @@
   }
 
   body {
+    --habitat-font-sans:
+      var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+    --habitat-font-serif:
+      var(--font-zilla-slab), Georgia, "Times New Roman", ui-serif, serif;
     min-height: 100vh;
     background: var(--background);
     color: var(--foreground);
@@ -111,6 +115,12 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.site-wordmark-logo {
+  display: block;
+  width: min(14rem, 22vw);
+  height: auto;
 }
 
 .site-nav-links {
@@ -299,47 +309,79 @@
   color: var(--habitat-blue);
 }
 
-.public-workshop-grid {
-  display: grid;
+.public-hero-structure {
+  position: relative;
   min-height: 24rem;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 0.75rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--deep-blue);
   background: var(--deep-blue);
-  padding: 0.75rem;
 }
 
-.public-workshop-grid > div {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.4rem;
-}
-
-.public-workshop-grid > div:first-child {
+.public-hero-structure::before {
+  position: absolute;
+  inset: 8% 7% auto;
+  z-index: -1;
+  height: 24%;
   background: var(--habitat-blue);
-  color: var(--clean-white);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  content: "";
 }
 
-.public-workshop-grid > div:last-child {
-  background: var(--workshop-green);
-  color: var(--clean-white);
+.public-hero-structure::after {
+  position: absolute;
+  inset: 30% 7% 7%;
+  z-index: -1;
+  border: 1rem solid var(--workshop-green);
+  border-top-width: 0.7rem;
+  background: var(--habitat-blue);
+  content: "";
 }
 
-.public-workshop-grid strong {
-  font-family: var(--habitat-font-serif);
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 500;
-  line-height: 0.95;
+.public-hero-structure-frame {
+  position: absolute;
+  inset: 35% 19% 13%;
+  border: 0.7rem solid var(--clean-white);
+  border-bottom-width: 1rem;
+  opacity: 0.92;
 }
 
-.public-workshop-grid span {
-  max-width: 12rem;
-  border-top: 1px solid rgb(255 255 255 / 65%);
-  padding-top: 0.75rem;
-  font-size: 0.82rem;
-  font-weight: 650;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+.public-hero-structure-frame::before,
+.public-hero-structure-frame::after {
+  position: absolute;
+  background: var(--clean-white);
+  content: "";
+}
+
+.public-hero-structure-frame::before {
+  inset: 0 50%;
+  width: 0.7rem;
+  transform: translateX(-50%);
+}
+
+.public-hero-structure-frame::after {
+  inset: 50% 0;
+  height: 0.7rem;
+  transform: translateY(-50%);
+}
+
+.public-hero-structure-post {
+  position: absolute;
+  right: 9%;
+  bottom: 7%;
+  width: 0.8rem;
+  height: 28%;
+  background: var(--texas-clay);
+}
+
+.public-hero-structure-post::after {
+  position: absolute;
+  right: -3.2rem;
+  bottom: 0;
+  width: 4rem;
+  height: 0.8rem;
+  background: var(--texas-clay);
+  content: "";
 }
 
 .public-action-secondary {
@@ -411,15 +453,13 @@
 
 @media (max-width: 639px) {
   .site-header-inner {
+    gap: 0.75rem;
     min-height: 4.8rem;
+    padding-inline: 1rem;
   }
 
-  .site-wordmark-copy {
-    font-size: 0.85rem;
-  }
-
-  .site-wordmark-copy span:last-child {
-    font-size: 0.66rem;
+  .site-wordmark-logo {
+    width: 10.5rem;
   }
 
   .public-page-header-inner {
@@ -432,17 +472,8 @@
     padding-bottom: 4rem;
   }
 
-  .public-workshop-grid {
-    min-height: 18rem;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .public-workshop-grid > div {
-    padding: 1rem;
-  }
-
-  .public-workshop-grid strong {
-    font-size: 2rem;
+  .public-hero-structure {
+    min-height: 19rem;
   }
 
   .public-help-band,

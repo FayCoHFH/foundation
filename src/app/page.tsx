@@ -81,7 +81,7 @@ export default async function HomePage() {
       <main id="main-content" tabIndex={-1} className="public-page-main flex-1">
         <SiteNoticeRegion targetArea={SiteNoticeTargetArea.HOMEPAGE} />
 
-        <section className="border-limestone bg-warm-paper border-b">
+        <section className="border-limestone bg-clean-white border-b">
           <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-12 lg:px-12 lg:py-20">
             <div className="editorial-arrival flex flex-col justify-center">
               <p className="public-kicker">
@@ -114,19 +114,9 @@ export default async function HomePage() {
                 )}
               </div>
             </div>
-            <div
-              className="public-workshop-grid"
-              role="img"
-              aria-label="A structural documentary image space for approved Habitat photography"
-            >
-              <div>
-                <strong>Place</strong>
-                <span>Fayette County</span>
-              </div>
-              <div>
-                <strong>Work</strong>
-                <span>Homes, repairs, neighbors</span>
-              </div>
+            <div className="public-hero-structure" aria-hidden="true">
+              <span className="public-hero-structure-frame" />
+              <span className="public-hero-structure-post" />
             </div>
           </div>
         </section>
