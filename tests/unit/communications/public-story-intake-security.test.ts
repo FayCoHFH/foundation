@@ -56,6 +56,7 @@ function form(token: string, overrides: Record<string, string> = {}) {
   );
   value.set("contactConsent", "true");
   value.set("privacyNoticeVersion", "public-story-v1");
+  value.set("privacyNoticeAcknowledged", "true");
   value.set("editorialReviewAcknowledged", "true");
   value.set("sensitiveDataWarningAcknowledged", "true");
   for (const [key, entry] of Object.entries(overrides)) value.set(key, entry);

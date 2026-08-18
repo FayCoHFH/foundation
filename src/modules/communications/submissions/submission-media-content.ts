@@ -14,6 +14,8 @@ export const SUBMISSION_MEDIA_MAX_WIDTH = 12_000;
 export const SUBMISSION_MEDIA_MAX_HEIGHT = 12_000;
 export const SUBMISSION_MEDIA_MAX_PIXELS = 80_000_000;
 export const SUBMISSION_MEDIA_REVIEW_DERIVATIVE_MAX_EDGE = 2_400;
+export const PUBLIC_STORY_SUBMISSION_RIGHTS_DECLARATION_VERSION =
+  "public-story-image-rights-v1";
 
 export const submissionMediaDetectedFormats = [
   "JPEG",

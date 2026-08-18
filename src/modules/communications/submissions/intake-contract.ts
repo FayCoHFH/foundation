@@ -43,7 +43,7 @@ export type PublicStoryIntakeRequestContext = Readonly<{
 }>;
 
 export const PUBLIC_STORY_INTAKE_SUCCESS_MESSAGE =
-  "Thanks for sharing your story.";
+  "Thank you. Your story has been received for confidential review.";
 export const PUBLIC_STORY_INTAKE_GENERIC_MESSAGE =
   "Story submissions are not available right now.";
 export const PUBLIC_STORY_INTAKE_VALIDATION_MESSAGE =

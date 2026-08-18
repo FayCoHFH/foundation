@@ -27,6 +27,13 @@ Communications owns public editorial projection and selected public operational 
 
 There is no V1 page builder, generic content table, generic tags, public News intake, social-post automation, AI moderation, calendar-only entity, communications-package entity, subscriber database, or email sender/provider commitment.
 
+The C6B-4A public Share Your Story route is a thin, feature-gated confidential
+intake surface. It may create only a `PublicStorySubmission` and private
+attempt-scoped submission-media rows. It never creates a Story, Publication,
+public projection, MediaAsset, or public URL; final ready-media association is
+atomic with intake receipt. The route remains disabled by default and has no
+global navigation entry while disabled.
+
 ## 2. Typed editorial aggregates
 
 `Publication` is a narrow shared spine, not a user-facing content type. A publication has exactly one typed root (`Story` or `NewsItem`) and a closed `kind` discriminator. Its revision, approval, scheduling, snapshot, workflow, quality, authorship, media, SEO, and relation records remain type-aware through the root and validation service.

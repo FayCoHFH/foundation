@@ -125,3 +125,13 @@ A hold suspends only the relevant scheduled deletion, has an authorized owner an
 ## Review cadence
 
 Review this policy before launching Communications uploads, commerce, analytics/newsletter integration, private Grant Administration, or applicant intake; after a material vendor/data-flow change; after an incident; and at least annually once production data is collected.
+# C6B-4A public Story intake note
+
+Share Your Story submissions and their optional upload attempts are
+Confidential intake data. The public form explains the administrative review
+purpose, contact possibility, lack of publication guarantee, sensitive-data
+warning, and separate image rights/likeness choices before receipt. Raw
+recovery material is hashed at rest; image originals and private derivatives
+remain in the quarantine boundary. Expired attempts are subject to the
+existing 24-hour cleanup path. C6B-4A does not create public assets or a Story;
+conversion and retention disposition remain later authorized work under G-07.

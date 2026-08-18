@@ -15,12 +15,17 @@ const allowedFields = new Set([
   "storyText",
   "contactConsent",
   "privacyNoticeVersion",
+  "privacyNoticeAcknowledged",
   "editorialReviewAcknowledged",
   "sensitiveDataWarningAcknowledged",
   "publicationInterest",
   "involvesMinor",
   "involvesHomeownerOrApplicant",
   "containsSensitivePersonalCircumstances",
+  "mediaRecoveryToken",
+  "mediaAttemptVersion",
+  "rightsDeclarationAccepted",
+  "submitterLikenessConsentAccepted",
 ]);
 
 type ParsedForm = Readonly<{
@@ -33,12 +38,17 @@ type ParsedForm = Readonly<{
   storyText: string;
   contactConsent: boolean;
   privacyNoticeVersion: string;
+  privacyNoticeAcknowledged: boolean;
   editorialReviewAcknowledged: boolean;
   sensitiveDataWarningAcknowledged: boolean;
   publicationInterest: boolean | null;
   involvesMinor: boolean;
   involvesHomeownerOrApplicant: boolean;
   containsSensitivePersonalCircumstances: boolean;
+  mediaRecoveryToken: string | null;
+  mediaAttemptVersion: number | null;
+  rightsDeclarationAccepted: boolean | null;
+  submitterLikenessConsentAccepted: boolean | null;
 }>;
 
 export type ParsedIntakeForm =
@@ -109,7 +119,24 @@ export function parsePublicStorySubmissionForm(
 
   const suggestedTitle = optionalScalar(formData, "suggestedTitle");
   const publicationInterest = optionalScalar(formData, "publicationInterest");
-  if (!suggestedTitle.ok || !publicationInterest.ok) {
+  const mediaRecoveryToken = optionalScalar(formData, "mediaRecoveryToken");
+  const mediaAttemptVersion = optionalScalar(formData, "mediaAttemptVersion");
+  const rightsDeclarationAccepted = optionalScalar(
+    formData,
+    "rightsDeclarationAccepted",
+  );
+  const submitterLikenessConsentAccepted = optionalScalar(
+    formData,
+    "submitterLikenessConsentAccepted",
+  );
+  if (
+    !suggestedTitle.ok ||
+    !publicationInterest.ok ||
+    !mediaRecoveryToken.ok ||
+    !mediaAttemptVersion.ok ||
+    !rightsDeclarationAccepted.ok ||
+    !submitterLikenessConsentAccepted.ok
+  ) {
     return { kind: "security", reason: "shape" };
   }
   if (
@@ -142,6 +169,11 @@ export function parsePublicStorySubmissionForm(
       "containsSensitivePersonalCircumstances",
       false,
     ),
+    privacyNoticeAcknowledged: booleanScalar(
+      formData,
+      "privacyNoticeAcknowledged",
+      true,
+    ),
   };
   if (
     flags.contactConsent === null ||
@@ -149,7 +181,8 @@ export function parsePublicStorySubmissionForm(
     flags.sensitiveDataWarningAcknowledged === null ||
     flags.involvesMinor === null ||
     flags.involvesHomeownerOrApplicant === null ||
-    flags.containsSensitivePersonalCircumstances === null
+    flags.containsSensitivePersonalCircumstances === null ||
+    flags.privacyNoticeAcknowledged === null
   ) {
     return { kind: "security", reason: "shape" };
   }
@@ -161,6 +194,35 @@ export function parsePublicStorySubmissionForm(
     storyText: scalarValues(formData, "storyText"),
     privacyNoticeVersion: scalarValues(formData, "privacyNoticeVersion"),
   };
+
+  const optionalBooleanValue = (value: string | null) => {
+    if (value === null) return null;
+    if (value === "true" || value === "on") return true;
+    if (value === "false") return false;
+    return undefined;
+  };
+  const parsedRights = optionalBooleanValue(rightsDeclarationAccepted.value);
+  const parsedLikeness = optionalBooleanValue(
+    submitterLikenessConsentAccepted.value,
+  );
+  const parsedAttemptVersion =
+    mediaAttemptVersion.value === null
+      ? null
+      : Number(mediaAttemptVersion.value);
+  if (
+    parsedRights === undefined ||
+    parsedLikeness === undefined ||
+    (mediaRecoveryToken.value !== null) !==
+      (mediaAttemptVersion.value !== null) ||
+    (mediaRecoveryToken.value !== null &&
+      mediaRecoveryToken.value.length > PUBLIC_STORY_INTAKE_MAX_TOKEN_LENGTH) ||
+    (mediaAttemptVersion.value !== null &&
+      (parsedAttemptVersion === null ||
+        !Number.isSafeInteger(parsedAttemptVersion) ||
+        parsedAttemptVersion <= 0))
+  ) {
+    return { kind: "security", reason: "shape" };
+  }
 
   return {
     kind: "ok",
@@ -179,6 +241,10 @@ export function parsePublicStorySubmissionForm(
             : publicationInterest.value === "false"
               ? false
               : null,
+      mediaRecoveryToken: mediaRecoveryToken.value,
+      mediaAttemptVersion: parsedAttemptVersion,
+      rightsDeclarationAccepted: parsedRights,
+      submitterLikenessConsentAccepted: parsedLikeness,
     } as ParsedForm,
   };
 }

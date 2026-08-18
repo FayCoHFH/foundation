@@ -265,3 +265,21 @@ Applicant intake and private Grant Administration additionally require a dedicat
 - [Next.js authentication/authorization guidance](https://nextjs.org/docs/app/guides/authentication)
 - [Better Auth security reference](https://better-auth.com/docs/reference/security)
 - [Stripe webhook security and delivery behavior](https://docs.stripe.com/webhooks)
+# C6B-4A public intake controls
+
+The public `/share-your-story` form is disabled by default and fails closed
+without the signed intake secret/privacy configuration. Enabled media requests
+are same-origin and Fetch-Metadata checked, use short-lived opaque recovery and
+upload authorizations, bind each authorization to one attempt/media/mime/size,
+and write only to private quarantine. The browser receives safe DTOs only;
+storage keys, hashes, tokens, filenames used for storage, decoder diagnostics,
+and raw errors are not returned.
+
+`sessionStorage` contains only the opaque recovery token and transient UI
+state. No submission content, contact data, declaration values, checksums, or
+credentials are persisted in browser storage. The server independently checks
+ownership, optimistic versions, 10-image/10MB/60MB limits, duplicate bytes,
+secure processing, READY-only finalization, conditional image rights
+declaration, replay protection, and rate/security controls. No CAPTCHA, email,
+third-party uploader, public object, Story conversion, or admin authorization
+is introduced by C6B-4A.

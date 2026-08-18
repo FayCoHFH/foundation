@@ -16,12 +16,14 @@ Current Communications routes include `/`, `/stories/[slug]`, `/news`, and
 `/news/[slug]`; authorized curation is available at
 `/admin/communications`, `/admin/communications/queue`, and
 `/admin/communications/homepage`, and the capability-protected Story
-Submission inbox at `/admin/communications/submissions`. The C4 placement
+Submission inbox at `/admin/communications/submissions`. The gated public
+`/share-your-story` route is present but unavailable by default. The C4 placement
 surface is limited to its implemented Story/News keys and does not add
 Project/Campaign placements.
 
-The submission inbox is an authorized confidential review surface; no public
-Story Submission route or form is enabled. Browser and accessibility evidence
+The submission inbox is an authorized confidential review surface; the public
+form remains disabled until its approved configuration is explicitly enabled.
+Browser and accessibility evidence
 is recorded in the [C6B-2B validation record](docs/development/c6b2b-public-story-submission-inbox-validation.md),
 with policy alignment and controlled spam restoration documented in the
 [C6B-2C record](docs/development/c6b2c-submission-policy-alignment.md).

@@ -10,6 +10,11 @@ import { logger } from "@/platform/logging/logger";
 
 import { receivePublicStorySubmissionInTransaction } from "./submission-service";
 import {
+  associateReadySubmissionMediaInTransaction,
+  validateFinalizableSubmissionMediaInTransaction,
+} from "./submission-media-service";
+import { PUBLIC_STORY_SUBMISSION_RIGHTS_DECLARATION_VERSION } from "./submission-media-content";
+import {
   PUBLIC_STORY_INTAKE_GENERIC_MESSAGE,
   PUBLIC_STORY_INTAKE_MIN_COMPLETION_MS,
   PUBLIC_STORY_INTAKE_SUCCESS_MESSAGE,
@@ -152,6 +157,22 @@ function formInput(
     involvesHomeownerOrApplicant: parsed.involvesHomeownerOrApplicant,
     containsSensitivePersonalCircumstances:
       parsed.containsSensitivePersonalCircumstances,
+    rightsDeclarationAccepted:
+      parsed.rightsDeclarationAccepted === true ? true : null,
+    rightsDeclarationVersion:
+      parsed.rightsDeclarationAccepted === true
+        ? PUBLIC_STORY_SUBMISSION_RIGHTS_DECLARATION_VERSION
+        : null,
+    rightsDeclarationAcceptedAt:
+      parsed.rightsDeclarationAccepted === true ? now : null,
+    submitterLikenessConsentAccepted:
+      parsed.submitterLikenessConsentAccepted === true ? true : null,
+    submitterLikenessConsentVersion:
+      parsed.submitterLikenessConsentAccepted === true
+        ? PUBLIC_STORY_SUBMISSION_RIGHTS_DECLARATION_VERSION
+        : null,
+    submitterLikenessConsentAcceptedAt:
+      parsed.submitterLikenessConsentAccepted === true ? now : null,
   };
 }
 
@@ -163,6 +184,11 @@ async function consumeToken(
   now: Date,
   auditWriter?: SubmissionAuditWriter,
   tokenUseWriter?: PublicStoryIntakeDependencies["tokenUseWriter"],
+  media?: {
+    readonly recoveryToken: string;
+    readonly expectedAttemptVersion: number;
+    readonly rightsDeclarationAccepted: boolean;
+  },
 ) {
   return prisma.$transaction(async (transaction) => {
     const inserted = tokenUseWriter
@@ -178,11 +204,31 @@ async function consumeToken(
       return outcome("DUPLICATE_ACCEPTED", PUBLIC_STORY_INTAKE_SUCCESS_MESSAGE);
     }
 
+    if (media) {
+      const finalizable = await validateFinalizableSubmissionMediaInTransaction(
+        transaction,
+        media,
+        now,
+      );
+      if (finalizable.mediaCount > 0 && !media.rightsDeclarationAccepted) {
+        throw new ValidationError(
+          "Image rights declaration is required when images are submitted.",
+        );
+      }
+    }
+
     const internal = await receivePublicStorySubmissionInTransaction(
       transaction,
       input,
       { now: () => now, ...(auditWriter ? { auditWriter } : {}) },
     );
+    if (media) {
+      await associateReadySubmissionMediaInTransaction(
+        transaction,
+        { ...media, submissionId: internal.submissionId },
+        now,
+      );
+    }
     await transaction.publicStoryIntakeTokenUse.update({
       where: { tokenHash },
       data: { submissionId: internal.submissionId },
@@ -267,6 +313,7 @@ export async function submitPublicStorySubmission(
     if (parsed.value.privacyNoticeVersion !== token.privacyNoticeVersion) {
       return rejectedOutcome();
     }
+    if (!parsed.value.privacyNoticeAcknowledged) return rejectedOutcome();
     if (parsed.value.honeypot.trim() !== "") return rejectedOutcome();
     if (!completionTimeAllowsSubmission(token, now)) return rejectedOutcome();
     if (
@@ -281,7 +328,7 @@ export async function submitPublicStorySubmission(
       validateReceivePublicStorySubmissionInput(candidate);
     } catch (error) {
       if (error instanceof ValidationError) return validationOutcome(error);
-      return rejectedOutcome();
+      throw error;
     }
 
     const emailAllowed = await database.$transaction((transaction) =>
@@ -304,15 +351,28 @@ export async function submitPublicStorySubmission(
       return outcome("RATE_LIMITED", PUBLIC_STORY_INTAKE_GENERIC_MESSAGE);
     }
 
-    return await consumeToken(
-      database,
-      hashPublicStorySubmissionToken(parsed.value.formToken),
-      token.expiresAt,
-      candidate,
-      now,
-      dependencies.auditWriter,
-      dependencies.tokenUseWriter,
-    );
+    try {
+      return await consumeToken(
+        database,
+        hashPublicStorySubmissionToken(parsed.value.formToken),
+        token.expiresAt,
+        candidate,
+        now,
+        dependencies.auditWriter,
+        dependencies.tokenUseWriter,
+        parsed.value.mediaRecoveryToken
+          ? {
+              recoveryToken: parsed.value.mediaRecoveryToken,
+              expectedAttemptVersion: parsed.value.mediaAttemptVersion!,
+              rightsDeclarationAccepted:
+                parsed.value.rightsDeclarationAccepted === true,
+            }
+          : undefined,
+      );
+    } catch (error) {
+      if (error instanceof ValidationError) return validationOutcome(error);
+      throw error;
+    }
   } catch (error) {
     logger.error("public_story_submission.intake.unexpected_error", {
       correlationId,

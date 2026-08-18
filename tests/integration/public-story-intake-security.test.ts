@@ -66,6 +66,7 @@ function formFor(
   );
   form.set("contactConsent", "true");
   form.set("privacyNoticeVersion", "public-story-v1");
+  form.set("privacyNoticeAcknowledged", "true");
   form.set("editorialReviewAcknowledged", "true");
   form.set("sensitiveDataWarningAcknowledged", "true");
   for (const [key, value] of Object.entries(overrides)) form.set(key, value);
@@ -146,7 +147,8 @@ describe("C6B-1B Public Story Submission intake security PostgreSQL boundary", (
     const result = await submit("ValidOne");
     expect(result).toEqual({
       code: "ACCEPTED",
-      message: "Thanks for sharing your story.",
+      message:
+        "Thank you. Your story has been received for confidential review.",
     });
     const row = await prisma.publicStorySubmission.findFirstOrThrow({
       where: { submitterName: "C6B1B ValidOne" },
@@ -395,7 +397,8 @@ describe("C6B-1B Public Story Submission intake security PostgreSQL boundary", (
     expect(first.code).toBe("ACCEPTED");
     expect(second).toEqual({
       code: "DUPLICATE_ACCEPTED",
-      message: "Thanks for sharing your story.",
+      message:
+        "Thank you. Your story has been received for confidential review.",
     });
     expect(
       await prisma.publicStorySubmission.count({

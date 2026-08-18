@@ -205,6 +205,17 @@ current source restrictions. No public form, Story conversion, or automatic
 attachment is included. G-07 remains open. The detailed record is
 [the C6B-3E Media Library promotion record](../development/c6b3e-media-promotion-rights-integration.md).
 
+**C6B-4A — Public Share Your Story intake form and private image upload:
+complete locally on 2026-08-17.** The feature-gated public route, disabled safe
+state, privacy/acknowledgment copy, text intake, optional immediate private
+upload, safe processing statuses, same-browser opaque recovery, per-image
+metadata/declarations, rights/likeness controls, reorder/remove behavior,
+READY-only final gate, atomic intake/media association, focused tests, and
+PostgreSQL regression are documented in
+[the C6B-4A delivery record](../development/c6b4a-public-story-submission-form.md).
+Browser, accessibility, responsive, and visual validation remain C6B-4B work;
+G-07 still gates production collection and final policy approval.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

@@ -41,7 +41,8 @@ import {
   verifySubmissionMediaUploadAuthorization,
 } from "./submission-media-upload-auth";
 
-type Transaction = Prisma.TransactionClient;
+export type SubmissionMediaTransaction = Prisma.TransactionClient;
+type Transaction = SubmissionMediaTransaction;
 type SubmissionReviewActor = Pick<
   AdminPrincipal,
   "adminUserId" | "capabilities"
@@ -419,75 +420,91 @@ export async function issuePublicStorySubmissionMediaUpload(
   validateSubmissionMediaSensitivity(input.sensitivity);
   const now = nowFrom(dependencies);
   const mediaId = randomUUID();
-  const result = await prisma.$transaction(
-    async (transaction) => {
-      const attempt = await findAttemptByRecoveryToken(
-        transaction,
-        input.recoveryToken,
-      );
-      if (attempt.version !== input.expectedAttemptVersion)
-        throw new ConcurrencyError();
-      assertActiveAttempt(attempt, now);
-      const active = retainedMedia(attempt.media);
-      if (active.length >= SUBMISSION_MEDIA_MAX_ITEMS) {
-        throw new ValidationError(
-          "A submission attempt may retain no more than 10 images.",
+  try {
+    const result = (await prisma.$transaction(
+      async (transaction) => {
+        const attempt = await findAttemptByRecoveryToken(
+          transaction,
+          input.recoveryToken,
         );
-      }
-      const boundAuthorization = issueSubmissionMediaUploadAuthorization({
-        secret: input.uploadAuthorizationSecret,
-        attemptId: attempt.id,
-        mediaId,
-        mimeType: input.declaredMimeType,
-        now,
-      });
-      const bound = verifySubmissionMediaUploadAuthorization(
-        boundAuthorization.token,
-        {
+        if (attempt.version !== input.expectedAttemptVersion)
+          throw new ConcurrencyError();
+        assertActiveAttempt(attempt, now);
+        const active = retainedMedia(attempt.media);
+        if (active.length >= SUBMISSION_MEDIA_MAX_ITEMS) {
+          throw new ValidationError(
+            "A submission attempt may retain no more than 10 images.",
+          );
+        }
+        const boundAuthorization = issueSubmissionMediaUploadAuthorization({
           secret: input.uploadAuthorizationSecret,
-          now,
-        },
-      );
-      if (!bound)
-        throw new ValidationError("Upload authorization could not be issued.");
-      const created = await transaction.publicStorySubmissionMedia.create({
-        data: {
-          id: mediaId,
           attemptId: attempt.id,
-          originalFilename: validateOriginalFilename(input.originalFilename),
-          declaredMimeType: input.declaredMimeType,
-          ordinal: active.length + 1,
-          description: validateSubmissionMediaDescription(input.description),
-          suggestedPhotoCredit: validateSuggestedPhotoCredit(
-            input.suggestedPhotoCredit,
-          ),
-          ...input.sensitivity,
-          quarantineStorageKey: (
-            dependencies.createStorageKey ??
-            (() => createOpaqueObjectKey("submission-quarantine"))
-          )(),
-          uploadAuthorizationNonceHash: hash(bound.nonce),
-        },
-        select: mediaSelect,
-      });
-      await transaction.publicStorySubmissionAttempt.update({
-        where: { id_version: { id: attempt.id, version: attempt.version } },
-        data: { version: { increment: 1 } },
-      });
-      return {
-        media: created,
-        authorization: boundAuthorization,
-        attemptVersion: attempt.version + 1,
-      };
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
-  );
-  return {
-    media: recoveryItem(result.media),
-    uploadAuthorization: result.authorization.token,
-    uploadAuthorizationExpiresAt: result.authorization.expiresAt,
-    attemptVersion: result.attemptVersion,
-  };
+          mediaId,
+          mimeType: input.declaredMimeType,
+          now,
+        });
+        const bound = verifySubmissionMediaUploadAuthorization(
+          boundAuthorization.token,
+          {
+            secret: input.uploadAuthorizationSecret,
+            now,
+          },
+        );
+        if (!bound)
+          throw new ValidationError(
+            "Upload authorization could not be issued.",
+          );
+        const created = await transaction.publicStorySubmissionMedia.create({
+          data: {
+            id: mediaId,
+            attemptId: attempt.id,
+            originalFilename: validateOriginalFilename(input.originalFilename),
+            declaredMimeType: input.declaredMimeType,
+            ordinal: active.length + 1,
+            description: validateSubmissionMediaDescription(input.description),
+            suggestedPhotoCredit: validateSuggestedPhotoCredit(
+              input.suggestedPhotoCredit,
+            ),
+            ...input.sensitivity,
+            quarantineStorageKey: (
+              dependencies.createStorageKey ??
+              (() => createOpaqueObjectKey("submission-quarantine"))
+            )(),
+            uploadAuthorizationNonceHash: hash(bound.nonce),
+          },
+          select: mediaSelect,
+        });
+        await transaction.publicStorySubmissionAttempt.update({
+          where: { id_version: { id: attempt.id, version: attempt.version } },
+          data: { version: { increment: 1 } },
+        });
+        return {
+          media: created,
+          authorization: boundAuthorization,
+          attemptVersion: attempt.version + 1,
+        };
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    )) as {
+      media: MediaRecord;
+      authorization: { token: string; expiresAt: Date };
+      attemptVersion: number;
+    };
+    return {
+      media: recoveryItem(result.media),
+      uploadAuthorization: result.authorization.token,
+      uploadAuthorizationExpiresAt: result.authorization.expiresAt,
+      attemptVersion: result.attemptVersion,
+    };
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2034"
+    ) {
+      throw new ConcurrencyError();
+    }
+    throw error;
+  }
 }
 
 export async function uploadPublicStorySubmissionMedia(
@@ -1103,53 +1120,86 @@ export async function associateReadySubmissionMedia(
   const now = nowFrom(dependencies);
   return prisma.$transaction(
     async (transaction) => {
-      const attempt = await findAttemptByRecoveryToken(
+      return associateReadySubmissionMediaInTransaction(
         transaction,
-        input.recoveryToken,
+        input,
+        now,
       );
-      if (attempt.version !== input.expectedAttemptVersion)
-        throw new ConcurrencyError();
-      assertActiveAttempt(attempt, now);
-      const submission = await transaction.publicStorySubmission.findUnique({
-        where: { id: input.submissionId },
-        select: { id: true },
-      });
-      if (!submission)
-        throw new NotFoundError("Story submission was not found.");
-      const active = retainedMedia(attempt.media);
-      if (
-        active.some(
-          (media) => !isFinalizableSubmissionMediaStatus(media.technicalStatus),
-        )
-      ) {
-        throw new ValidationError(
-          "Only Ready images may be attached to a Story submission.",
-        );
-      }
-      await transaction.publicStorySubmissionMedia.updateMany({
-        where: {
-          id: { in: active.map((media) => media.id) },
-          attemptId: attempt.id,
-        },
-        data: { submissionId: submission.id },
-      });
-      await transaction.publicStorySubmissionAttempt.update({
-        where: { id_version: { id: attempt.id, version: attempt.version } },
-        data: {
-          status: PublicStorySubmissionAttemptStatus.SUBMITTED,
-          submissionId: submission.id,
-          version: { increment: 1 },
-        },
-      });
-      return {
-        attemptId: attempt.id,
-        submissionId: submission.id,
-        mediaCount: active.length,
-        version: attempt.version + 1,
-      };
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
   );
+}
+
+export async function validateFinalizableSubmissionMediaInTransaction(
+  transaction: SubmissionMediaTransaction,
+  input: {
+    readonly recoveryToken: string;
+    readonly expectedAttemptVersion: number;
+  },
+  now: Date,
+) {
+  const attempt = await findAttemptByRecoveryToken(
+    transaction,
+    input.recoveryToken,
+  );
+  if (attempt.version !== input.expectedAttemptVersion)
+    throw new ConcurrencyError();
+  assertActiveAttempt(attempt, now);
+  const active = retainedMedia(attempt.media);
+  if (
+    active.some(
+      (media) => !isFinalizableSubmissionMediaStatus(media.technicalStatus),
+    )
+  ) {
+    throw new ValidationError(
+      "Only Ready images may be attached to a Story submission.",
+    );
+  }
+  return { attempt, mediaCount: active.length };
+}
+
+export async function associateReadySubmissionMediaInTransaction(
+  transaction: SubmissionMediaTransaction,
+  input: {
+    readonly recoveryToken: string;
+    readonly expectedAttemptVersion: number;
+    readonly submissionId: string;
+  },
+  now: Date,
+) {
+  const { attempt, mediaCount } =
+    await validateFinalizableSubmissionMediaInTransaction(
+      transaction,
+      input,
+      now,
+    );
+  const submission = await transaction.publicStorySubmission.findUnique({
+    where: { id: input.submissionId },
+    select: { id: true },
+  });
+  if (!submission) throw new NotFoundError("Story submission was not found.");
+  const active = retainedMedia(attempt.media);
+  await transaction.publicStorySubmissionMedia.updateMany({
+    where: {
+      id: { in: active.map((media) => media.id) },
+      attemptId: attempt.id,
+    },
+    data: { submissionId: submission.id },
+  });
+  await transaction.publicStorySubmissionAttempt.update({
+    where: { id_version: { id: attempt.id, version: attempt.version } },
+    data: {
+      status: PublicStorySubmissionAttemptStatus.SUBMITTED,
+      submissionId: submission.id,
+      version: { increment: 1 },
+    },
+  });
+  return {
+    attemptId: attempt.id,
+    submissionId: submission.id,
+    mediaCount,
+    version: attempt.version + 1,
+  };
 }
 
 export async function cleanupExpiredPublicStorySubmissionAttempts(
