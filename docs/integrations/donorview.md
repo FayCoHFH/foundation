@@ -31,7 +31,7 @@ The first integration may be intentionally manual: an authorized staff member cr
 | --- | --- | --- | --- | --- | --- |
 | Hosted donation pages | Documented | DonorView documents one-time, recurring, select-a-fund, multi-option, peer-to-peer, and advanced donation-page models with hosted `dvforms.net` URLs | Primary Give and Campaign destination | Yes, for this account and production configuration | Verify branding, accessibility, analytics, custom domain, return behavior, and URL longevity |
 | Recurring giving | Documented | Recurring donation/pledge page allows amount, frequency, and day selection | DonorView owns recurring agreement and receipts | Yes | Do not mirror payment schedule locally |
-| Targeted designation | Documented in product concepts; exact desired workflow unconfirmed | `For`, `Fund`, `Event`, `Appeal`, `Location`, and Fundraising Goal Category are configurable; select-a-fund and fixed-purpose pages are documented | Create a destination targeted to one Habitat Campaign/project/program | **Yes—priority question** | Establish whether a fixed designation can be hidden/preselected and how quickly staff can create it |
+| Targeted designation | **Documented for page-level defaults; account configuration still requires confirmation** | Advanced and Simple donation-page documentation describes default `For`, `Fund`, `Event`, `Appeal`, Gift Category, and Fundraising Goal Category settings; donors may be offered a designation picker only when staff enables it | Create a destination targeted to one Habitat Campaign/project/program | **Yes** | Confirm the account's designation lists, enabled modules, and whether fixed values are hidden from donors in the production configuration |
 | Donation page embed/widget | Partially documented | Goal-progress widgets are documented for use on organization websites; hosted page URLs are documented | Prefer hosted redirect unless an approved accessible embed is demonstrably better | Yes | Confirm official embed code, CSP/frame policy, responsive/accessibility behavior, cookie/analytics disclosures; do not scrape or frame an unsupported URL |
 | Constituent CRM | Documented | Product features describe centralized donor records, profiles, segmentation, interaction history | Donor/constituent system of record | Confirm subscribed modules | Do not create a local donor profile database |
 | Gifts, pledges, tax receipts | Documented | Pricing/features list gifts, pledges, grants, tax receipts; support documentation describes online acknowledgment | Financial-development record of truth | Confirm configuration/accounting workflow | Public progress needs source and as-of time |
@@ -41,7 +41,7 @@ The first integration may be intentionally manual: an authorized staff member cr
 | Event registration/ticketing | Documented | Product features and Event module describe registration, ticketing, attendance, and recurring event setup | Use where DonorView is selected for an EventEdition | Confirm ticket/payment configuration | Habitat platform owns marketing content, not registrants |
 | Forms/surveys | Documented | Survey/Form Builder with custom fields/conditional logic and auto-import is advertised | Use only where DonorView ownership fits (volunteer/constituent) | Yes | Do not use as a generic private applicant intake without a separate review |
 | Reporting/export | Documented | Analytics, custom reports, data export, PDF/PNG and Excel exports are described | Manual or supported scheduled aggregate import/reconciliation | Yes for exact fields, schedule, and delivery | A CSV workflow can be valid; define external IDs and as-of semantics |
-| Goal/progress widgets | Documented | Fundraising Goal Category widgets (thermometer/donut/bar) can appear on DonorView and organization sites | Possible display source after accessibility/security review | Yes | Prefer locally presented, source-stamped aggregate if export support is safer |
+| Goal/progress widgets | **Documented for aggregate display; no documented programmatic aggregate API** | Goal Progress widgets can display aggregate progress on an organization's website; reports support Goal Category filtering/export | Possible display source after accessibility/security review | Yes | Widget configuration can include/exclude pledges and pay-later purchases; confirm fee/refund treatment before using the value as an accounting-grade total |
 | Newsletter/email marketing | Documented at feature level | DonorView lists email marketing, constituent lists, and communication features; the live legacy signup is a DonorView form | Keep subscriber consent, suppression, and mailing-list membership in DonorView; Habitat owns newsletter editorial content | Yes, for configured sender, consent, unsubscribe, archive, and export behavior | Do not create a shadow subscriber list in the platform |
 | QuickBooks integration | Documented, with direction requiring confirmation | Marketing describes a two-way sync while detailed support material describes reviewing and exporting/posting DonorView data to QuickBooks | Keep donation-to-accounting flow outside Habitat platform | **Yes** for actual direction, objects, cadence, correction, and reconciliation | Treat the public wording difference as a live-demo acceptance item; public Campaign categories must not overwrite accounting semantics |
 | Duplicate detection and merge | Documented | DonorView documents email/name/address/birth-date matching options, potential-duplicate review, and two-record merge | DonorView data steward owns constituent matching and merge | Yes for configured rules and steward | Email is important matching data but is not a permanent cross-system identity key |
@@ -69,11 +69,11 @@ Unsupported operations return a typed “capability unavailable” result. They 
 
 ### Highest-priority Campaign question
 
-1. Can an administrator quickly create a donation page or designation for a specific Habitat Campaign/project/program?
-2. Can that destination fix or preselect `For`, `Fund`, `Event`, `Appeal`, or Goal Category so the donor cannot accidentally redirect the gift?
+1. Can an administrator quickly create a donation page or designation for a specific Habitat Campaign/project/program, and which page-level default fields are enabled for our account?
+2. Can the production configuration hide fixed `For`, `Fund`, `Event`, `Appeal`, or Goal Category values from donors, rather than exposing a designation picker?
 3. Does it provide a durable hosted URL and/or officially supported embed code?
-4. Can goal/progress be scoped to that destination, and what transactions contribute to it?
-5. How are refunds, offline gifts, matching gifts, recurring gifts, and fees reflected in progress?
+4. Can Goal Progress be scoped to that destination or Goal Category, and what transactions contribute to it?
+5. How are refunds, matching gifts, recurring gifts, and processing fees reflected in progress? Confirm the account's pledge and pay-later settings.
 
 ### Technical integration
 
@@ -120,10 +120,14 @@ confirmation.
 
 Documented page controls include one-time or recurring giving, preset amounts,
 processing-fee choices, acknowledgments, branding, custom fields, and page
-progress display. Payment methods and recurring behavior are account/page
-configuration concerns; the public feature material lists card, ACH, PayPal,
-Apple Pay, Google Pay, and other payment options, while support material notes
-that Apple Pay is unavailable when a donation page is embedded.
+progress display. The Advanced Designer documents page-level defaults for
+`For`, `Fund`, `Event`, `Appeal`, Gift Category, and Fundraising Goal Category;
+the Simple Donation Page documentation also supports assigning a `For`, `Fund`,
+Appeal, or `Event` to each donation. A donor designation picker is an optional
+page control, not a requirement. Payment methods and recurring behavior are
+account/page configuration concerns; the public feature material lists card,
+ACH, PayPal, Apple Pay, Google Pay, and other payment options, while support
+material notes that Apple Pay is unavailable when a donation page is embedded.
 
 ### Donation attribution and revenue semantics
 
@@ -142,35 +146,49 @@ Campaign field:
 The recommended starting pattern is one targeted donation page per major
 fundraising Campaign, with a fixed/default Appeal and any required For/Fund or
 Fundraising Goal Category set by DonorView staff. A page may feed a broader
-Fund while using a Campaign-specific Appeal for attribution. Whether donors can
-see or change any picklist, whether a fixed value can be hidden, and how
-recurring future installments retain attribution are priority support questions.
+Fund while using a Campaign-specific Appeal for attribution. DonorView's public
+documentation establishes the page-level default mechanism; the exact account
+configuration and whether fixed values are hidden from donors still require a
+production-account check.
 
 Recurring donations are documented as pledges and can be perpetual or have a
-fixed number of payments. DonorView documents separate thank-you handling for
-the initial and subsequent recurring payments, but the reviewed public material
-does not establish the exact future-installment attribution contract. Do not
-assume that a local Campaign record can reconcile recurring installments.
+fixed number of payments. DonorView's pledge documentation states that the
+pledge's Gift Categories, `For`, `Fund`, `Event`, `Appeal`, Location, and
+Fundraising Goal Category are copied to all future pledge payments. This
+supports campaign attribution continuity inside DonorView, but it does not
+authorize local replication of the recurring schedule or installments.
 
 ### Fundraising progress
 
 DonorView documents Goal Progress widgets using a Goal Category, goal amount or
 quantity, dates, and optional inclusion of pledges or pay-later transactions.
 The same Goal Category can combine transactions from multiple pages,
-activities, events, auctions, and manual entries. DonorView supplies generated
-HTML for widgets, and reports can filter/export transactions by revenue
-categories.
+activities, events, auctions, and manual entries. Offline/manual gifts can be
+assigned to the same Goal Category. DonorView supplies generated HTML for
+widgets, and reports can filter/export transactions by revenue categories.
+
+The widget's inclusion settings are material: pledges and pay-later purchases
+can be included or excluded, while recurring installments inherit the original
+Goal Category as pledge payments. Processing-fee and refund effects on the
+displayed total are not established by the reviewed public documentation and
+must be confirmed with DonorView before treating the widget as an accounting
+or cash-raised figure.
 
 This is evidence that DonorView can calculate and display aggregate progress;
-it is not evidence of a supported machine-readable aggregate API, webhook, or
-scheduled feed to Habitat. The current Habitat Campaign `goalAmountCents` and
-`progressAmountCents` therefore remain editorial, source-stamped by staff when
-appropriate, and non-authoritative. Do not scrape a widget or public page.
+the widget is the only clearly documented supported automatic public display
+mechanism found in this research. It is not evidence of a supported
+machine-readable aggregate API, webhook, or scheduled feed to Habitat. The
+current Habitat Campaign `goalAmountCents` and `progressAmountCents` therefore
+remain editorial, source-stamped by staff when appropriate, and
+non-authoritative. Do not scrape a widget or public page.
 
 An aggregate sync becomes a valid future option only after DonorView confirms a
 supported export/API/report delivery with totals, as-of time, inclusion rules,
 refund treatment, pledge treatment, fees, and a stable Campaign/Goal Category
-reference. Until then, retain manual progress.
+reference. A Goal Progress widget may be evaluated separately as a donor-facing
+presentation option after accessibility, privacy, mobile, and content-accuracy
+review; it does not create a local data integration. Until either path is
+approved, retain manual progress.
 
 ### API and webhook findings
 
@@ -194,6 +212,15 @@ another DonorView event, which is not evidence of a general external return
 contract. Treat return-to-Habitat as unresolved. The first flow should use the
 external page's own confirmation and a normal Habitat-origin link back when the
 vendor/account supports it.
+
+### Hosted URL lifecycle
+
+Each page receives a unique generated URL that is not editable. Editing an
+existing page appears to preserve that page's URL, but the reviewed public
+material does not make URL persistence an explicit contractual guarantee.
+Copying a donation page creates a distinct page and must be treated as creating
+a new URL. Habitat should store and verify the exact URL for the approved page
+instead of assuming that a copied page remains a drop-in replacement.
 
 ### Hosted page, branding, and domain findings
 
@@ -242,6 +269,21 @@ appear in Volunteer Applications, volunteer events populate registrations and
 attendance, and the Scheduler manages activities and shifts. The Habitat
 platform should not create the volunteer profile, application, registration,
 attendance, or hours record.
+
+For volunteer applications, DonorView documents constituent matching through
+identity fields and an optional Identity Verification flow. Exact-match rules
+can associate a submission with an existing constituent, but DonorView does
+not guarantee duplicate-free intake; account settings and routine duplicate
+review/merge remain part of the DonorView data-steward workflow. Habitat must
+not implement its own cross-system identity matching or copy application
+contents locally.
+
+No general DonorView sandbox or non-production payment/event-registration
+environment is documented. DonorView's documented test-email behavior for
+Surveys/Forms is limited and does not establish a safe test mode for donations,
+recurring payments, pledges, refunds, or Volunteer Events. Treat those flows
+as production-recording unless DonorView support confirms an account-specific
+test facility.
 
 ## Project, Campaign, and DonorView mapping
 
@@ -452,11 +494,26 @@ start Option C based on undocumented browser behavior.
 - [Publish a donation page](https://support.donorview.com/support/solutions/articles/9000027398-how-do-i-publish-my-donation-page-)
 - [Sharing DonorView pages and links](https://support.donorview.com/support/solutions/articles/9000239504-sharing-donorview-pages-and-links)
 - [Advanced donation page designer](https://support.donorview.com/support/solutions/articles/9000239294-using-the-advanced-donation-page-designer)
+- [Advanced donation page designer: page designer](https://support.donorview.com/support/solutions/articles/9000239294-advanced-donation-page-page-designer)
+- [Simple donation page setup](https://support.donorview.com/support/solutions/articles/9000027376-what-are-the-steps-to-set-up-an-simple-donation-page-)
 - [Gift fields: For, Fund, Event, Appeal, and goal category](https://support.donorview.com/support/solutions/articles/9000026782-how-do-i-enter-a-donation-or-general-gift-)
+- [For, Fund, Event, and Appeal definitions](https://support.donorview.com/support/solutions/articles/9000217633-what-is-the-difference-between-for-fund-event-and-appeal-)
+- [Fundraising Goal Category](https://support.donorview.com/support/solutions/articles/9000217634-what-is-the-fundraising-goal-category-)
+- [Pledge attribution and future pledge payments](https://support.donorview.com/support/solutions/articles/9000026894-how-do-i-add-a-pledge-)
+- [Pledge payment entry](https://support.donorview.com/support/solutions/articles/9000027352-how-do-i-enter-a-pledge-payment-)
+- [Processing fees](https://support.donorview.com/support/solutions/articles/9000190361-where-can-i-see-processing-fees-)
+- [Advanced page preview and publish](https://support.donorview.com/support/solutions/articles/9000278162-advanced-page-designer-preview-publish-tab)
 - [Standalone fundraising graphic](https://support.donorview.com/support/solutions/articles/9000210672-can-i-have-a-stand-alone-fundraising-graphic-)
 - [Fundraising reports](https://support.donorview.com/support/solutions/articles/9000258780-fundraising-reports)
 - [Volunteer module overview](https://support.donorview.com/support/solutions/articles/9000237566-volunteer-module-overview)
 - [Volunteer applications](https://support.donorview.com/support/solutions/articles/9000237567-volunteer-applications)
+- [Constituent matching](https://support.donorview.com/support/solutions/articles/9000210667-how-does-the-software-determine-if-a-constituent-already-exists-)
+- [Constituent field questions](https://support.donorview.com/support/solutions/articles/9000277272-how-do-constituent-field-questions-work-in-a-survey-or-form-)
+- [Survey/form identity verification](https://support.donorview.com/support/solutions/articles/9000027843-how-do-i-create-a-basic-survey-application-or-other-form-)
+- [Duplicate prevention and merge workflow](https://support.donorview.com/support/solutions/articles/9000247049-duplicate-record-search-criteria-prevention-identification)
+- [Single-day Volunteer Event](https://support.donorview.com/support/solutions/articles/9000237547-creating-a-single-day-or-single-occurrence-volunteer-event)
+- [Direct event registration links](https://support.donorview.com/support/solutions/articles/9000027613-how-do-i-put-the-event-registration-form-on-my-website-)
+- [Testing Surveys/Forms by test email](https://support.donorview.com/support/solutions/articles/9000277262-how-do-i-send-a-survey-or-form-to-an-email-list-)
 - [Volunteer management options](https://support.donorview.com/support/solutions/articles/9000277671-what-are-the-options-for-managing-volunteers-)
 - [Recurring and multi-day volunteer events](https://support.donorview.com/support/solutions/articles/9000237550-creating-recurring-or-multi-day-volunteer-events)
 - [Volunteer registrations](https://support.donorview.com/support/solutions/articles/9000237568-volunteer-registrations)
