@@ -8,7 +8,9 @@ const communicationsCapabilities = CAPABILITIES.filter(
     capability.startsWith("projects.") ||
     capability.startsWith("campaigns.") ||
     capability.startsWith("newsletter.") ||
-    capability.startsWith("media."),
+    capability.startsWith("media.") ||
+    capability === "integrations.donorview.read" ||
+    capability === "integrations.donorview.configure",
 );
 
 const futureSensitiveCapabilities = new Set<Capability>([
@@ -54,6 +56,7 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       "campaigns.read.draft.own",
       "campaigns.edit.own",
       "campaigns.submit_review",
+      "integrations.donorview.read",
       "media.upload",
     ],
   },
@@ -77,6 +80,7 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       "campaigns.read.draft.any",
       "campaigns.edit.any",
       "campaigns.review",
+      "integrations.donorview.read",
       "newsletter.read.draft",
       "newsletter.edit",
       "newsletter.review",

@@ -14,6 +14,7 @@ import type {
   CampaignActionInput,
   CampaignProjectCandidate,
 } from "@/modules/communications/campaigns";
+import type { DonorViewDestinationOption } from "@/modules/engagement/donorview-destination-content";
 import {
   CAMPAIGN_ACTION_LABELS,
   CAMPAIGN_ACTION_TYPES,
@@ -49,8 +50,10 @@ function human(value: string) {
 
 export function CampaignCreateForm({
   projects,
+  destinationOptions,
 }: {
   projects: readonly CampaignProjectCandidate[];
+  destinationOptions?: readonly DonorViewDestinationOption[];
 }) {
   const [state, action, pending] = useActionState(createCampaignAction, {
     status: "idle",
@@ -67,6 +70,7 @@ export function CampaignCreateForm({
       action={action}
       pending={pending}
       projects={projects}
+      destinationOptions={destinationOptions ?? []}
       submitLabel="Create Campaign draft"
     />
   );
@@ -77,11 +81,13 @@ export function CampaignEditorForm({
   expectedVersion,
   values,
   projects,
+  destinationOptions,
 }: {
   campaignId: string;
   expectedVersion: number;
   values: CampaignFormValues;
   projects: readonly CampaignProjectCandidate[];
+  destinationOptions?: readonly DonorViewDestinationOption[];
 }) {
   const [state, action, pending] = useActionState(saveCampaignRevisionAction, {
     status: "idle",
@@ -97,6 +103,7 @@ export function CampaignEditorForm({
       action={action}
       pending={pending}
       projects={projects}
+      destinationOptions={destinationOptions ?? []}
       submitLabel="Save new Campaign revision"
       campaignId={campaignId}
       expectedVersion={expectedVersion}
@@ -112,6 +119,7 @@ export function CampaignFields({
   campaignId,
   expectedVersion,
   projects,
+  destinationOptions,
 }: {
   state: CampaignActionState;
   action: (formData: FormData) => void;
@@ -120,7 +128,9 @@ export function CampaignFields({
   campaignId?: string;
   expectedVersion?: number;
   projects: readonly CampaignProjectCandidate[];
+  destinationOptions?: readonly DonorViewDestinationOption[];
 }) {
+  const availableDestinationOptions = destinationOptions ?? [];
   const [facts, setFacts] = useState(state.values.facts);
   const [projectIds, setProjectIds] = useState(state.values.projectIds);
   const [actions, setActions] = useState(state.values.actions);
@@ -133,6 +143,7 @@ export function CampaignFields({
     actionType: "LEARN_MORE",
     label: "",
     destination: "",
+    destinationId: null,
     sortOrder: 0,
   });
   const errors = state.fieldErrors ?? {};
@@ -174,7 +185,9 @@ export function CampaignFields({
   const addAction = () => {
     if (
       !actionDraft.label.trim() ||
-      !actionDraft.destination.trim() ||
+      (actionDraft.actionType === "LEARN_MORE"
+        ? !actionDraft.destination?.trim()
+        : !actionDraft.destinationId) ||
       actions.length >= 5
     )
       return;
@@ -183,7 +196,8 @@ export function CampaignFields({
       {
         ...actionDraft,
         label: actionDraft.label.trim(),
-        destination: actionDraft.destination.trim(),
+        destination: actionDraft.destination?.trim() || null,
+        destinationId: actionDraft.destinationId || null,
         sortOrder: actions.length,
       },
     ]);
@@ -191,6 +205,7 @@ export function CampaignFields({
       actionType: "LEARN_MORE",
       label: "",
       destination: "",
+      destinationId: null,
       sortOrder: 0,
     });
   };
@@ -600,6 +615,8 @@ export function CampaignFields({
                 ...actionDraft,
                 actionType: event.target
                   .value as CampaignActionInput["actionType"],
+                destination: event.target.value === "LEARN_MORE" ? "" : null,
+                destinationId: null,
               })
             }
           >
@@ -618,18 +635,47 @@ export function CampaignFields({
               setActionDraft({ ...actionDraft, label: event.target.value })
             }
           />
-          <input
-            aria-label="Action HTTPS destination"
-            className="border-input bg-surface min-h-11 rounded-sm border px-3 py-2"
-            placeholder="https://approved.example.org/…"
-            value={actionDraft.destination}
-            onChange={(event) =>
-              setActionDraft({
-                ...actionDraft,
-                destination: event.target.value,
-              })
-            }
-          />
+          {actionDraft.actionType === "LEARN_MORE" ? (
+            <input
+              aria-label="Action HTTPS destination"
+              className="border-input bg-surface min-h-11 rounded-sm border px-3 py-2"
+              placeholder="https://approved.example.org/…"
+              value={actionDraft.destination ?? ""}
+              onChange={(event) =>
+                setActionDraft({
+                  ...actionDraft,
+                  destination: event.target.value,
+                })
+              }
+            />
+          ) : (
+            <select
+              aria-label="Reviewed DonorView destination"
+              className="border-input bg-surface min-h-11 rounded-sm border px-3 py-2"
+              value={actionDraft.destinationId ?? ""}
+              onChange={(event) =>
+                setActionDraft({
+                  ...actionDraft,
+                  destinationId: event.target.value || null,
+                  destination: null,
+                })
+              }
+            >
+              <option value="">Choose a verified DonorView destination</option>
+              {availableDestinationOptions
+                .filter((option) =>
+                  actionDraft.actionType === "DONATE"
+                    ? option.purpose === "CAMPAIGN_DONATE"
+                    : option.purpose === "VOLUNTEER_EVENT",
+                )
+                .map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                    {option.pageReference ? ` · ${option.pageReference}` : ""}
+                  </option>
+                ))}
+            </select>
+          )}
           <Button
             type="button"
             onClick={addAction}
@@ -649,7 +695,10 @@ export function CampaignFields({
                   {item.label || CAMPAIGN_ACTION_LABELS[item.actionType]}
                 </strong>
                 <span className="text-muted-foreground mt-1 block text-sm break-all">
-                  {CAMPAIGN_ACTION_LABELS[item.actionType]} · {item.destination}
+                  {CAMPAIGN_ACTION_LABELS[item.actionType]} ·{" "}
+                  {item.destinationId
+                    ? "Verified DonorView destination"
+                    : item.destination || "Destination needs review"}
                 </span>
               </span>
               <Button

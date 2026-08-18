@@ -5,6 +5,7 @@ import { signOutAdmin } from "@/app/admin/actions";
 import { AdminShell, communicationsNavigation } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import { listCampaignProjectCandidates } from "@/modules/communications/campaigns";
+import { listCampaignDestinationOptions } from "@/modules/engagement";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
 import { CampaignCreateForm } from "../campaign-form";
@@ -20,10 +21,10 @@ export default async function NewCampaignPage() {
     !hasCapability(access.principal, "campaigns.create")
   )
     redirect("/admin/access-denied");
-  const projects = await listCampaignProjectCandidates(
-    prisma,
-    access.principal,
-  );
+  const [projects, destinationOptions] = await Promise.all([
+    listCampaignProjectCandidates(prisma, access.principal),
+    listCampaignDestinationOptions(prisma, access.principal),
+  ]);
   return (
     <AdminShell
       identity={{
@@ -51,7 +52,10 @@ export default async function NewCampaignPage() {
         separate steps; external Donate and Volunteer actions leave this
         platform.
       </p>
-      <CampaignCreateForm projects={projects} />
+      <CampaignCreateForm
+        projects={projects}
+        destinationOptions={destinationOptions}
+      />
     </AdminShell>
   );
 }

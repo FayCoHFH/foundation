@@ -110,6 +110,16 @@ export function communicationsNavigation(
       current: currentRoute(currentHref, COMMUNICATIONS_ROUTES.homepage),
     });
   }
+  if (
+    hasCapability(principal, "integrations.donorview.read") ||
+    hasCapability(principal, "integrations.donorview.configure")
+  ) {
+    navigation.push({
+      href: "/admin/engagement",
+      label: "Giving & Volunteer Destinations",
+      current: currentRoute(currentHref, "/admin/engagement"),
+    });
+  }
   return navigation;
 }
 

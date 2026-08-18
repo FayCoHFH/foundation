@@ -9,6 +9,7 @@ import {
   listCampaignProjectCandidates,
   getCampaignDraft,
 } from "@/modules/communications/campaigns";
+import { listCampaignDestinationOptions } from "@/modules/engagement";
 import { storyDocumentToPlainText } from "@/modules/communications/stories";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
@@ -41,10 +42,10 @@ export default async function CampaignAdminPage({
     if (error instanceof AppError && error.code === "NOT_FOUND") notFound();
     redirect("/admin/access-denied");
   }
-  const projects = await listCampaignProjectCandidates(
-    prisma,
-    access.principal,
-  );
+  const [projects, destinationOptions] = await Promise.all([
+    listCampaignProjectCandidates(prisma, access.principal),
+    listCampaignDestinationOptions(prisma, access.principal),
+  ]);
   const canEdit =
     hasCapability(access.principal, "campaigns.edit.any") ||
     (hasCapability(access.principal, "campaigns.edit.own") &&
@@ -155,6 +156,7 @@ export default async function CampaignAdminPage({
           expectedVersion={campaign.version}
           values={values}
           projects={projects}
+          destinationOptions={destinationOptions}
         />
       ) : (
         <p className="text-muted-foreground mt-8">

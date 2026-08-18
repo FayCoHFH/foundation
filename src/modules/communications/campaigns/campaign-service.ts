@@ -5,6 +5,8 @@ import type {
   CampaignActionType,
   CampaignStatus,
   CampaignType,
+  DonorViewDestinationPurpose,
+  DonorViewDestinationStatus,
   PublicationLifecycleAction,
   PublicationWorkflowState,
 } from "@/generated/prisma/client";
@@ -99,6 +101,7 @@ const campaignListInclude = {
                   actionType: true,
                   label: true,
                   destination: true,
+                  destinationId: true,
                   sortOrder: true,
                 },
               },
@@ -201,6 +204,7 @@ export type PublicCampaignAction = Readonly<{
   label: string;
   destination: string;
   sortOrder: number;
+  destinationId?: string | null;
 }>;
 
 export type PublicCampaign = Readonly<{
@@ -384,7 +388,8 @@ function toActions(
   actions: readonly {
     actionType: CampaignActionType;
     label: string;
-    destination: string;
+    destination: string | null;
+    destinationId: string | null;
     sortOrder: number;
   }[],
 ) {
@@ -392,6 +397,7 @@ function toActions(
     actionType: action.actionType,
     label: action.label,
     destination: action.destination,
+    destinationId: action.destinationId,
     sortOrder: action.sortOrder,
   }));
 }
@@ -598,6 +604,37 @@ async function assertProjectsExist(
     );
 }
 
+async function assertActionDestinations(
+  tx: Transaction,
+  actions: readonly CampaignActionInput[],
+) {
+  const governed = actions.filter(
+    (action) => action.actionType !== "LEARN_MORE" && action.destinationId,
+  );
+  if (!governed.length) return;
+  const destinations = await tx.donorViewDestination.findMany({
+    where: { id: { in: governed.map((action) => action.destinationId!) } },
+    select: { id: true, purpose: true, status: true },
+  });
+  const byId = new Map(
+    destinations.map((destination) => [destination.id, destination]),
+  );
+  for (const action of governed) {
+    const destination = byId.get(action.destinationId!);
+    const expectedPurpose =
+      action.actionType === "DONATE" ? "CAMPAIGN_DONATE" : "VOLUNTEER_EVENT";
+    if (
+      !destination ||
+      destination.purpose !== expectedPurpose ||
+      destination.status !== "VERIFIED"
+    ) {
+      throw new PreconditionError(
+        "Campaign actions may use only active, verified destinations of the matching purpose.",
+      );
+    }
+  }
+}
+
 async function createRevision(
   tx: Transaction,
   publicationId: string,
@@ -609,6 +646,7 @@ async function createRevision(
 ) {
   const contentHash = hashCampaignCandidate(candidate);
   await assertProjectsExist(tx, candidate.projectIds ?? [], actor);
+  await assertActionDestinations(tx, candidate.actions ?? []);
   const revision = await tx.publicationRevision.create({
     data: {
       publicationId,
@@ -642,7 +680,15 @@ async function createRevision(
           sortOrder,
         })),
       },
-      actions: { create: [...(candidate.actions ?? [])] },
+      actions: {
+        create: [...(candidate.actions ?? [])].map((action) => ({
+          actionType: action.actionType,
+          label: action.label,
+          destination: action.destination ?? null,
+          destinationId: action.destinationId ?? null,
+          sortOrder: action.sortOrder,
+        })),
+      },
     },
   });
   return { revision, contentHash };
@@ -1313,10 +1359,37 @@ function publicCampaign(row: {
   actions: readonly {
     actionType: CampaignActionType;
     label: string;
-    destination: string;
+    destination: string | null;
+    destinationId: string | null;
+    donorViewDestination: {
+      purpose: DonorViewDestinationPurpose;
+      status: DonorViewDestinationStatus;
+      url: string;
+    } | null;
     sortOrder: number;
   }[];
 }): PublicCampaign {
+  const actions = row.actions.flatMap((action) => {
+    const expectedPurpose =
+      action.actionType === "DONATE" ? "CAMPAIGN_DONATE" : "VOLUNTEER_EVENT";
+    const destination = action.destinationId
+      ? action.donorViewDestination?.purpose === expectedPurpose &&
+        action.donorViewDestination.status === "VERIFIED"
+        ? action.donorViewDestination.url
+        : null
+      : action.destination;
+    return destination
+      ? [
+          {
+            actionType: action.actionType,
+            label: action.label,
+            destination,
+            destinationId: action.destinationId,
+            sortOrder: action.sortOrder,
+          },
+        ]
+      : [];
+  });
   return {
     slug: row.slug,
     title: row.title,
@@ -1332,7 +1405,7 @@ function publicCampaign(row: {
     currencyCode: row.currencyCode,
     facts: toFacts(row.facts),
     projects: row.projectReferences,
-    actions: toActions(row.actions),
+    actions,
     publishedAt: row.publishedAt,
   };
 }
@@ -1373,6 +1446,10 @@ const publicSelect = {
       actionType: true,
       label: true,
       destination: true,
+      destinationId: true,
+      donorViewDestination: {
+        select: { purpose: true, status: true, url: true },
+      },
       sortOrder: true,
     },
   },

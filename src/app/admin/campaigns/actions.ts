@@ -68,7 +68,8 @@ const actionsSchema = z.array(
   z.object({
     actionType: z.enum(CAMPAIGN_ACTION_TYPES as [string, ...string[]]),
     label: z.string().trim().max(80),
-    destination: z.string().trim().max(2048),
+    destination: z.string().trim().max(2048).nullable().optional(),
+    destinationId: z.string().uuid().nullable().optional(),
     sortOrder: z.number().int().nonnegative().max(999),
   }),
 );

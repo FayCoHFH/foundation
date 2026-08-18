@@ -471,6 +471,25 @@ start Option C based on undocumented browser behavior.
 8. Defer all Giving, payment, volunteer registration, donor sync, and webhook
    implementation until those gates are accepted.
 
+## G1 handoff implementation boundary
+
+The first local Giving & Volunteer slice implements a bounded
+`DonorViewDestination` registry rather than a transaction integration. Each
+record has an explicit DonorView provider, code-owned purpose, reviewed HTTPS
+URL, verification state, version, and audited administrative lifecycle. A
+singleton configuration assigns at most one verified General Donate and
+General Volunteer destination. Campaign Donate and Volunteer actions reference
+verified Campaign Donate or Volunteer Event destinations; Learn More actions
+retain their existing generic HTTPS boundary.
+
+Only active, verified destinations are resolved publicly. URL replacement
+resets verification, deactivation removes the public CTA, and current public
+Campaign resolution checks destination state without mutating the immutable
+Campaign editorial snapshot. G1 does not add forms, payments, donor or
+volunteer records, API/webhooks, embeds, scraping, conversion state, analytics,
+or Goal Progress synchronization. See the [G1 development record](../development/g1-donorview-handoff.md)
+and [ADR-0010](../adr/0010-donorview-handoff-destination-governance.md).
+
 ## Failure and reconciliation behavior
 
 - If a destination fails validation or is stale, show a safe staff-visible error and disable the affected public CTA or use an explicitly configured general-giving fallback. Never guess a new URL.

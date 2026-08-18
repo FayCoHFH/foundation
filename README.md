@@ -68,6 +68,11 @@ Volunteer actions are outbound HTTPS handoffs; DonorView remains the current
 external system of record for donation and volunteer management. See the
 [Campaigns C2 UI record](docs/development/campaigns-c2-ui.md).
 
+DonorView handoff destinations are governed at `/admin/engagement` by
+authorized administrators. The public shell exposes only active, verified
+canonical Donate and Volunteer destinations; no local donation or volunteer
+records are created. See the [G1 handoff record](docs/development/g1-donorview-handoff.md).
+
 ## Validate the foundation
 
 ```bash

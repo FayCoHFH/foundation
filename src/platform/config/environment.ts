@@ -36,6 +36,7 @@ const rawEnvironmentSchema = z.object({
     .min(1)
     .max(64)
     .optional(),
+  DONORVIEW_APPROVED_HOSTS: z.string().optional(),
 });
 
 export type AppEnvironment = z.infer<typeof appEnvironmentSchema>;
@@ -239,6 +240,10 @@ export function readServerEnvironment(
     publicStorySubmissionsSecret: parsed.PUBLIC_STORY_SUBMISSIONS_SECRET,
     publicStorySubmissionsPrivacyNoticeVersion:
       parsed.PUBLIC_STORY_SUBMISSIONS_PRIVACY_NOTICE_VERSION,
+    donorViewApprovedHosts:
+      parsed.DONORVIEW_APPROVED_HOSTS?.split(",")
+        .map((value) => value.trim().toLowerCase())
+        .filter(Boolean) ?? [],
   } as const;
 }
 

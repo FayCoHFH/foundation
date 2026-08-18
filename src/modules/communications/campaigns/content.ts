@@ -65,7 +65,8 @@ export type CampaignFactInput = Readonly<{
 export type CampaignActionInput = Readonly<{
   actionType: CampaignActionType;
   label: string;
-  destination: string;
+  destination?: string | null;
+  destinationId?: string | null;
   sortOrder: number;
 }>;
 
@@ -227,31 +228,53 @@ function validateActions(actions: readonly CampaignActionInput[] | undefined) {
       }
       seen.add(action.sortOrder);
       const label = text(action.label, "Campaign action label", 80)!;
+      const destinationId = action.destinationId?.trim() || null;
+      if (destinationId && !UUID_PATTERN.test(destinationId))
+        reject("Campaign action destination must use a valid identifier.");
+      if (action.actionType === "LEARN_MORE" && destinationId) {
+        reject("Learn more actions must use their own HTTPS destination.");
+      }
       const destination = text(
-        action.destination,
+        action.destination ?? "",
         "Campaign action destination",
         2_048,
-      )!;
-      let url: URL;
-      try {
-        url = new URL(destination);
-      } catch {
-        reject("Campaign action destination must be a valid HTTPS URL.");
-      }
+        action.actionType === "LEARN_MORE" || !destinationId,
+      );
       if (
-        url.protocol !== "https:" ||
-        url.username ||
-        url.password ||
-        url.hostname.length === 0
+        action.actionType !== "LEARN_MORE" &&
+        !destinationId &&
+        !destination
       ) {
         reject(
-          "Campaign action destination must use HTTPS without credentials.",
+          "Donate and Volunteer actions must reference a reviewed destination.",
         );
+      }
+      if (action.actionType !== "LEARN_MORE" && destinationId && destination) {
+        reject("Governed Donate and Volunteer actions cannot copy a URL.");
+      }
+      if (destination) {
+        let url: URL;
+        try {
+          url = new URL(destination);
+        } catch {
+          reject("Campaign action destination must be a valid HTTPS URL.");
+        }
+        if (
+          url.protocol !== "https:" ||
+          url.username ||
+          url.password ||
+          url.hostname.length === 0
+        ) {
+          reject(
+            "Campaign action destination must use HTTPS without credentials.",
+          );
+        }
       }
       return {
         actionType: action.actionType,
         label,
-        destination: url.toString(),
+        destination: destination ?? null,
+        destinationId,
         sortOrder: action.sortOrder,
       };
     })

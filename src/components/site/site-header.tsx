@@ -1,6 +1,13 @@
 import Link from "next/link";
 
-export function SiteHeader() {
+import { getPublicGlobalDestination } from "@/modules/engagement";
+import { prisma } from "@/platform/database/prisma";
+
+export async function SiteHeader() {
+  const [donate, volunteer] = await Promise.all([
+    getPublicGlobalDestination(prisma, "GENERAL_DONATE"),
+    getPublicGlobalDestination(prisma, "GENERAL_VOLUNTEER"),
+  ]);
   const links = (
     <ul className="flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center sm:gap-x-5">
       <li>
@@ -23,6 +30,28 @@ export function SiteHeader() {
           Campaigns
         </Link>
       </li>
+      {donate ? (
+        <li>
+          <a
+            className="hover:text-primary"
+            href={donate.url}
+            aria-label="Donate (opens the secure DonorView giving page)"
+          >
+            Donate <span aria-hidden="true">↗</span>
+          </a>
+        </li>
+      ) : null}
+      {volunteer ? (
+        <li>
+          <a
+            className="hover:text-primary"
+            href={volunteer.url}
+            aria-label="Volunteer (opens DonorView volunteer registration)"
+          >
+            Volunteer <span aria-hidden="true">↗</span>
+          </a>
+        </li>
+      ) : null}
     </ul>
   );
   return (

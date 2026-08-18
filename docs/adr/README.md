@@ -13,6 +13,7 @@ ADRs record consequential decisions and their rationale. An accepted ADR changes
 | [ADR-0007](./0007-structured-rich-text.md) | Schema-versioned Tiptap/ProseMirror JSON | Accepted |
 | [ADR-0008](./0008-campaign-publication-boundary.md) | Typed Campaign publication boundary | Accepted |
 | [ADR-0009](./0009-campaign-reviewed-action-boundary.md) | Reviewed Campaign action and provider handoff boundary | Accepted |
+| [ADR-0010](./0010-donorview-handoff-destination-governance.md) | Governed DonorView handoff destinations | Accepted |
 
 ## Lightweight process
 

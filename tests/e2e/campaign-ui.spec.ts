@@ -1,4 +1,5 @@
 import { AxeBuilder } from "@axe-core/playwright";
+import { randomUUID } from "node:crypto";
 import {
   expect,
   test,
@@ -67,6 +68,48 @@ test.describe("Campaigns C2 admin and public experience", () => {
     const contributor = await persona(browser, "campaign-contributor");
     const reviewer = await persona(browser, "campaign-reviewer");
     const approver = await persona(browser, "campaign-approver");
+    const destinationLabel = `Community Build donation page ${randomUUID()}`;
+    const destinationContext = await browser.newContext({
+      storageState: approver.state,
+    });
+    const destinationPage = await destinationContext.newPage();
+    await destinationPage.goto("/admin/engagement");
+    await destinationPage.getByLabel("Purpose").selectOption("CAMPAIGN_DONATE");
+    await destinationPage
+      .getByLabel("Administrative label")
+      .first()
+      .fill(destinationLabel);
+    await destinationPage
+      .getByLabel("DonorView HTTPS URL")
+      .fill("https://app.dvforms.net/api/dv/community-build");
+    await destinationPage
+      .getByRole("button", { name: "Save unverified destination" })
+      .click();
+    await expect(
+      destinationPage.getByRole("heading", { name: destinationLabel }).last(),
+    ).toBeVisible();
+    const destinationRow = destinationPage
+      .locator("li")
+      .filter({
+        has: destinationPage.getByRole("heading", {
+          name: destinationLabel,
+          exact: true,
+        }),
+      })
+      .last();
+    await destinationRow
+      .getByText("Review usage and manage destination", { exact: true })
+      .click();
+    await Promise.all([
+      destinationPage.waitForNavigation({ waitUntil: "networkidle" }),
+      destinationRow
+        .getByRole("button", { name: "Verify destination" })
+        .click(),
+    ]);
+    await expect(
+      destinationRow.getByText("Campaign Donate · Verified", { exact: true }),
+    ).toBeVisible();
+    await destinationContext.close();
     const contributorContext = await browser.newContext({
       storageState: contributor.state,
     });
@@ -100,8 +143,8 @@ test.describe("Campaigns C2 admin and public experience", () => {
       .getByLabel("Action label")
       .fill("Give through DonorView");
     await contributorPage
-      .getByLabel("Action HTTPS destination")
-      .fill("https://giving.example.org/community-build");
+      .getByLabel("Reviewed DonorView destination")
+      .selectOption({ label: destinationLabel });
     await contributorPage.getByRole("button", { name: "Add action" }).click();
     await contributorPage
       .getByRole("button", { name: "Create Campaign draft" })
@@ -180,7 +223,7 @@ test.describe("Campaigns C2 admin and public experience", () => {
     ).toBeVisible();
     await expect(
       publicPage.getByRole("link", { name: /Give through DonorView/ }),
-    ).toHaveAttribute("href", "https://giving.example.org/community-build");
+    ).toHaveAttribute("href", "https://app.dvforms.net/api/dv/community-build");
     await expect(publicPage.locator("body")).not.toContainText(
       "Editorial workflow",
     );

@@ -32,8 +32,6 @@ export function CampaignActions({ campaign }: { campaign: PublicCampaign }) {
           <a
             className="bg-primary text-primary-foreground inline-flex min-h-11 items-center rounded-sm px-4 py-2 font-semibold underline-offset-4 hover:underline"
             href={action.destination}
-            target="_blank"
-            rel="noopener noreferrer"
             aria-label={`${action.label} (${CAMPAIGN_ACTION_LABELS[action.actionType]} opens an external destination)`}
           >
             {action.label}

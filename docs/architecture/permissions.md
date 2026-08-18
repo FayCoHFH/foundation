@@ -105,9 +105,13 @@ and Site Notice capabilities did not imply confidential submission access.
 - Campaign capabilities authorize only Campaign editorial content, Project
   relationship selection, reviewed outbound action configuration, and the C1
   workflow. They do not authorize donor, payment, Stripe, checkout,
-  volunteer-registration, media-upload, or homepage-placement work. The older
-  `campaigns.manage`/`campaigns.publish` placeholders remain reserved for later
-  destination/integration work and are not used by C2.
+  volunteer-registration, media-upload, or homepage-placement work.
+  `integrations.donorview.read` permits bounded destination inspection and
+  Campaign selection. `integrations.donorview.configure` permits destination
+  creation, replacement, verification, deactivation, and global assignment;
+  it does not authorize donor, payment, volunteer, API, webhook, or
+  synchronization operations. The older `campaigns.manage`/`campaigns.publish`
+  placeholders remain reserved for later work and are not used by G1.
 - `events.manage`, `events.publish`, `events.registrations.configure`
 - `integrations.donorview.read`, `integrations.donorview.configure`, `integrations.donorview.sync`
 

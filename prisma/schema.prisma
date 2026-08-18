@@ -84,6 +84,23 @@ enum CampaignActionType {
   LEARN_MORE
 }
 
+enum DonorViewDestinationPurpose {
+  GENERAL_DONATE
+  CAMPAIGN_DONATE
+  GENERAL_VOLUNTEER
+  VOLUNTEER_EVENT
+}
+
+enum EngagementDestinationProvider {
+  DONORVIEW
+}
+
+enum DonorViewDestinationStatus {
+  UNVERIFIED
+  VERIFIED
+  INACTIVE
+}
+
 enum PlacementKey {
   HOME_HERO
   HOME_FEATURED_STORY
@@ -448,6 +465,7 @@ model AdminUser {
   resolvedSubmissionMediaRevocationRequests PublicStorySubmissionMediaRevocationRequest[] @relation("SubmissionMediaRevocationRequestResolver")
   createdMediaAssets                        MediaAsset[]                                  @relation("MediaAssetCreator")
   promotedSubmissionMedia                   PublicStorySubmissionMediaPromotion[]         @relation("MediaPromotionActor")
+  verifiedDonorViewDestinations             DonorViewDestination[]                        @relation("DonorViewDestinationVerifier")
 
   @@index([status])
   @@map("admin_user")
@@ -803,17 +821,58 @@ model PublicCampaignProjection {
 }
 
 model PublicCampaignAction {
-  id           String                   @id @default(uuid()) @db.Uuid
-  projectionId String                   @db.Uuid
-  actionType   CampaignActionType
-  label        String                   @db.VarChar(80)
-  destination  String                   @db.VarChar(2048)
-  sortOrder    Int
-  projection   PublicCampaignProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+  id                   String                   @id @default(uuid()) @db.Uuid
+  projectionId         String                   @db.Uuid
+  actionType           CampaignActionType
+  label                String                   @db.VarChar(80)
+  destination          String?                  @db.VarChar(2048)
+  destinationId        String?                  @db.Uuid
+  sortOrder            Int
+  projection           PublicCampaignProjection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+  donorViewDestination DonorViewDestination?    @relation("PublicCampaignActionDestination", fields: [destinationId], references: [id], onDelete: Restrict)
 
   @@unique([projectionId, sortOrder])
   @@index([projectionId, actionType])
+  @@index([destinationId])
   @@map("public_campaign_action")
+}
+
+model DonorViewDestination {
+  id                     String                        @id @default(uuid()) @db.Uuid
+  provider               EngagementDestinationProvider @default(DONORVIEW)
+  purpose                DonorViewDestinationPurpose
+  label                  String                        @db.VarChar(120)
+  url                    String                        @db.VarChar(2048)
+  pageReference          String?                       @db.VarChar(160)
+  status                 DonorViewDestinationStatus    @default(UNVERIFIED)
+  verifiedAt             DateTime?
+  verifiedByAdminUserId  String?                       @db.Uuid
+  lastReviewedAt         DateTime?
+  version                Int                           @default(1)
+  createdAt              DateTime                      @default(now())
+  updatedAt              DateTime                      @updatedAt
+  verifiedBy             AdminUser?                    @relation("DonorViewDestinationVerifier", fields: [verifiedByAdminUserId], references: [id], onDelete: SetNull)
+  campaignActions        CampaignAction[]              @relation("CampaignActionDestination")
+  publicActions          PublicCampaignAction[]        @relation("PublicCampaignActionDestination")
+  globalDonateConfigs    EngagementConfiguration[]     @relation("GlobalDonateDestination")
+  globalVolunteerConfigs EngagementConfiguration[]     @relation("GlobalVolunteerDestination")
+
+  @@index([purpose, status])
+  @@index([verifiedByAdminUserId])
+  @@map("donorview_destination")
+}
+
+model EngagementConfiguration {
+  id                            String                @id @default("GLOBAL") @db.VarChar(16)
+  generalDonateDestinationId    String?               @unique @db.Uuid
+  generalVolunteerDestinationId String?               @unique @db.Uuid
+  version                       Int                   @default(1)
+  createdAt                     DateTime              @default(now())
+  updatedAt                     DateTime              @updatedAt
+  generalDonateDestination      DonorViewDestination? @relation("GlobalDonateDestination", fields: [generalDonateDestinationId], references: [id], onDelete: Restrict)
+  generalVolunteerDestination   DonorViewDestination? @relation("GlobalVolunteerDestination", fields: [generalVolunteerDestinationId], references: [id], onDelete: Restrict)
+
+  @@map("engagement_configuration")
 }
 
 model PublicCampaignFact {
@@ -1514,16 +1573,19 @@ model CampaignRevision {
 }
 
 model CampaignAction {
-  id                 String             @id @default(uuid()) @db.Uuid
-  campaignRevisionId String             @db.Uuid
-  actionType         CampaignActionType
-  label              String             @db.VarChar(80)
-  destination        String             @db.VarChar(2048)
-  sortOrder          Int
-  campaignRevision   CampaignRevision   @relation(fields: [campaignRevisionId], references: [id], onDelete: Cascade)
+  id                   String                @id @default(uuid()) @db.Uuid
+  campaignRevisionId   String                @db.Uuid
+  actionType           CampaignActionType
+  label                String                @db.VarChar(80)
+  destination          String?               @db.VarChar(2048)
+  destinationId        String?               @db.Uuid
+  sortOrder            Int
+  campaignRevision     CampaignRevision      @relation(fields: [campaignRevisionId], references: [id], onDelete: Cascade)
+  donorViewDestination DonorViewDestination? @relation("CampaignActionDestination", fields: [destinationId], references: [id], onDelete: Restrict)
 
   @@unique([campaignRevisionId, sortOrder])
   @@index([campaignRevisionId, actionType])
+  @@index([destinationId])
   @@map("campaign_action")
 }
 

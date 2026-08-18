@@ -330,6 +330,14 @@ relationships, and operational construction features remain later slices.
   and explicit DonorView ownership documentation. Payment, donor/volunteer
   records, deep provider integration, reconciliation, email, media, and
   homepage Campaign placements remain deferred.
+- Giving & Volunteer G1 (governed DonorView handoff foundation) is complete
+  locally on 2026-08-18. It adds reviewed DonorView destination persistence,
+  allowlisted HTTPS validation, audited verification/deactivation and
+  optimistic concurrency, canonical global Donate/Volunteer assignments,
+  Campaign destination references, safe public omission, and admin/public
+  browser coverage. Donations, payments, donor/volunteer records, API,
+  webhooks, embeds, scraping, analytics, and aggregate synchronization remain
+  deferred.
 - Campaigns C1 (typed publication domain and publishing-kernel integration) is
   complete locally on 2026-08-18. It establishes the bounded Campaign root,
   typed revision facts/goals and integer-cent progress fields, explicit
