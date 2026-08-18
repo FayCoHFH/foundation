@@ -15,7 +15,7 @@ export async function GET(
     params,
   }: {
     params: Promise<{
-      submissionId: string;
+      id: string;
       mediaId: string;
       evidenceId: string;
     }>;
@@ -28,7 +28,8 @@ export async function GET(
   const storage = getRuntimeSubmissionClearanceEvidenceStorage();
   if (!storage)
     return new Response("Evidence delivery is unavailable.", { status: 503 });
-  const { submissionId, mediaId, evidenceId } = await params;
+  const { id, mediaId, evidenceId } = await params;
+  const submissionId = id;
   try {
     const scopedEvidence =
       await prisma.publicStorySubmissionMediaClearanceEvidenceDocument.findUnique(

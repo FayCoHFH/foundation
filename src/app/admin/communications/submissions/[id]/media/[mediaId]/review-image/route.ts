@@ -11,7 +11,7 @@ export const revalidate = 0;
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ submissionId: string; mediaId: string }> },
+  { params }: { params: Promise<{ id: string; mediaId: string }> },
 ) {
   const access = await resolveAdminAccess();
   if (access.status !== "authorized") redirect("/admin/access-denied");
@@ -22,7 +22,8 @@ export async function GET(
     return new Response("Private media delivery is unavailable.", {
       status: 503,
     });
-  const { submissionId, mediaId } = await params;
+  const { id, mediaId } = await params;
+  const submissionId = id;
   try {
     const delivery = await deliverPublicStorySubmissionMediaReviewDerivative(
       prisma,

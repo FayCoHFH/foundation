@@ -15,7 +15,7 @@ export async function GET(
     params,
   }: {
     params: Promise<{
-      submissionId: string;
+      id: string;
       mediaId: string;
       evidenceId: string;
       ordinal: string;
@@ -29,12 +29,8 @@ export async function GET(
   const storage = getRuntimeSubmissionClearanceEvidenceStorage();
   if (!storage)
     return new Response("Evidence delivery is unavailable.", { status: 503 });
-  const {
-    submissionId,
-    mediaId,
-    evidenceId,
-    ordinal: rawOrdinal,
-  } = await params;
+  const { id, mediaId, evidenceId, ordinal: rawOrdinal } = await params;
+  const submissionId = id;
   const ordinal = Number(rawOrdinal);
   try {
     const scopedEvidence =

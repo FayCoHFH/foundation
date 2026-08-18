@@ -35,11 +35,12 @@ export default async function SubmissionMediaDetailPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ submissionId: string; mediaId: string }>;
+  params: Promise<{ id: string; mediaId: string }>;
   searchParams: Promise<{ media?: string | string[] }>;
 }) {
   const access = await resolveAdminAccess();
-  const { submissionId, mediaId } = await params;
+  const { id, mediaId } = await params;
+  const submissionId = id;
   if (access.status !== "authorized") redirect("/admin/access-denied");
   if (!hasCapability(access.principal, "communications.submissions.review"))
     redirect("/admin/access-denied");
