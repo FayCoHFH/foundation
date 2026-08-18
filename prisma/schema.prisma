@@ -123,6 +123,39 @@ enum PublicStorySubmissionMediaClearanceStatus {
   REVOKED
 }
 
+// A confidential, independently versioned technical record for evidence used
+// to support a clearance. It is deliberately not a MediaAsset or publication
+// attachment, even when the source bytes are an image.
+enum PublicStorySubmissionMediaClearanceEvidenceStatus {
+  PENDING_UPLOAD
+  UPLOADED
+  PROCESSING
+  READY
+  REJECTED
+  REMOVED
+}
+
+enum PublicStorySubmissionMediaClearanceEvidenceFormat {
+  PDF
+  JPEG
+  PNG
+  WEBP
+  HEIF
+}
+
+enum PublicStorySubmissionMediaClearanceEvidenceRejectionReason {
+  UNSUPPORTED_FORMAT
+  MIME_TYPE_MISMATCH
+  FILE_TOO_LARGE
+  CORRUPTED_FILE
+  PDF_ENCRYPTED
+  PDF_PAGE_LIMIT_EXCEEDED
+  PDF_UNSAFE_STRUCTURE
+  DIMENSIONS_EXCEEDED
+  MULTI_FRAME_UNSUPPORTED
+  PROCESSING_FAILED
+}
+
 enum PublicStorySubmissionMediaEvidenceType {
   EXISTING_HABITAT_RELEASE
   NEW_RELEASE
@@ -882,42 +915,100 @@ model PublicStorySubmissionMediaSubjectApplicability {
 // A clearance is a versioned, confidential fact. EXPIRED is derived from
 // expiresAt so expiration does not require a background mutation.
 model PublicStorySubmissionMediaClearance {
-  id                            String                                               @id @default(uuid()) @db.Uuid
-  submissionId                  String                                               @db.Uuid
-  clearanceType                 PublicStorySubmissionMediaClearanceType
-  status                        PublicStorySubmissionMediaClearanceStatus            @default(PENDING)
-  subjectId                     String?                                              @db.Uuid
-  dateObtained                  DateTime?
-  dateVerified                  DateTime?
-  verifiedByAdminUserId         String?                                              @db.Uuid
-  expiresAt                     DateTime?
-  evidenceType                  PublicStorySubmissionMediaEvidenceType?
-  existingEvidenceReference     String?                                              @db.VarChar(240)
-  existingEvidenceVersion       String?                                              @db.VarChar(64)
-  confidentialNote              String?                                              @db.VarChar(1000)
-  websitePublicationAllowed     Boolean                                              @default(false)
-  socialMediaAllowed            Boolean                                              @default(false)
-  printAllowed                  Boolean                                              @default(false)
-  fundraisingPromotionalAllowed Boolean                                              @default(false)
-  paidAdvertisingAllowed        Boolean                                              @default(false)
-  otherRestrictionsPresent      Boolean                                              @default(false)
-  confidentialRestrictionsNote  String?                                              @db.VarChar(1000)
-  revokedAt                     DateTime?
-  revokedByAdminUserId          String?                                              @db.Uuid
-  revocationReason              PublicStorySubmissionMediaClearanceRevocationReason?
-  version                       Int                                                  @default(1)
-  createdAt                     DateTime                                             @default(now())
-  updatedAt                     DateTime                                             @updatedAt
-  submission                    PublicStorySubmission                                @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  subject                       PublicStorySubmissionMediaSubject?                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
-  verifiedBy                    AdminUser?                                           @relation("SubmissionMediaClearanceVerifier", fields: [verifiedByAdminUserId], references: [id], onDelete: SetNull)
-  revokedBy                     AdminUser?                                           @relation("SubmissionMediaClearanceRevoker", fields: [revokedByAdminUserId], references: [id], onDelete: SetNull)
-  applicability                 PublicStorySubmissionMediaClearanceApplicability[]
+  id                             String                                                @id @default(uuid()) @db.Uuid
+  submissionId                   String                                                @db.Uuid
+  clearanceType                  PublicStorySubmissionMediaClearanceType
+  status                         PublicStorySubmissionMediaClearanceStatus             @default(PENDING)
+  subjectId                      String?                                               @db.Uuid
+  dateObtained                   DateTime?
+  dateVerified                   DateTime?
+  verifiedByAdminUserId          String?                                               @db.Uuid
+  expiresAt                      DateTime?
+  evidenceType                   PublicStorySubmissionMediaEvidenceType?
+  existingEvidenceReference      String?                                               @db.VarChar(240)
+  existingEvidenceVersion        String?                                               @db.VarChar(64)
+  confidentialNote               String?                                               @db.VarChar(1000)
+  websitePublicationAllowed      Boolean                                               @default(false)
+  socialMediaAllowed             Boolean                                               @default(false)
+  printAllowed                   Boolean                                               @default(false)
+  fundraisingPromotionalAllowed  Boolean                                               @default(false)
+  paidAdvertisingAllowed         Boolean                                               @default(false)
+  otherRestrictionsPresent       Boolean                                               @default(false)
+  confidentialRestrictionsNote   String?                                               @db.VarChar(1000)
+  revokedAt                      DateTime?
+  revokedByAdminUserId           String?                                               @db.Uuid
+  revocationReason               PublicStorySubmissionMediaClearanceRevocationReason?
+  // Set only when verification deliberately relies on one Ready uploaded
+  // evidence document. Existing C6B-3C release references remain valid.
+  verificationEvidenceDocumentId String?                                               @db.Uuid
+  version                        Int                                                   @default(1)
+  createdAt                      DateTime                                              @default(now())
+  updatedAt                      DateTime                                              @updatedAt
+  submission                     PublicStorySubmission                                 @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  subject                        PublicStorySubmissionMediaSubject?                    @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  verifiedBy                     AdminUser?                                            @relation("SubmissionMediaClearanceVerifier", fields: [verifiedByAdminUserId], references: [id], onDelete: SetNull)
+  revokedBy                      AdminUser?                                            @relation("SubmissionMediaClearanceRevoker", fields: [revokedByAdminUserId], references: [id], onDelete: SetNull)
+  applicability                  PublicStorySubmissionMediaClearanceApplicability[]
+  evidenceDocuments              PublicStorySubmissionMediaClearanceEvidenceDocument[] @relation("ClearanceEvidenceDocuments")
+  verificationEvidenceDocument   PublicStorySubmissionMediaClearanceEvidenceDocument?  @relation("ClearanceVerificationEvidence", fields: [verificationEvidenceDocumentId], references: [id], onDelete: Restrict)
 
   @@unique([id, version])
   @@index([submissionId, clearanceType, status])
   @@index([subjectId, clearanceType, status])
+  @@index([verificationEvidenceDocumentId])
   @@map("public_story_submission_media_clearance")
+}
+
+// Original filenames, storage keys, parser details, and page object keys are
+// confidential operational metadata. Reviewer DTOs expose only safe status
+// and bounded technical facts.
+model PublicStorySubmissionMediaClearanceEvidenceDocument {
+  id                           String                                                      @id @default(uuid()) @db.Uuid
+  clearanceId                  String                                                      @db.Uuid
+  replacesEvidenceDocumentId   String?                                                     @db.Uuid
+  declaredFormat               PublicStorySubmissionMediaClearanceEvidenceFormat
+  detectedFormat               PublicStorySubmissionMediaClearanceEvidenceFormat?
+  technicalStatus              PublicStorySubmissionMediaClearanceEvidenceStatus           @default(PENDING_UPLOAD)
+  rejectionReason              PublicStorySubmissionMediaClearanceEvidenceRejectionReason?
+  originalByteSize             Int?
+  originalSha256               String?                                                     @db.Char(64)
+  originalFilename             String?                                                     @db.VarChar(255)
+  originalStorageKey           String?                                                     @db.VarChar(240)
+  uploadAuthorizationNonceHash String?                                                     @db.Char(64)
+  pageCount                    Int?
+  processedAt                  DateTime?
+  rejectedAt                   DateTime?
+  removedAt                    DateTime?
+  binaryDeletedAt              DateTime?
+  version                      Int                                                         @default(1)
+  createdAt                    DateTime                                                    @default(now())
+  updatedAt                    DateTime                                                    @updatedAt
+  clearance                    PublicStorySubmissionMediaClearance                         @relation("ClearanceEvidenceDocuments", fields: [clearanceId], references: [id], onDelete: Cascade, map: "clearance_evidence_document_clearance_id_fkey")
+  replacesEvidenceDocument     PublicStorySubmissionMediaClearanceEvidenceDocument?        @relation("ClearanceEvidenceReplacement", fields: [replacesEvidenceDocumentId], references: [id], onDelete: Restrict, map: "clearance_evidence_document_replaces_id_fkey")
+  replacements                 PublicStorySubmissionMediaClearanceEvidenceDocument[]       @relation("ClearanceEvidenceReplacement")
+  reviewPages                  PublicStorySubmissionMediaClearanceEvidenceReviewPage[]
+  verificationForClearances    PublicStorySubmissionMediaClearance[]                       @relation("ClearanceVerificationEvidence")
+
+  @@unique([id, version])
+  @@index([clearanceId, technicalStatus, createdAt])
+  @@index([replacesEvidenceDocumentId])
+  @@map("public_story_submission_media_clearance_evidence_document")
+}
+
+model PublicStorySubmissionMediaClearanceEvidenceReviewPage {
+  id                 String                                              @id @default(uuid()) @db.Uuid
+  evidenceDocumentId String                                              @db.Uuid
+  ordinal            Int
+  width              Int
+  height             Int
+  byteSize           Int
+  storageKey         String                                              @db.VarChar(240)
+  createdAt          DateTime                                            @default(now())
+  evidenceDocument   PublicStorySubmissionMediaClearanceEvidenceDocument @relation(fields: [evidenceDocumentId], references: [id], onDelete: Cascade)
+
+  @@unique([evidenceDocumentId, ordinal])
+  @@index([evidenceDocumentId, ordinal])
+  @@map("public_story_submission_media_clearance_evidence_review_page")
 }
 
 model PublicStorySubmissionMediaClearanceApplicability {

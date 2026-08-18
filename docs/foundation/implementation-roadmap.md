@@ -186,6 +186,15 @@ production collection, named owner, retention profile, and legal/policy launch
 gate remain open under G-07. The detailed record is [the C6B-3C image rights
 clearance record](../development/c6b3c-image-rights-clearance-domain.md).
 
+**C6B-3D — Private clearance evidence documents: complete locally on
+2026-08-17.** A separate confidential evidence aggregate now accepts bounded
+PDF/JPEG/PNG/WebP/HEIC/HEIF originals under reviewer-scoped one-use upload
+authorization, creates private review derivatives, preserves immutable
+replacement/tombstone history, and requires Ready evidence when uploaded
+evidence is selected for verification. It creates no public URL, form,
+promotion, or retention worker; G-07 remains open. The detailed record is
+[the C6B-3D private clearance evidence record](../development/c6b3d-private-clearance-evidence.md).
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,

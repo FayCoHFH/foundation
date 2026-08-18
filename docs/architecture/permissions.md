@@ -31,7 +31,7 @@ Names may be mechanically refined before migrations, but separation must be pres
 - `stories.create`, `stories.read.draft.own`, `stories.read.draft.any`, `stories.edit.own`, `stories.edit.any`, `stories.submit`, `stories.review`, `stories.approve`, `stories.schedule`, `stories.publish`, `stories.withdraw`, `stories.archive`
 - `news.create`, `news.read.draft.own`, `news.read.draft.any`, `news.edit.own`, `news.edit.any`, `news.submit`, `news.review`, `news.approve`, `news.schedule`, `news.publish`, `news.withdraw`, `news.archive`
 - `newsletter.create`, `newsletter.read.draft`, `newsletter.edit`, `newsletter.submit`, `newsletter.review`, `newsletter.approve`, `newsletter.schedule`, `newsletter.publish`, `newsletter.withdraw`, `newsletter.archive`
-- `media.upload`, `media.edit`, `media.rights.clear`, `media.public.use`, with separate `media.private.read` and `media.private.manage` where private assets exist; confidential Story Submission clearance review uses `communications.submissions.review`, while restoring eligibility additionally requires `communications.media.restore_eligibility`
+- `media.upload`, `media.edit`, `media.rights.clear`, `media.public.use`, with separate `media.private.read` and `media.private.manage` where private assets exist; confidential Story Submission clearance/evidence issue, process, list, delivery, replacement, and removal use `communications.submissions.review`, while restoring eligibility additionally requires `communications.media.restore_eligibility`
 - `communications.categories.manage`
 - `communications.authors.manage`
 - `communications.requirements.override` for an explicit, audited exceptional publication-requirement override only

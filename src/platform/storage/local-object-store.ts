@@ -15,6 +15,7 @@ import type {
   PrivateDownloadGrant,
   PrivateObjectStorePort,
   PutObjectInput,
+  SubmissionClearanceEvidenceStoragePort,
   SubmissionQuarantineStoragePort,
   StoredObject,
 } from "./contracts";
@@ -50,7 +51,11 @@ function base64UrlDecode(value: string): string {
 
 /** Opaque, immutable keys avoid filenames, email, and other sensitive data. */
 export function createOpaqueObjectKey(namespace = "objects"): string {
-  const safeNamespace = namespace.replace(/[^a-z0-9-]/gi, "").toLowerCase();
+  const safeNamespace = namespace
+    .split("/")
+    .map((segment) => segment.replace(/[^a-z0-9-]/gi, "").toLowerCase())
+    .filter(Boolean)
+    .join("/");
   if (safeNamespace.length === 0) {
     throw new InvalidObjectKeyError(
       "Object key namespace must contain letters or numbers.",
@@ -358,6 +363,61 @@ export function createLocalSubmissionQuarantineStore(options: {
   readonly now?: () => Date;
 }): SubmissionQuarantineStoragePort {
   return new LocalSubmissionQuarantineStore({
+    rootDirectory: options.rootDirectory,
+    ...(options.now === undefined ? {} : { now: options.now }),
+  });
+}
+
+class LocalSubmissionClearanceEvidenceStore
+  extends LocalObjectStore
+  implements SubmissionClearanceEvidenceStoragePort
+{
+  constructor(options: Omit<LocalStoreOptions, "scope">) {
+    super({ ...options, scope: "PRIVATE" });
+  }
+
+  async putOriginal(input: PutObjectInput): Promise<ObjectMetadata> {
+    if (
+      input.classification !== "CONFIDENTIAL" ||
+      !input.key.startsWith("submission-clearance-evidence/original/")
+    ) {
+      throw new InvalidObjectKeyError(
+        "Clearance evidence originals must remain Confidential in their dedicated namespace.",
+      );
+    }
+    return super.put(input);
+  }
+
+  async putReviewDerivative(input: PutObjectInput): Promise<ObjectMetadata> {
+    if (
+      input.classification !== "CONFIDENTIAL" ||
+      !input.key.startsWith("submission-clearance-evidence/review/")
+    ) {
+      throw new InvalidObjectKeyError(
+        "Clearance evidence review derivatives must remain Confidential in their dedicated namespace.",
+      );
+    }
+    return super.put(input);
+  }
+
+  readForProcessing(key: string) {
+    return this.read(key);
+  }
+
+  readForAuthorizedReview(key: string) {
+    return this.read(key);
+  }
+
+  deleteForCleanup(key: string) {
+    return this.deleteObject(key);
+  }
+}
+
+export function createLocalSubmissionClearanceEvidenceStore(options: {
+  readonly rootDirectory: string;
+  readonly now?: () => Date;
+}): SubmissionClearanceEvidenceStoragePort {
+  return new LocalSubmissionClearanceEvidenceStore({
     rootDirectory: options.rootDirectory,
     ...(options.now === undefined ? {} : { now: options.now }),
   });

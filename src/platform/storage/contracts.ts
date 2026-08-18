@@ -82,6 +82,19 @@ export interface SubmissionQuarantineStoragePort {
   deleteForCleanup(key: string): Promise<void>;
 }
 
+/**
+ * A distinct confidential boundary for clearance evidence. It intentionally
+ * does not offer public URLs, listings, or private-store download grants.
+ */
+export interface SubmissionClearanceEvidenceStoragePort {
+  putOriginal(input: PutObjectInput): Promise<ObjectMetadata>;
+  putReviewDerivative(input: PutObjectInput): Promise<ObjectMetadata>;
+  readForProcessing(key: string): Promise<StoredObject | null>;
+  /** Called only after the evidence service has authorized and audited access. */
+  readForAuthorizedReview(key: string): Promise<StoredObject | null>;
+  deleteForCleanup(key: string): Promise<void>;
+}
+
 export interface ObjectStores {
   readonly publicStore: ObjectStorePort;
   readonly privateStore: PrivateObjectStorePort;

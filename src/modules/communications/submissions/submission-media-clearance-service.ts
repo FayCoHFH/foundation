@@ -575,35 +575,86 @@ async function updateClearance(
   });
 }
 
-export const verifyPublicStorySubmissionMediaClearance = (
+export async function verifyPublicStorySubmissionMediaClearance(
   prisma: PrismaClient,
   actor: ClearanceActor,
   input: Readonly<{
     clearanceId: string;
     expectedClearanceVersion: number;
     dateObtained?: Date | null;
+    /** Required when verification deliberately relies on uploaded evidence. */
+    evidenceDocumentId?: string | null;
   }>,
   dependencies: SubmissionMediaClearanceMutationDependencies = {},
-) =>
-  updateClearance(
-    prisma,
-    actor,
-    input,
-    {
-      status: "VERIFIED",
-      ...(input.dateObtained !== undefined
-        ? { dateObtained: input.dateObtained }
-        : {}),
-      dateVerified: dependencies.now?.() ?? new Date(),
-      verifiedByAdminUserId: actor.adminUserId,
-      revokedAt: null,
-      revokedByAdminUserId: null,
-      revocationReason: null,
-    },
-    "public_story_submission_media.clearance_verified",
-    { status: "VERIFIED" },
-    dependencies,
-  );
+) {
+  assertMediaIdentifier(input.clearanceId, "Clearance ID");
+  assertPositiveVersion(input.expectedClearanceVersion, "Clearance version");
+  if (input.evidenceDocumentId)
+    assertMediaIdentifier(input.evidenceDocumentId, "Evidence document ID");
+  return runMutation(prisma, async (transaction) => {
+    await requireActiveReviewer(transaction, actor);
+    const current =
+      await transaction.publicStorySubmissionMediaClearance.findUnique({
+        where: { id: input.clearanceId },
+        select: { id: true, version: true },
+      });
+    if (!current) throw new NotFoundError("Clearance was not found.");
+    if (current.version !== input.expectedClearanceVersion)
+      throw new ConcurrencyError();
+    if (input.evidenceDocumentId) {
+      const evidence =
+        await transaction.publicStorySubmissionMediaClearanceEvidenceDocument.findFirst(
+          {
+            where: {
+              id: input.evidenceDocumentId,
+              clearanceId: current.id,
+              technicalStatus: "READY",
+            },
+            select: { id: true },
+          },
+        );
+      if (!evidence)
+        throw new PreconditionError(
+          "Verification evidence must be Ready and belong to this clearance.",
+        );
+    }
+    await transaction.publicStorySubmissionMediaClearance.update({
+      where: { id_version: { id: current.id, version: current.version } },
+      data: {
+        status: "VERIFIED",
+        ...(input.dateObtained !== undefined
+          ? { dateObtained: input.dateObtained }
+          : {}),
+        verificationEvidenceDocumentId: input.evidenceDocumentId ?? null,
+        dateVerified: dependencies.now?.() ?? new Date(),
+        verifiedByAdminUserId: actor.adminUserId,
+        revokedAt: null,
+        revokedByAdminUserId: null,
+        revocationReason: null,
+        version: { increment: 1 },
+      },
+    });
+    await (dependencies.auditWriter ?? writeAudit)(
+      transaction,
+      buildAuditEvent({
+        actorKind: "ADMIN_USER",
+        actorAdminUserId: actor.adminUserId,
+        action: "public_story_submission_media.clearance_verified",
+        targetType: "PublicStorySubmissionMediaClearance",
+        targetId: current.id,
+        correlationId: randomUUID(),
+        summary: {
+          status: "VERIFIED",
+          usesUploadedEvidence:
+            input.evidenceDocumentId !== undefined &&
+            input.evidenceDocumentId !== null,
+          version: current.version + 1,
+        },
+      }),
+    );
+    return { id: current.id, version: current.version + 1 };
+  });
+}
 
 export const rejectPublicStorySubmissionMediaClearance = (
   prisma: PrismaClient,

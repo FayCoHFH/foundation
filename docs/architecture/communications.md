@@ -318,6 +318,13 @@ bounded submission subjects, exact per-image clearance applicability, derived
 use eligibility, and confidential restriction/revocation history. The domain
 does not store evidence files or create a public MediaAsset; explicit future
 promotion must still pass the normal public rights and contextual-use gates.
+C6B-3D adds a separate confidential clearance-evidence aggregate for bounded
+PDF/image originals and private raster review derivatives. Its signed upload
+authorization is reviewer/clearance/document/slot/family/size/expiry scoped;
+there is no public URL or public reading path. A `READY` document is technical
+state only. When clearance verification relies on an uploaded document, the
+exact document must be Ready and is recorded; legacy C6B-3C release references
+remain valid. Evidence does not alter public media promotion or G-07.
 The future public boundary still requires the upload, rate-limit, challenge,
 duplicate/throttle, CSRF/origin, and generic response controls described below
 before launch.

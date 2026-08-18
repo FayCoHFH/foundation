@@ -11,3 +11,7 @@ export * from "./submission-media-upload-auth";
 export * from "./submission-media-service";
 export * from "./submission-media-clearance-content";
 export * from "./submission-media-clearance-service";
+export * from "./submission-media-clearance-evidence-content";
+export * from "./submission-media-clearance-evidence-processing";
+export * from "./submission-media-clearance-evidence-upload-auth";
+export * from "./submission-media-clearance-evidence-service";

@@ -120,7 +120,15 @@ decode/re-encode, and a separately keyed confidential review JPEG derivative.
 It deletes rejected/removed/expired originals and derivatives and uses
 optimistic processing ownership. C6B-3C adds confidential rights declarations,
 scoped consent, clearance applicability, eligibility, restrictions, and
-revocation history. It does not add public delivery or evidence-file storage.
+revocation history. C6B-3D adds a distinct confidential evidence port and
+document aggregate. Its HMAC upload grant binds one active reviewer, clearance,
+document, slot, MIME family, byte cap, nonce, and expiry; originals and raster
+derivatives use separate opaque namespaces. PDF.js parses bytes only with
+network, eval, XFA, and annotations disabled, while unsafe action names,
+encryption, malformed documents, excessive pages, and dimensions are rejected.
+Every original/review delivery requires fresh reviewer capability and a redacted
+audit record; no PDF is delivered inline by default. It still adds no public
+delivery or evidence-file route.
 
 **Verification:** OWASP upload corpus, oversize/bomb/polyglot tests, private URL tests, object inventory scan, and media withdrawal/consent tests. Separate malware scanning is not required for the initial image pipeline; it remains an optional future defense-in-depth enhancement.
 

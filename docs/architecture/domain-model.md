@@ -201,6 +201,13 @@ Stripe owns card/payment method data and processor transaction detail. Product a
   server-determined detected format, normalized source dimensions, derivative
   dimensions/bytes, and processing time are technical facts; neither object is
   a `MediaAsset`, `MediaUsage`, public object, consent record, or clearance.
+- `PublicStorySubmissionMediaClearanceEvidenceDocument`: immutable,
+  confidential evidence object attached to exactly one submission-media
+  clearance, with technical status/rejection/tombstone state and an optional
+  replacement predecessor. It has no public/media-library relationship.
+  `PublicStorySubmissionMediaClearanceEvidenceReviewPage` stores only
+  server-created, bounded private JPEG review derivatives. A clearance may
+  record the one Ready document deliberately used for verification.
 - Draft/public media and private/confidential documents never share an access policy simply because both are files.
 - Replacing an asset creates a new immutable object/version; published snapshots continue to reference the version they approved.
 
