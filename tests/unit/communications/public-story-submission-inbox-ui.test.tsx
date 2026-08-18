@@ -29,6 +29,10 @@ import {
 vi.mock("@/app/admin/communications/submissions/actions", () => ({
   submissionReviewNoteAction: vi.fn(),
   submissionWorkflowAction: vi.fn(),
+  convertStorySubmissionAction: vi.fn(),
+}));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
 }));
 
 const id = "11111111-1111-4111-8111-111111111111";
@@ -209,6 +213,55 @@ describe("Story Submission administrative UI", () => {
     expect(markup).not.toContain("Convert to Story");
     expect(markup).not.toContain("Delete");
     expect(markup).not.toContain("Export");
+  });
+
+  it("shows Story handoff only for accepted submissions with both capabilities", () => {
+    const markup = renderToStaticMarkup(
+      <StorySubmissionDetailContent
+        submission={detail({ status: PublicStorySubmissionStatus.ACCEPTED })}
+        canCreateStoryDraft
+      />,
+    );
+    expect(markup).toContain("Story handoff");
+    expect(markup).toContain("Create a private Story draft");
+    expect(markup).toContain('name="confirmConversion"');
+    expect(markup).toContain("source material, not publishable content");
+
+    const reviewerOnly = renderToStaticMarkup(
+      <StorySubmissionDetailContent
+        submission={detail({ status: PublicStorySubmissionStatus.ACCEPTED })}
+      />,
+    );
+    expect(reviewerOnly).toContain(
+      "Story draft creation requires both submission-review and Story-create authority.",
+    );
+    expect(reviewerOnly).not.toContain('name="confirmConversion"');
+  });
+
+  it("renders an existing conversion as a typed private Story link without a repeat action", () => {
+    const markup = renderToStaticMarkup(
+      <StorySubmissionDetailContent
+        submission={detail({
+          status: PublicStorySubmissionStatus.ACCEPTED,
+          storyConversion: {
+            storyId: "22222222-2222-4222-8222-222222222222",
+            sourceSubmissionVersion: 5,
+            convertedAt: now,
+            convertedByAdminUserId: id,
+            convertedByDisplayName: "Communications Manager",
+          },
+        })}
+        canCreateStoryDraft
+      />,
+    );
+    expect(markup).toContain("Story draft created");
+    expect(markup).toContain("Source version");
+    expect(markup).toContain("Open Story draft");
+    expect(markup).toContain(
+      "/admin/communications/stories/22222222-2222-4222-8222-222222222222",
+    );
+    expect(markup).toContain("edited independently");
+    expect(markup).not.toContain('name="confirmConversion"');
   });
 
   it("renders only active lifecycle actions and closes terminal states", () => {

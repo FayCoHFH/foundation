@@ -383,6 +383,7 @@ model AdminUser {
   superAdminGrant                           SuperAdminGrant?                              @relation("SuperAdminHolder")
   grantedSuperAdminRecords                  SuperAdminGrant[]                             @relation("SuperAdminGrantor")
   createdPublications                       Publication[]                                 @relation("PublicationCreator")
+  convertedStorySubmissions                 PublicStorySubmissionStoryConversion[]        @relation("StorySubmissionConversionActor")
   createdRevisions                          PublicationRevision[]                         @relation("PublicationRevisionCreator")
   editorialResponsibilities                 PublicationResponsibility[]                   @relation("PublicationEditorialOwner")
   reviewerResponsibilities                  PublicationResponsibility[]                   @relation("PublicationAssignedReviewer")
@@ -679,10 +680,11 @@ model PublicNewsProjection {
 
 // Typed root. It has no public fields or route in C1.
 model Story {
-  id            String      @id @default(uuid()) @db.Uuid
-  publicationId String      @unique @db.Uuid
-  createdAt     DateTime    @default(now())
-  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  id              String                                @id @default(uuid()) @db.Uuid
+  publicationId   String                                @unique @db.Uuid
+  createdAt       DateTime                              @default(now())
+  publication     Publication                           @relation(fields: [publicationId], references: [id], onDelete: Restrict)
+  storyConversion PublicStorySubmissionStoryConversion?
 
   @@map("story")
 }
@@ -792,11 +794,32 @@ model PublicStorySubmission {
   mediaSubjects                          PublicStorySubmissionMediaSubject[]
   mediaClearances                        PublicStorySubmissionMediaClearance[]
   mediaPromotions                        PublicStorySubmissionMediaPromotion[]
+  storyConversion                        PublicStorySubmissionStoryConversion?
 
   @@unique([id, version])
   @@index([status, receivedAt, id])
   @@index([receivedAt, id])
   @@map("public_story_submission")
+}
+
+// Restricted provenance for the one-time editorial handoff from confidential
+// intake into the ordinary Story authoring domain. This never enters public
+// projections or Story content.
+model PublicStorySubmissionStoryConversion {
+  id                      String                @id @default(uuid()) @db.Uuid
+  submissionId            String                @unique @db.Uuid
+  storyId                 String                @unique @db.Uuid
+  sourceSubmissionVersion Int
+  convertedByAdminUserId  String                @db.Uuid
+  convertedAt             DateTime              @default(now())
+  correlationId           String                @unique @db.Uuid
+  createdAt               DateTime              @default(now())
+  submission              PublicStorySubmission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  story                   Story                 @relation(fields: [storyId], references: [id], onDelete: Restrict)
+  convertedBy             AdminUser             @relation("StorySubmissionConversionActor", fields: [convertedByAdminUserId], references: [id], onDelete: Restrict)
+
+  @@index([convertedByAdminUserId, convertedAt])
+  @@map("public_story_submission_story_conversion")
 }
 
 // Short-lived privacy-preserving abuse-control state. These rows never store

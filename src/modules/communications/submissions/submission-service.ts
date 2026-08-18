@@ -50,6 +50,15 @@ const detailSelect = {
   createdAt: true,
   updatedAt: true,
   statusChangedBy: { select: { authUser: { select: { name: true } } } },
+  storyConversion: {
+    select: {
+      storyId: true,
+      sourceSubmissionVersion: true,
+      convertedAt: true,
+      convertedByAdminUserId: true,
+      convertedBy: { select: { authUser: { select: { name: true } } } },
+    },
+  },
 } satisfies Prisma.PublicStorySubmissionSelect;
 
 const listSelect = {
@@ -98,6 +107,13 @@ export type PublicStorySubmissionAdminDetail = Readonly<{
   statusChangedByDisplayName: string | null;
   createdAt: Date;
   updatedAt: Date;
+  storyConversion?: Readonly<{
+    storyId: string;
+    sourceSubmissionVersion: number;
+    convertedAt: Date;
+    convertedByAdminUserId: string;
+    convertedByDisplayName: string | null;
+  }> | null;
 }>;
 
 export type PublicStorySubmissionAdminListItem = Readonly<{
@@ -239,6 +255,17 @@ function toDetail(record: DetailRecord): PublicStorySubmissionAdminDetail {
     statusChangedByDisplayName: record.statusChangedBy?.authUser.name ?? null,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
+    storyConversion: record.storyConversion
+      ? {
+          storyId: record.storyConversion.storyId,
+          sourceSubmissionVersion:
+            record.storyConversion.sourceSubmissionVersion,
+          convertedAt: record.storyConversion.convertedAt,
+          convertedByAdminUserId: record.storyConversion.convertedByAdminUserId,
+          convertedByDisplayName:
+            record.storyConversion.convertedBy.authUser.name,
+        }
+      : null,
   };
 }
 

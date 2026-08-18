@@ -18,3 +18,4 @@ export * from "./submission-media-clearance-evidence-upload-auth";
 export * from "./submission-media-clearance-evidence-service";
 export * from "./submission-media-promotion-content";
 export * from "./submission-media-promotion-service";
+export * from "./story-conversion-service";

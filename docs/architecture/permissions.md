@@ -117,7 +117,7 @@ These future capabilities must not be included in broad content-admin roles by d
 - An approver cannot approve a revision they materially edited after submission without a second qualified approver.
 - Publishing requires an exact approved revision/hash; a later edit invalidates approval.
 - Placement managers cannot feature unpublished, expired, withdrawn, or otherwise ineligible content.
-- Conversion of a public submission into a Story draft requires `communications.submissions.review`; it grants no permission to publish the submitter's raw intake or private upload.
+- Conversion of an accepted public submission into a Story draft requires both `communications.submissions.review` and `stories.create`; the active administrator remains the default editorial owner. It grants no permission to publish the submitter's raw intake or private upload, and the service records a one-time restricted provenance relation.
 - A clearance/second-approval/legal-review requirement is evaluated for the exact revision before approval or publishing. A normal capability grant may satisfy only the requirement it names; exceptional override is an explicit, audited policy action.
 - Commerce fulfillment cannot mark an order paid; only verified Stripe state/reconciliation may advance payment state.
 - Integration secret managers need not be content publishers or applicant/grant readers.

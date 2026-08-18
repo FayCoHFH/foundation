@@ -43,6 +43,16 @@ privacy, first-party network routing, and strict production CSP. This evidence
 does not authorize production collection, change the confidential/public media
 boundary, or add administrative media/clearance/evidence/promotion UI.
 
+C6B-6 adds an explicit administrative handoff from an `ACCEPTED`
+`PublicStorySubmission` to one independent ordinary Story draft. The service
+requires both `communications.submissions.review` and `stories.create`, assigns
+the existing default editorial responsibility to the converter, maps only the
+suggested title and story text into validated draft fields, and records a
+restricted one-to-one provenance relation. It does not copy submitter identity,
+consent, sensitivity, rights, clearance, evidence, byline, media, or public
+credit; it does not create approval, release, projection, placement, email, or
+automatic Story media. The source remains confidential and unchanged.
+
 ## 2. Typed editorial aggregates
 
 `Publication` is a narrow shared spine, not a user-facing content type. A publication has exactly one typed root (`Story` or `NewsItem`) and a closed `kind` discriminator. Its revision, approval, scheduling, snapshot, workflow, quality, authorship, media, SEO, and relation records remain type-aware through the root and validation service.

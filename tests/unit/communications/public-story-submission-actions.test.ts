@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   spam: vi.fn(),
   restore: vi.fn(),
   updateNote: vi.fn(),
+  convert: vi.fn(),
   resolveAdminAccess: vi.fn(),
   hasCapability: vi.fn(),
   revalidatePath: vi.fn(),
@@ -31,10 +32,17 @@ vi.mock("@/platform/auth/principal", () => ({
   resolveAdminAccess: mocks.resolveAdminAccess,
 }));
 vi.mock("@/platform/database/prisma", () => ({ prisma: mocks.prisma }));
+vi.mock(
+  "@/modules/communications/submissions/story-conversion-service",
+  () => ({
+    convertPublicStorySubmissionToStory: mocks.convert,
+  }),
+);
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 
 import {
+  convertStorySubmissionAction,
   submissionReviewNoteAction,
   submissionWorkflowAction,
 } from "@/app/admin/communications/submissions/actions";
@@ -59,6 +67,14 @@ function noteForm(value: string, version = "7") {
   form.set("submissionId", id);
   form.set("expectedVersion", version);
   form.set("internalReviewNote", value);
+  return form;
+}
+
+function conversionForm(confirmed = true) {
+  const form = new FormData();
+  form.set("submissionId", id);
+  form.set("expectedVersion", "7");
+  if (confirmed) form.set("confirmConversion", "on");
   return form;
 }
 
@@ -163,5 +179,39 @@ describe("Story Submission administrative server actions", () => {
       value: "Keep this entered note.",
     });
     expect(mocks.redirect).not.toHaveBeenCalled();
+  });
+
+  it("requires deliberate confirmation and passes the expected version to the conversion command", async () => {
+    const invalid = await convertStorySubmissionAction(
+      { status: "idle" },
+      conversionForm(false),
+    );
+    expect(invalid).toEqual({
+      status: "error",
+      message: "Confirm that you want to create a private Story draft.",
+    });
+    expect(mocks.convert).not.toHaveBeenCalled();
+
+    mocks.convert.mockResolvedValue({
+      created: true,
+      storyId: "22222222-2222-4222-8222-222222222222",
+    });
+    const success = await convertStorySubmissionAction(
+      { status: "idle" },
+      conversionForm(),
+    );
+    expect(success).toEqual({
+      status: "success",
+      storyId: "22222222-2222-4222-8222-222222222222",
+      message: "Private Story draft created for editorial handoff.",
+    });
+    expect(mocks.convert).toHaveBeenCalledWith(mocks.prisma, principal, {
+      submissionId: id,
+      expectedVersion: 7,
+      confirmConversion: "on",
+    });
+    expect(mocks.revalidatePath).toHaveBeenCalledWith(
+      `/admin/communications/stories/22222222-2222-4222-8222-222222222222`,
+    );
   });
 });

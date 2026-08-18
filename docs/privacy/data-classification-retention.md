@@ -49,6 +49,7 @@ Raw card number/CVC data is prohibited, not merely Restricted: the platform must
 | Public Story intake token hashes, HMAC rate-limit fingerprints, expiry, and bounded counters | Confidential operational security artifact | No raw token, nonce, IP, email, user agent, or request body; expire and clean through the bounded C6B-1B cleanup path; not subject to the unresolved submission-content retention profile |
 | Public Story Submission attempt recovery hashes, upload nonce hashes, raw image metadata, checksums, sensitivity declarations, private quarantine originals, C6B-3B review derivatives, C6B-3C rights declarations, scoped subjects, clearances, C6B-3D evidence originals/private raster derivatives, restrictions, and revocation requests | Confidential | No public URL, cache, search, analytics, or log payload; raw recovery/evidence upload tokens are never persisted; evidence filenames, object keys, checksums, document contents, and parser details stay out of DTOs/audit summaries; rejected/removed technical objects are deleted while a tombstone remains; submitted-evidence retention remains manual under the unresolved G-07 profile |
 | Public MediaAsset and promotion provenance | Public | Sanitized derivative object plus public-safe metadata, unique source/version link, explicit credit decision, and clearance snapshot; source submission remains confidential | No original/private key/suggested credit crosses promotion; later rights restrictions govern public reads and new usage |
+| PublicStorySubmission-to-Story conversion provenance | Confidential | One-to-one source/Story/version/actor/time/correlation record; no submitter identity, consent, rights, evidence, media, or review note is copied into the Story; source and provenance remain under the unresolved G-07 retention profile | Never public, indexed, cached, or included in public Story projections; conversion is audited and does not delete or rewrite the source |
 
 The C6B-2A/2B administrative inbox is a review surface, not a new collection
 or retention policy. It server-renders the minimum list/detail DTOs only after
@@ -141,5 +142,7 @@ purpose, contact possibility, lack of publication guarantee, sensitive-data
 warning, and separate image rights/likeness choices before receipt. Raw
 recovery material is hashed at rest; image originals and private derivatives
 remain in the quarantine boundary. Expired attempts are subject to the
-existing 24-hour cleanup path. C6B-4A does not create public assets or a Story;
-conversion and retention disposition remain later authorized work under G-07.
+existing 24-hour cleanup path. C6B-4A does not create public assets or a Story.
+C6B-6 adds only an explicit authorized administrative conversion into an
+independent private draft; it does not change the public intake gate or
+retention disposition under G-07.

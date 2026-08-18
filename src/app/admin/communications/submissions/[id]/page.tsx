@@ -85,6 +85,10 @@ export default async function StorySubmissionDetailPage({
           access.principal,
           "communications.submissions.restore_spam",
         )}
+        canCreateStoryDraft={
+          hasCapability(access.principal, "stories.create") &&
+          hasCapability(access.principal, "communications.submissions.review")
+        }
         {...(statusCode ? { statusCode } : {})}
       />
     </AdminShell>

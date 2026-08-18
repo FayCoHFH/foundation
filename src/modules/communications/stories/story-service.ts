@@ -397,82 +397,89 @@ async function runMutation<T>(
   }
 }
 
+export async function createStoryDraftInTransaction(
+  transaction: Transaction,
+  actor: StoryActor,
+  input: CreateStoryInput,
+  correlationId = randomUUID(),
+): Promise<PersistedStoryDraft> {
+  requireCapability(actor, "stories.create");
+  const candidate = validateStoryCandidate(input);
+  await requireActiveAdmin(transaction, actor.adminUserId);
+  const ownerId = input.editorialOwnerAdminUserId ?? actor.adminUserId;
+  assertIdentifier(ownerId, "Editorial owner ID");
+  if (ownerId !== actor.adminUserId)
+    requireCapability(actor, "stories.edit.any");
+  await requireActiveAdmin(transaction, ownerId);
+
+  const publication = await transaction.publication.create({
+    data: {
+      kind: "STORY",
+      createdById: actor.adminUserId,
+      story: { create: {} },
+      responsibility: {
+        create: {
+          editorialOwnerAdminUserId: ownerId,
+          changedByAdminUserId: actor.adminUserId,
+        },
+      },
+    },
+    include: { story: true },
+  });
+  const story = publication.story;
+  if (!story) throw new Error("Story root was not created.");
+  const contentHash = hashStoryCandidate(candidate);
+  const revision = await transaction.publicationRevision.create({
+    data: {
+      publicationId: publication.id,
+      number: 1,
+      headline: candidate.headline,
+      deck: candidate.deck,
+      excerpt: candidate.excerpt,
+      body: candidate.body as Prisma.InputJsonValue,
+      schemaVersion: candidate.body.schemaVersion,
+      contentHash,
+      contentHashVersion: STORY_CONTENT_HASH_VERSION,
+      createdByAdminUserId: actor.adminUserId,
+    },
+  });
+  await transaction.publication.update({
+    where: { id: publication.id },
+    data: { currentRevisionId: revision.id },
+  });
+  await createLifecycleTransition(transaction, {
+    publicationId: publication.id,
+    action: "DRAFT_CREATED",
+    fromState: null,
+    toState: "DRAFT",
+    revisionId: revision.id,
+    contentHash,
+    actorAdminUserId: actor.adminUserId,
+    correlationId,
+  });
+  await createAudit(
+    transaction,
+    actor.adminUserId,
+    "story.create",
+    story.id,
+    correlationId,
+    {
+      revisionNumber: 1,
+      workflow: "DRAFT",
+      ownerAssignedToCreator: ownerId === actor.adminUserId,
+    },
+  );
+  return toDraft(await findStory(transaction, story.id));
+}
+
 export async function createStory(
   prisma: PrismaClient,
   actor: StoryActor,
   input: CreateStoryInput,
 ): Promise<PersistedStoryDraft> {
-  requireCapability(actor, "stories.create");
-  const candidate = validateStoryCandidate(input);
-  const correlationId = randomUUID();
-
-  return runMutation(prisma, async (transaction) => {
-    await requireActiveAdmin(transaction, actor.adminUserId);
-    const ownerId = input.editorialOwnerAdminUserId ?? actor.adminUserId;
-    assertIdentifier(ownerId, "Editorial owner ID");
-    if (ownerId !== actor.adminUserId)
-      requireCapability(actor, "stories.edit.any");
-    await requireActiveAdmin(transaction, ownerId);
-
-    const publication = await transaction.publication.create({
-      data: {
-        kind: "STORY",
-        createdById: actor.adminUserId,
-        story: { create: {} },
-        responsibility: {
-          create: {
-            editorialOwnerAdminUserId: ownerId,
-            changedByAdminUserId: actor.adminUserId,
-          },
-        },
-      },
-      include: { story: true },
-    });
-    const story = publication.story;
-    if (!story) throw new Error("Story root was not created.");
-    const contentHash = hashStoryCandidate(candidate);
-    const revision = await transaction.publicationRevision.create({
-      data: {
-        publicationId: publication.id,
-        number: 1,
-        headline: candidate.headline,
-        deck: candidate.deck,
-        excerpt: candidate.excerpt,
-        body: candidate.body as Prisma.InputJsonValue,
-        schemaVersion: candidate.body.schemaVersion,
-        contentHash,
-        contentHashVersion: STORY_CONTENT_HASH_VERSION,
-        createdByAdminUserId: actor.adminUserId,
-      },
-    });
-    await transaction.publication.update({
-      where: { id: publication.id },
-      data: { currentRevisionId: revision.id },
-    });
-    await createLifecycleTransition(transaction, {
-      publicationId: publication.id,
-      action: "DRAFT_CREATED",
-      fromState: null,
-      toState: "DRAFT",
-      revisionId: revision.id,
-      contentHash,
-      actorAdminUserId: actor.adminUserId,
-      correlationId,
-    });
-    await createAudit(
-      transaction,
-      actor.adminUserId,
-      "story.create",
-      story.id,
-      correlationId,
-      {
-        revisionNumber: 1,
-        workflow: "DRAFT",
-        ownerAssignedToCreator: ownerId === actor.adminUserId,
-      },
-    );
-    return toDraft(await findStory(transaction, story.id));
-  });
+  return runMutation(prisma, (transaction) =>
+    createStoryDraftInTransaction(transaction, actor, input),
+  );
 }
 
 export async function getStoryDraft(

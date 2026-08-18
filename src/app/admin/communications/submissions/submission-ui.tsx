@@ -20,6 +20,7 @@ import {
 import { SubmissionReviewNoteForm } from "./review-note-form";
 import { SubmissionWorkflowControls } from "./workflow-controls";
 import { SubmissionMediaSummarySection } from "./media-ui";
+import { StoryConversionForm } from "./story-conversion-form";
 import type { SubmissionMediaAdminSummary } from "@/modules/communications/submissions/submission-media-admin-service";
 
 const SENSITIVITY_LABELS = [
@@ -343,11 +344,13 @@ export function StorySubmissionDetailContent({
   submission,
   statusCode,
   canRestoreSpam = false,
+  canCreateStoryDraft = false,
   mediaSummaries = [],
 }: {
   submission: PublicStorySubmissionAdminDetail;
   statusCode?: SubmissionStatusCode;
   canRestoreSpam?: boolean;
+  canCreateStoryDraft?: boolean;
   mediaSummaries?: readonly SubmissionMediaAdminSummary[];
 }) {
   const hasSensitivity =
@@ -584,6 +587,69 @@ export function StorySubmissionDetailContent({
         status={submission.status}
         canRestoreSpam={canRestoreSpam}
       />
+
+      <section
+        aria-labelledby="submission-story-handoff-heading"
+        className="mt-9"
+      >
+        <h2
+          id="submission-story-handoff-heading"
+          className="font-serif text-2xl"
+        >
+          Story handoff
+        </h2>
+        <p className="text-muted-foreground mt-3 max-w-3xl text-sm">
+          A confidential submission is source material, not publishable content.
+          A Story draft is an independent editorial record and follows the
+          normal private draft, review, approval, and release workflow.
+        </p>
+        {submission.storyConversion ? (
+          <div className="border-border mt-5 border-y py-5 text-sm">
+            <p className="font-semibold">Story draft created</p>
+            <dl className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div>
+                <dt className="font-semibold">Created</dt>
+                <dd className="mt-1">
+                  {formatEditorialDateTime(
+                    submission.storyConversion.convertedAt,
+                  )}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-semibold">Source version</dt>
+                <dd className="mt-1">
+                  {submission.storyConversion.sourceSubmissionVersion}
+                </dd>
+              </div>
+            </dl>
+            <Link
+              href={`/admin/communications/stories/${submission.storyConversion.storyId}`}
+              className="text-primary mt-4 inline-block font-semibold underline underline-offset-4"
+            >
+              Open Story draft
+            </Link>
+            <p className="text-muted-foreground mt-3 text-sm">
+              The Story is edited independently; later submission changes do not
+              rewrite its draft.
+            </p>
+          </div>
+        ) : submission.status === "ACCEPTED" && canCreateStoryDraft ? (
+          <StoryConversionForm
+            submissionId={submission.id}
+            expectedVersion={submission.version}
+          />
+        ) : submission.status === "ACCEPTED" ? (
+          <p className="border-border text-muted-foreground mt-5 border-y py-5 text-sm">
+            Story draft creation requires both submission-review and
+            Story-create authority.
+          </p>
+        ) : (
+          <p className="border-border text-muted-foreground mt-5 border-y py-5 text-sm">
+            Story handoff becomes available only after this submission is
+            accepted for editorial consideration.
+          </p>
+        )}
+      </section>
     </>
   );
 }

@@ -7,6 +7,7 @@ export const SUBMISSION_STATUS_CODES = [
   "submission-marked-spam",
   "submission-spam-restored",
   "submission-note-updated",
+  "story-created",
 ] as const;
 
 export type SubmissionStatusCode = (typeof SUBMISSION_STATUS_CODES)[number];
@@ -23,6 +24,7 @@ export const SUBMISSION_STATUS_MESSAGES: Record<SubmissionStatusCode, string> =
     "submission-spam-restored":
       "Story submission restored to Received for ordinary triage.",
     "submission-note-updated": "Internal review note updated.",
+    "story-created": "Private Story draft created for editorial handoff.",
   };
 
 export function isSubmissionStatusCode(

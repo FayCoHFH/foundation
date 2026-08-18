@@ -13,6 +13,7 @@ import {
   restoreSpamPublicStorySubmission,
   updatePublicStorySubmissionReviewNote,
 } from "@/modules/communications/submissions";
+import { convertPublicStorySubmissionToStory } from "@/modules/communications/submissions/story-conversion-service";
 import { hasCapability, resolveAdminAccess } from "@/platform/auth/principal";
 import { prisma } from "@/platform/database/prisma";
 import {
@@ -35,6 +36,12 @@ export type SubmissionReviewNoteActionState = Readonly<{
   fieldError?: string;
 }>;
 
+export type StoryConversionActionState = Readonly<{
+  status: "idle" | "error" | "success";
+  message?: string;
+  storyId?: string;
+}>;
+
 const submissionMutationSchema = z.object({
   submissionId: z.string().uuid(),
   expectedVersion: z.coerce.number().int().positive(),
@@ -53,6 +60,12 @@ const reviewNoteSchema = z.object({
   submissionId: z.string().uuid(),
   expectedVersion: z.coerce.number().int().positive(),
   internalReviewNote: z.string().max(2_000, "Use 2,000 characters or fewer."),
+});
+
+const storyConversionSchema = z.object({
+  submissionId: z.string().uuid(),
+  expectedVersion: z.coerce.number().int().positive(),
+  confirmConversion: z.literal("on"),
 });
 
 async function currentPrincipal() {
@@ -207,4 +220,48 @@ export async function submissionReviewNoteAction(
     );
   }
   redirectAfterMutation(parsed.data.submissionId, "submission-note-updated");
+}
+
+export async function convertStorySubmissionAction(
+  _previousState: StoryConversionActionState,
+  formData: FormData,
+): Promise<StoryConversionActionState> {
+  const parsed = storyConversionSchema.safeParse({
+    submissionId: formData.get("submissionId"),
+    expectedVersion: formData.get("expectedVersion"),
+    confirmConversion: formData.get("confirmConversion"),
+  });
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Confirm that you want to create a private Story draft.",
+    };
+  }
+  try {
+    const principal = await currentPrincipal();
+    const result = await convertPublicStorySubmissionToStory(
+      prisma,
+      principal,
+      parsed.data,
+    );
+    revalidatePath(
+      `/admin/communications/submissions/${parsed.data.submissionId}`,
+    );
+    revalidatePath(`/admin/communications/stories/${result.storyId}`);
+    return {
+      status: "success",
+      storyId: result.storyId,
+      message: result.created
+        ? "Private Story draft created for editorial handoff."
+        : "This submission already has a Story draft.",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: actionError(
+        error,
+        "The Story draft could not be created. Reload the submission and try again.",
+      ),
+    };
+  }
 }

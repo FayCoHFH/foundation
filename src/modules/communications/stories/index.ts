@@ -11,6 +11,7 @@ export {
   archiveStory,
   assignStoryEditorialOwner,
   createStory,
+  createStoryDraftInTransaction,
   getStoryDraft,
   requestStoryChanges,
   saveStoryRevision,

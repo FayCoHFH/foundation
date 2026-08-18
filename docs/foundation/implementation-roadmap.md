@@ -239,6 +239,19 @@ documented in [the C6B-5A delivery record](../development/c6b5a-submission-media
 Public intake remains disabled by default; browser, axe, screenshot, bulk, and
 Story-conversion work remains deferred.
 
+**C6B-6 — Story Submission conversion handoff: complete locally on
+2026-08-18.** An accepted confidential submission can now be converted once,
+with both `communications.submissions.review` and `stories.create`, into an
+ordinary independent private Story draft owned by the converter through the
+existing responsibility model. The handoff maps only suggested title/story
+text, records restricted source/version/actor provenance, preserves the source,
+and creates no approval, release, projection, placement, media, clearance,
+byline, public credit, email, or automatic Story publication. Unit, PostgreSQL,
+Playwright/axe, migration, build, and documentation evidence is recorded in
+[the C6B-6 delivery record](../development/c6b6-story-conversion-handoff.md).
+G-07 remains open; public intake enablement and media-to-Story attachment remain
+deferred.
+
 ## Slice 1 — Application Foundation and Scaffold
 
 Implementation status: **complete locally on 2026-08-14**. The application,
