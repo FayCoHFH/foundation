@@ -12,8 +12,8 @@ The public shell deliberately contains no migrated or invented production
 content. It is marked `noindex` until verified content and an approved launch
 replace the scaffold.
 
-Current Communications routes include `/`, `/stories/[slug]`, `/news`, and
-`/news/[slug]`; authorized curation is available at
+Current public routes include `/`, `/stories/[slug]`, `/news`, `/news/[slug]`,
+`/projects`, and `/projects/[slug]`; authorized curation is available at
 `/admin/communications`, `/admin/communications/queue`, and
 `/admin/communications/homepage`, and the capability-protected Story
 Submission inbox at `/admin/communications/submissions`, including the nested
@@ -58,6 +58,9 @@ server-only `PUBLIC_STORY_SUBMISSIONS_ENABLED`, dedicated secret, and approved
 privacy-notice version must be configured before an isolated test or approved
 deployment may enable the boundary. See the
 [C6B-1B intake-security record](docs/development/c6b1b-public-story-intake-security.md).
+
+Projects administration is available at `/admin/projects` for authorized
+Project authors, reviewers, and publishers. See the [Projects P2 UI record](docs/development/p2-projects-ui.md).
 
 ## Validate the foundation
 

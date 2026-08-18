@@ -57,6 +57,17 @@ export function communicationsNavigation(
     });
   }
   if (
+    hasCapability(principal, "projects.create") ||
+    hasCapability(principal, "projects.read.draft.own") ||
+    hasCapability(principal, "projects.read.draft.any")
+  ) {
+    navigation.push({
+      href: "/admin/projects",
+      label: "Projects",
+      current: currentRoute(currentHref, "/admin/projects"),
+    });
+  }
+  if (
     hasCapability(principal, "news.create") ||
     hasCapability(principal, "news.read.draft.own") ||
     hasCapability(principal, "news.read.draft.any")
@@ -90,3 +101,5 @@ export function communicationsNavigation(
   }
   return navigation;
 }
+
+export const projectsNavigation = communicationsNavigation;

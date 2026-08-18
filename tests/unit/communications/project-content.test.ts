@@ -113,4 +113,15 @@ describe("Project content contract", () => {
     expect(validated).not.toHaveProperty("applicant");
     expect(validated).not.toHaveProperty("financials");
   });
+
+  it("accepts omitted optional impact fact units through repeated validation", () => {
+    const withoutUnit = {
+      ...candidate,
+      impactFacts: [{ label: "Homes built", value: "1", sortOrder: 0 }],
+    };
+    expect(validateProjectCandidate(withoutUnit).impactFacts[0]?.unit).toBe(
+      null,
+    );
+    expect(() => hashProjectCandidate(withoutUnit)).not.toThrow();
+  });
 });

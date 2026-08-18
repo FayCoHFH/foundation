@@ -26,6 +26,10 @@ const requestSchema = z.object({
     "news-manager",
     "dashboard-contributor",
     "dashboard-only",
+    "project-contributor",
+    "project-editor",
+    "project-manager",
+    "project-publisher",
     "denied",
   ]),
 });
@@ -39,6 +43,10 @@ const fixtureRoleKeys = {
   "news-contributor": "contributor",
   "news-editor": "editor",
   "news-manager": "communications-manager",
+  "project-contributor": "contributor",
+  "project-editor": "editor",
+  "project-manager": "communications-manager",
+  "project-publisher": "publisher",
 } as const;
 
 const testOnlyFixtureCapabilities = {

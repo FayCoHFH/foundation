@@ -60,6 +60,10 @@ function reject(message: string): never {
 }
 
 function text(value: unknown, label: string, max: number, required = true) {
+  if (value === null || value === undefined) {
+    if (!required) return null;
+    reject(`${label} must be text.`);
+  }
   if (typeof value !== "string") reject(`${label} must be text.`);
   const normalized = value.trim();
   if (required && normalized.length === 0)

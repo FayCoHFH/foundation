@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-type StoryNode = {
+export type StoryNode = {
   type?: string;
   text?: string;
   attrs?: { href?: string; level?: number };

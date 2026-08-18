@@ -22,6 +22,11 @@ export function SiteHeader() {
                 News
               </Link>
             </li>
+            <li>
+              <Link className="hover:text-primary" href="/projects">
+                Projects
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
