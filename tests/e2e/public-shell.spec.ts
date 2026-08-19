@@ -11,7 +11,7 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
   expect(response?.headers()["content-security-policy"]).not.toContain("*");
   expect(response?.headers()["referrer-policy"]).toBe("no-referrer");
 
-  await expect(page).toHaveTitle("Foundation environment");
+  await expect(page).toHaveTitle("Home | Fayette County Habitat for Humanity");
   await expect(page.getByRole("banner")).toBeVisible();
   await expect(
     page.getByRole("navigation", { name: "Public navigation" }),
@@ -79,11 +79,22 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
       heading.color,
     );
   }
-  await expect(page.locator(".public-hero-structure")).toHaveAttribute(
+  await expect(page.locator(".public-hero-media")).toHaveAttribute(
     "aria-hidden",
     "true",
   );
-  await expect(page.locator(".public-hero-structure img")).toHaveCount(0);
+  await expect(
+    page.locator('[data-reference-status="TEMPORARY_EXTERNAL_REFERENCE"]'),
+  ).toHaveCount(1);
+  await expect(
+    page.locator('[data-newsletter-state="not-configured"]'),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Habitat ReStore" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "ReStore" }).first(),
+  ).toHaveAttribute("href", "/restore");
   await expect(
     page.locator(
       ".bg-warm-paper, .bg-editorial-cream, .bg-pale-habitat-blue, .bg-pale-habitat-green",

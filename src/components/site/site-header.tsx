@@ -32,6 +32,11 @@ export async function SiteHeader() {
           Volunteer
         </Link>
       </li>
+      <li>
+        <Link className="site-nav-link" href="/restore">
+          ReStore
+        </Link>
+      </li>
       {donate ? (
         <li>
           <a
@@ -47,6 +52,21 @@ export async function SiteHeader() {
   );
   return (
     <header className="site-header">
+      <div className="site-utility-bar">
+        <div className="site-utility-inner mx-auto max-w-7xl">
+          <p className="site-utility-label">Fayette County, Texas</p>
+          <nav aria-label="Utility navigation">
+            <ul className="site-utility-links">
+              <li>
+                <Link href="/give">Giving information</Link>
+              </li>
+              <li>
+                <Link href="/share-your-story">Share your story</Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
       <div className="site-header-inner mx-auto max-w-7xl">
         <Link href="/" className="site-wordmark">
           <HabitatLogo

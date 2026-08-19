@@ -1,0 +1,14 @@
+{
+  "status": "TEMPORARY_EXTERNAL_REFERENCE",
+  "productionUse": false,
+  "assets": [
+    {
+      "path": "/reference/portland-volunteers.jpg",
+      "sourceUrl": "https://habitatportlandregion.org/wp-content/uploads/2022/08/volunteers-at-foster-scaled.jpg",
+      "sourceOrganization": "Habitat for Humanity Portland Region",
+      "role": "temporary homepage development reference",
+      "replacementRequired": true,
+      "notes": "Do not imply the people or project shown are Fayette County Habitat participants. Replace with approved Fayette County or licensed HFHI imagery before production."
+    }
+  ]
+}

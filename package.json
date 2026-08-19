@@ -14,6 +14,7 @@
     "build:clean": "rm -rf .next && pnpm db:generate && pnpm build",
     "start": "next start",
     "lint": "eslint .",
+    "audit:temporary-reference": "tsx scripts/temporary-reference-audit.ts",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",

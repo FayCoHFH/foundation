@@ -7,6 +7,7 @@ const INDEX_ROUTES = [
   "/news",
   "/give",
   "/volunteer",
+  "/restore",
   "/share-your-story",
 ] as const;
 
@@ -73,6 +74,7 @@ test("public navigation matrix reaches current destinations and mobile navigatio
     "/news",
     "/give",
     "/volunteer",
+    "/restore",
   ]) {
     await visit(href);
   }
@@ -113,6 +115,7 @@ test("public navigation matrix reaches current destinations and mobile navigatio
       "/projects",
       "/campaigns",
       "/volunteer",
+      "/restore",
     ]),
   );
   for (const href of mobileHrefs.filter((value): value is string =>

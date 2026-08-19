@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 
 import { CampaignActions } from "@/components/campaigns/campaign-presentation";
 import {
@@ -9,6 +10,7 @@ import {
 import { PROJECT_STATUS_LABELS } from "@/app/admin/projects/project-constants";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { NewsletterSignup } from "@/components/site/newsletter-signup";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { listCurrentPublicCampaigns } from "@/modules/communications/campaigns";
@@ -21,7 +23,7 @@ import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Foundation environment",
+  title: { absolute: "Home | Fayette County Habitat for Humanity" },
 };
 
 function target(item: Awaited<ReturnType<typeof getEffectivePlacement>>) {
@@ -72,6 +74,8 @@ export default async function HomePage() {
   const news = target(newsRow);
   const activeCampaign = campaigns[0] ?? null;
   const shownNews = new Set([news?.href]);
+  const useReferenceImage =
+    process.env.APP_ENV === "development" || process.env.APP_ENV === "test";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -81,9 +85,21 @@ export default async function HomePage() {
       <main id="main-content" tabIndex={-1} className="public-page-main flex-1">
         <SiteNoticeRegion targetArea={SiteNoticeTargetArea.HOMEPAGE} />
 
-        <section className="border-brand-cool-gray bg-brand-white border-b">
-          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-12 lg:px-12 lg:py-20">
-            <div className="editorial-arrival flex flex-col justify-center">
+        <section className="public-hero">
+          <div className="public-hero-media" aria-hidden="true">
+            {useReferenceImage ? (
+              <Image
+                src="/reference/portland-volunteers.jpg"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 639px) 100vw, 62vw"
+                data-reference-status="TEMPORARY_EXTERNAL_REFERENCE"
+              />
+            ) : null}
+          </div>
+          <div className="public-hero-content">
+            <div className="editorial-arrival">
               <p className="public-kicker">
                 Fayette County Habitat for Humanity
               </p>
@@ -113,10 +129,6 @@ export default async function HomePage() {
                   </Link>
                 )}
               </div>
-            </div>
-            <div className="public-hero-structure" aria-hidden="true">
-              <span className="public-hero-structure-frame" />
-              <span className="public-hero-structure-post" />
             </div>
           </div>
         </section>
@@ -285,7 +297,7 @@ export default async function HomePage() {
           {story ? (
             <section
               aria-labelledby="featured-story"
-              className="public-section-rule mt-20"
+              className="public-section-rule public-story-band mt-20"
             >
               <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
                 <p className="public-kicker">Featured story</p>
@@ -343,7 +355,7 @@ export default async function HomePage() {
 
           <section
             aria-labelledby="latest-news"
-            className="public-section-rule mt-20"
+            className="public-section-rule public-news-band mt-20"
           >
             <div className="flex flex-wrap items-end justify-between gap-5">
               <div>
@@ -406,6 +418,8 @@ export default async function HomePage() {
                 ))}
             </ul>
           </section>
+
+          <NewsletterSignup />
         </div>
       </main>
       <SiteFooter />

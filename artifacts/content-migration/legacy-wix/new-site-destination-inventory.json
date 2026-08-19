@@ -62,6 +62,12 @@
       "legacyUse": "Legacy volunteer guidance was reviewed but no unverified registration destination or roster was added."
     },
     {
+      "route": "/restore",
+      "implementation": "src/app/restore/page.tsx",
+      "destinations": ["verification-aware ReStore information surface"],
+      "legacyUse": "The legacy ReStore address and hours remain verification-required; no operational details are published until current information is confirmed."
+    },
+    {
       "route": "/share-your-story",
       "implementation": "src/app/share-your-story/page.tsx",
       "destinations": ["confidential public Story submission intake"],
@@ -90,10 +96,10 @@
     "CONFIDENTIAL_STORY_INTAKE": "/share-your-story",
     "PROGRAM": null,
     "PEOPLE_AND_LEADERSHIP": null,
-    "RESTORE": null,
+    "RESTORE": "/restore",
     "EVENT_EDITION": null,
     "NEWSLETTER_ARCHIVE": null,
     "IMPACT_METRIC": null
   },
-  "architectureDecision": "No route, public section, navigation item, content model, or module was added to accommodate legacy material."
+  "architectureDecision": "A minimal /restore route and primary navigation item were added because this task explicitly authorized first-class ReStore visibility; no legacy ReStore operating details, logo treatment, or content architecture were migrated."
 }

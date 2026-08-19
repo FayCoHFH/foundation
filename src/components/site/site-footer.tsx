@@ -9,39 +9,78 @@ export async function SiteFooter() {
     getPublicGlobalDestination(prisma, "GENERAL_VOLUNTEER"),
   ]);
   return (
-    <footer className="border-border bg-brand-traditional-blue text-brand-white border-t">
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr] lg:px-12">
-        <div>
+    <footer className="site-footer border-border bg-brand-traditional-blue text-brand-white border-t">
+      <div className="site-footer-inner mx-auto max-w-7xl">
+        <div className="site-footer-intro">
           <div className="site-footer-logo-inset">
-            <HabitatLogo className="site-footer-logo" variant="white" />
+            <HabitatLogo
+              className="site-footer-logo"
+              variant="white"
+              priority
+            />
           </div>
-          <p className="text-brand-white mt-5 max-w-md text-sm leading-6">
+          <p className="text-brand-white mt-5 max-w-md leading-7">
             Building and repairing homes with neighbors across Fayette County.
           </p>
         </div>
-        <div className="text-brand-white text-sm leading-6 md:text-right">
-          <div className="flex flex-wrap justify-start gap-x-5 gap-y-2 md:justify-end">
-            <Link href="/give">Why give</Link>
-            <Link href="/volunteer">Volunteer</Link>
-            {donate ? (
-              <a
-                href={donate.url}
-                aria-label="Donate (opens the secure DonorView giving page)"
-              >
-                Donate ↗
-              </a>
-            ) : null}
-            {!donate && !volunteer ? (
-              <p id="giving-status" className="basis-full">
-                General giving and volunteer destinations are not configured
-                yet.
-              </p>
-            ) : null}
+        <nav className="site-footer-nav" aria-label="Footer navigation">
+          <div>
+            <h2>Explore</h2>
+            <ul>
+              <li>
+                <Link href="/news">News</Link>
+              </li>
+              <li>
+                <Link href="/projects">Projects</Link>
+              </li>
+              <li>
+                <Link href="/campaigns">Campaigns</Link>
+              </li>
+            </ul>
           </div>
-          <p className="text-brand-white mt-5 text-xs tracking-[0.12em] uppercase">
-            Serving neighbors across Fayette County
+          <div>
+            <h2>Participate</h2>
+            <ul>
+              <li>
+                <Link href="/volunteer">Volunteer</Link>
+              </li>
+              <li>
+                <Link href="/share-your-story">Share your story</Link>
+              </li>
+              <li>
+                <Link href="/restore">ReStore</Link>
+              </li>
+              <li>
+                <Link href="/give">Why give</Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div className="site-footer-status">
+          {donate ? (
+            <a
+              className="site-footer-donate"
+              href={donate.url}
+              aria-label="Donate (opens the secure DonorView giving page)"
+            >
+              Donate ↗
+            </a>
+          ) : null}
+          {!donate && !volunteer ? (
+            <p id="giving-status">
+              Giving and volunteer destinations are not configured yet.
+            </p>
+          ) : null}
+          <p className="text-brand-white text-xs tracking-[0.12em] uppercase">
+            Fayette County Habitat for Humanity
           </p>
         </div>
+      </div>
+      <div className="site-footer-legal mx-auto max-w-7xl">
+        <span>
+          © {new Date().getFullYear()} Fayette County Habitat for Humanity
+        </span>
+        <span>Public information is published as it is verified.</span>
       </div>
     </footer>
   );
