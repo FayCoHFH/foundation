@@ -5,7 +5,7 @@ import { ButtonLink } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-5 py-16 sm:px-8">
-      <p className="text-primary text-sm font-semibold tracking-wide">
+      <p className="text-brand-traditional-blue text-sm font-semibold tracking-wide">
         Not found
       </p>
       <h1 className="text-foreground type-display mt-4 text-4xl leading-tight">

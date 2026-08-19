@@ -1,0 +1,26 @@
+{
+  "phase": "final",
+  "status": "PASS",
+  "command": "APP_ENV=test with isolated loopback database and explicit disposable-test opt-in; secrets omitted; pnpm exec playwright test tests/e2e/public-shell.spec.ts tests/e2e/public-link-integrity.spec.ts --project=chromium",
+  "browserProject": "chromium",
+  "database": {
+    "isolation": "fresh loopback PostgreSQL database habitat_brand_test, separate from development/preview/production",
+    "shadowDatabase": "habitat_brand_shadow_test",
+    "migrations": "21 committed migrations applied",
+    "seed": "pnpm db:seed completed",
+    "reset": "both disposable databases dropped after verification",
+    "destructiveGuardBypassed": false
+  },
+  "testsDiscovered": 6,
+  "testsRun": 6,
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "warnings": [
+    "Playwright/WebServer emitted NO_COLOR ignored because FORCE_COLOR was set; no test or application failure resulted."
+  ],
+  "originalBlockedAttempt": {
+    "status": "BLOCKED",
+    "cause": "The destructive-test database guard refused to start without explicit disposable-database opt-in and matching test-only URLs."
+  }
+}

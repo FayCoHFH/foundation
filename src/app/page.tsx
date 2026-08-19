@@ -182,7 +182,7 @@ export default async function HomePage() {
                 </p>
                 <h2
                   id="ways-to-help"
-                  className="type-display mt-3 text-4xl leading-tight font-semibold"
+                  className="text-brand-white type-display mt-3 text-4xl leading-tight font-semibold"
                 >
                   Bring what you can to the work.
                 </h2>

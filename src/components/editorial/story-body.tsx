@@ -16,7 +16,7 @@ function InlineText({ node }: { node: StoryNode }) {
     if (mark.type === "link" && mark.attrs?.href) {
       content = (
         <a
-          className="text-primary font-semibold underline"
+          className="text-brand-traditional-blue font-semibold underline"
           href={mark.attrs.href}
         >
           {content}
@@ -57,13 +57,13 @@ export function StoryBody({ node }: { node: StoryNode }) {
       );
     case "bulletList":
       return (
-        <ul className="marker:text-primary mt-7 space-y-3 pl-5 text-[1.125rem] leading-8">
+        <ul className="marker:text-brand-traditional-blue mt-7 space-y-3 pl-5 text-[1.125rem] leading-8">
           {children}
         </ul>
       );
     case "orderedList":
       return (
-        <ol className="marker:text-primary mt-7 list-decimal space-y-3 pl-6 text-[1.125rem] leading-8 marker:font-semibold">
+        <ol className="marker:text-brand-traditional-blue mt-7 list-decimal space-y-3 pl-6 text-[1.125rem] leading-8 marker:font-semibold">
           {children}
         </ol>
       );

@@ -97,6 +97,32 @@ async function main() {
     viewports: string[];
     screenshots: string[];
   }>(path.join(finalDir, "visual-regression-summary.json"));
+  const productionBuild = await readJSON<{
+    status: string;
+    command: string;
+    environment: string;
+    database: Record<string, unknown>;
+    exitCode: number;
+    compiled: boolean;
+    typechecked: boolean;
+    staticPagesGenerated: string;
+    routeGeneration: Record<string, string>;
+    warnings: string[];
+    originalBlockedAttempt: Record<string, string>;
+  }>(path.join(finalDir, "production-build.json"));
+  const playwright = await readJSON<{
+    status: string;
+    command: string;
+    browserProject: string;
+    database: Record<string, unknown>;
+    testsDiscovered: number;
+    testsRun: number;
+    passed: number;
+    failed: number;
+    skipped: number;
+    warnings: string[];
+    originalBlockedAttempt: Record<string, string>;
+  }>(path.join(finalDir, "playwright-results.json"));
   const branch = await git(["branch", "--show-current"]);
   const commit = await git(["rev-parse", "HEAD"]);
   const baselineCounts = summarizeFindings(baseline.findings);
@@ -105,10 +131,63 @@ async function main() {
     finalCounts.fail === 0 &&
     runtime.findings.every((finding) => finding.status !== "FAIL") &&
     accessibility.violationCount === 0 &&
-    links.failures.length === 0
+    links.failures.length === 0 &&
+    productionBuild.status === "PASS" &&
+    playwright.status === "PASS"
       ? "PASS"
       : "FAIL";
-  const overall = status === "PASS" ? "WARNING" : "FAIL";
+  const overall = status === "PASS" ? "PASS" : "FAIL";
+
+  const findingVerification = [
+    {
+      ruleId: "IMAGE-001",
+      category: "Imagery",
+      status: "NOT APPLICABLE",
+      affectedScope: "public/ non-logo image assets",
+      rationale:
+        "No non-logo public photographic asset exists in the implemented shell, so there is no image provenance, consent, dignity, or contextual-alt-text claim to approve yet.",
+      evidence:
+        "final/imagery-audit.json reports an empty non-logo asset list.",
+      futureApplicability:
+        "Becomes applicable when an approved non-logo image is added to public/ or a public route renders one.",
+    },
+    {
+      ruleId: "RESTORE-001",
+      category: "ReStore identity",
+      status: "NOT APPLICABLE",
+      affectedScope: "public ReStore routes and content",
+      rationale:
+        "No ReStore route, identifier, or public content is implemented in the current scaffold; the guide exception is not being exercised.",
+      evidence:
+        "final/restore-audit.json reports no ReStore public route or content.",
+      futureApplicability:
+        "Becomes applicable when a verified ReStore route, identifier, logo relationship, or public content is introduced; the May 2024 ReStore source must then be obtained for remaining rules.",
+    },
+    {
+      ruleId: "PROGRAM-001",
+      category: "Programs/events",
+      status: "NOT APPLICABLE",
+      affectedScope: "named program or event identity in public source",
+      rationale:
+        "No named program or event identity is present in the implemented public shell, so no separate lockup, ownership language, or mini-brand claim is being published.",
+      evidence:
+        "final/program-event-audit.json reports no named program/event identity.",
+      futureApplicability:
+        "Becomes applicable when verified program or event content is published in a public route or component.",
+    },
+    {
+      ruleId: "LINK-001",
+      category: "Rendered link integrity",
+      status: "PASS",
+      affectedScope: "static and rendered public links",
+      rationale:
+        "This is the fourth final finding, but it is PASS rather than NOT APPLICABLE: static and rendered public-link checks completed with no reserved-host or destination failures.",
+      evidence:
+        "final/link-audit.json reports 30 rendered links and 0 failures.",
+      futureApplicability:
+        "A future invalid, stale, empty, fabricated, or otherwise ungoverned public destination would create a new failure finding.",
+    },
+  ];
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -128,7 +207,9 @@ async function main() {
       automatedBrandChecks: status,
       overall,
       reason:
-        "The brand checks pass, but the production build/release gate is WARNING because the current shell has no permitted database connection during public-route prerendering.",
+        status === "PASS"
+          ? "Static/runtime brand checks, the completed disposable-database production build, and the guarded focused Playwright suite all pass."
+          : "One or more final verification gates failed; inspect the structured evidence artifacts.",
     },
     baseline: {
       generatedAt: baseline.generatedAt,
@@ -154,6 +235,8 @@ async function main() {
       accessibility,
       links,
       visual,
+      productionBuild,
+      playwright,
     },
     implementation: {
       typography:
@@ -175,17 +258,24 @@ async function main() {
       "ReStore-specific rules beyond the June 2025 guide require the May 2024 ReStore Style Guide when a ReStore experience is implemented.",
     ],
     verificationNotes: [
-      "The focused Playwright public-shell suite was safely refused by the repository destructive-test database guard because ALLOW_DESTRUCTIVE_TEST_DATABASE=true was not explicitly authorized; no destructive-test override was used.",
+      "The original build attempt was blocked by unavailable database access; the final build completed against habitat_brand_test after committed migrations and seed.",
+      "The original Playwright attempt was refused by the destructive-test database guard; the final focused suite ran against a fresh disposable database with the guard satisfied and not bypassed.",
     ],
+    findingVerification,
     commands: [
       "pnpm lint",
       "pnpm typecheck",
       "pnpm test:unit",
-      "APP_ENV=development pnpm build (compiled/type-checked, then blocked by database access during /campaigns prerender)",
+      "APP_ENV=test with disposable habitat_brand_test database pnpm build:clean (completed)",
+      "pnpm db:test:assert-migration-environment",
+      "pnpm db:migrate:deploy",
+      "pnpm db:migrate:status",
+      "pnpm db:migrate:diff",
+      "pnpm db:seed",
       "pnpm exec tsx scripts/brand-compliance-audit.ts baseline",
       "pnpm exec tsx scripts/brand-compliance-audit.ts final",
       "pnpm exec tsx scripts/brand-compliance-runtime.ts final",
-      "pnpm exec playwright test tests/e2e/public-shell.spec.ts --project=chromium",
+      "pnpm exec playwright test tests/e2e/public-shell.spec.ts tests/e2e/public-link-integrity.spec.ts --project=chromium",
       "pnpm verify:public",
       "pnpm format:check",
     ],
@@ -201,6 +291,8 @@ async function main() {
       "artifacts/brand-compliance/final/accessibility-results.json",
       "artifacts/brand-compliance/final/link-audit.json",
       "artifacts/brand-compliance/final/visual-regression-summary.json",
+      "artifacts/brand-compliance/final/production-build.json",
+      "artifacts/brand-compliance/final/playwright-results.json",
     ],
   };
 
@@ -213,10 +305,7 @@ async function main() {
       bold(status) +
       ". The overall delivery result is " +
       bold(overall) +
-      " because the production build is not conclusive in this shell: it compiled and type-checked, then database access was denied while prerendering a public route (currently " +
-      code("/campaigns") +
-      ")" +
-      ".",
+      ". The production build and guarded focused Playwright suite completed successfully against disposable local PostgreSQL.",
     "",
     "## 2. Guide authority",
     "",
@@ -228,6 +317,10 @@ async function main() {
     "",
     "- Branch: " + code(branch),
     "- Commit observed during report generation: " + code(commit),
+    "",
+    "## 3A. Verification gap provenance",
+    "",
+    "The original verification attempt was not rewritten: the first production build compiled/type-checked but stopped when /campaigns had no permitted database connection, and the first Playwright attempt was refused by the destructive-test database guard. The final evidence records those prior states separately from the completed build and guarded suite.",
     "",
     "## 4-5. Baseline counts and major findings",
     "",
@@ -328,6 +421,18 @@ async function main() {
           : "PASS",
       ) +
       "; zero runtime machine failures were recorded.",
+    "- Production build: " +
+      bold(productionBuild.status) +
+      ", " +
+      productionBuild.staticPagesGenerated +
+      " static pages generated against the disposable migrated/seeded database.",
+    "- Focused Playwright: " +
+      bold(playwright.status) +
+      ", " +
+      playwright.testsRun +
+      "/" +
+      playwright.testsDiscovered +
+      " Chromium tests passed with 0 failures and 0 skips; the guard was not bypassed.",
     "- Visual regression support: " +
       bold(visual.status) +
       ", routes " +
@@ -340,7 +445,26 @@ async function main() {
     "",
     manualReviewList(report.manualReview),
     "",
-    "Verification note: " + report.verificationNotes[0],
+    "Verification notes:",
+    report.verificationNotes.map((note) => "- " + note).join("\n"),
+    "",
+    "## 25A. Four final findings verified individually",
+    "",
+    ...findingVerification.flatMap((finding) => [
+      "- " +
+        code(finding.ruleId) +
+        " — " +
+        bold(finding.status) +
+        "; category: " +
+        finding.category +
+        "; scope: " +
+        finding.affectedScope +
+        ".",
+      "  Rationale: " + finding.rationale,
+      "  Evidence: " + finding.evidence,
+      "  Future applicability: " + finding.futureApplicability,
+    ]),
+    "",
     "",
     "## 26. Exact commands executed",
     "",
@@ -349,9 +473,7 @@ async function main() {
     "## 27-29. Overall result, evidence, and worktree",
     "",
     "- Automated brand compliance: " + bold(status) + ".",
-    "- Overall delivery result: " +
-      bold(overall) +
-      " due the documented database-access build blocker.",
+    "- Overall delivery result: " + bold(overall) + ".",
     "- Evidence: " + report.evidencePaths.map(code).join(", ") + ".",
     "- Worktree and final commit state must be confirmed after the delivery commit; no licensed font binaries are included in evidence.",
     "",

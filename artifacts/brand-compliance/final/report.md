@@ -2,7 +2,7 @@
 
 ## 1. Executive summary
 
-The June 2025 brand-compliance package centralizes typography, color, logo usage, static copy rules, runtime browser checks, accessibility checks, rendered link integrity, and responsive screenshots. Automated brand checks are **PASS**. The overall delivery result is **WARNING** because the production build is not conclusive in this shell: it compiled and type-checked, then database access was denied while prerendering a public route (currently `/campaigns`).
+The June 2025 brand-compliance package centralizes typography, color, logo usage, static copy rules, runtime browser checks, accessibility checks, rendered link integrity, and responsive screenshots. Automated brand checks are **PASS**. The overall delivery result is **PASS**. The production build and guarded focused Playwright suite completed successfully against disposable local PostgreSQL.
 
 ## 2. Guide authority
 
@@ -11,7 +11,11 @@ The normative source is the supplied **Habitat for Humanity Brand User Guide, Ju
 ## 3. Repository / branch / commit
 
 - Branch: `codex/public-visual-system-refinement-v4`
-- Commit observed during report generation: `0307dd1a1d19d430761b1bc683347ac88185c0cf`
+- Commit observed during report generation: `2e6fad0249a15bbcd7ac147ffc21a20a14b2accf`
+
+## 3A. Verification gap provenance
+
+The original verification attempt was not rewritten: the first production build compiled/type-checked but stopped when /campaigns had no permitted database connection, and the first Playwright attempt was refused by the destructive-test database guard. The final evidence records those prior states separately from the completed build and guarded suite.
 
 ## 4-5. Baseline counts and major findings
 
@@ -49,6 +53,8 @@ Baseline major findings were the obsolete Source Sans 3/Zilla Slab typography, p
 - Rendered links: **PASS**, 30 unique links (28 internal, 2 external), 0 failures.
 - Static brand lint: **PASS**; copy rules run inside the static audit.
 - Runtime typography/logo/color/reflow: **PASS**; zero runtime machine failures were recorded.
+- Production build: **PASS**, 33/33 static pages generated against the disposable migrated/seeded database.
+- Focused Playwright: **PASS**, 6/6 Chromium tests passed with 0 failures and 0 skips; the guard was not bypassed.
 - Visual regression support: **PASS**, routes /, /projects, /news, /campaigns, viewports 390x844, 1440x900; screenshots are recorded in the final visual-regression JSON artifact.
 
 ## 23-25. Remaining manual review and licensing notes
@@ -58,24 +64,51 @@ Baseline major findings were the obsolete Source Sans 3/Zilla Slab typography, p
 - **MANUAL REVIEW** — Formal Minion Pro license provenance/documentation is pending delivery; supplied webfont assets are not included in evidence artifacts.
 - **MANUAL REVIEW** — ReStore-specific rules beyond the June 2025 guide require the May 2024 ReStore Style Guide when a ReStore experience is implemented.
 
-Verification note: The focused Playwright public-shell suite was safely refused by the repository destructive-test database guard because ALLOW_DESTRUCTIVE_TEST_DATABASE=true was not explicitly authorized; no destructive-test override was used.
+Verification notes:
+
+- The original build attempt was blocked by unavailable database access; the final build completed against habitat_brand_test after committed migrations and seed.
+- The original Playwright attempt was refused by the destructive-test database guard; the final focused suite ran against a fresh disposable database with the guard satisfied and not bypassed.
+
+## 25A. Four final findings verified individually
+
+- `IMAGE-001` — **NOT APPLICABLE**; category: Imagery; scope: public/ non-logo image assets.
+  Rationale: No non-logo public photographic asset exists in the implemented shell, so there is no image provenance, consent, dignity, or contextual-alt-text claim to approve yet.
+  Evidence: final/imagery-audit.json reports an empty non-logo asset list.
+  Future applicability: Becomes applicable when an approved non-logo image is added to public/ or a public route renders one.
+- `RESTORE-001` — **NOT APPLICABLE**; category: ReStore identity; scope: public ReStore routes and content.
+  Rationale: No ReStore route, identifier, or public content is implemented in the current scaffold; the guide exception is not being exercised.
+  Evidence: final/restore-audit.json reports no ReStore public route or content.
+  Future applicability: Becomes applicable when a verified ReStore route, identifier, logo relationship, or public content is introduced; the May 2024 ReStore source must then be obtained for remaining rules.
+- `PROGRAM-001` — **NOT APPLICABLE**; category: Programs/events; scope: named program or event identity in public source.
+  Rationale: No named program or event identity is present in the implemented public shell, so no separate lockup, ownership language, or mini-brand claim is being published.
+  Evidence: final/program-event-audit.json reports no named program/event identity.
+  Future applicability: Becomes applicable when verified program or event content is published in a public route or component.
+- `LINK-001` — **PASS**; category: Rendered link integrity; scope: static and rendered public links.
+  Rationale: This is the fourth final finding, but it is PASS rather than NOT APPLICABLE: static and rendered public-link checks completed with no reserved-host or destination failures.
+  Evidence: final/link-audit.json reports 30 rendered links and 0 failures.
+  Future applicability: A future invalid, stale, empty, fabricated, or otherwise ungoverned public destination would create a new failure finding.
 
 ## 26. Exact commands executed
 
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm test:unit`
-- `APP_ENV=development pnpm build (compiled/type-checked, then blocked by database access during /campaigns prerender)`
+- `APP_ENV=test with disposable habitat_brand_test database pnpm build:clean (completed)`
+- `pnpm db:test:assert-migration-environment`
+- `pnpm db:migrate:deploy`
+- `pnpm db:migrate:status`
+- `pnpm db:migrate:diff`
+- `pnpm db:seed`
 - `pnpm exec tsx scripts/brand-compliance-audit.ts baseline`
 - `pnpm exec tsx scripts/brand-compliance-audit.ts final`
 - `pnpm exec tsx scripts/brand-compliance-runtime.ts final`
-- `pnpm exec playwright test tests/e2e/public-shell.spec.ts --project=chromium`
+- `pnpm exec playwright test tests/e2e/public-shell.spec.ts tests/e2e/public-link-integrity.spec.ts --project=chromium`
 - `pnpm verify:public`
 - `pnpm format:check`
 
 ## 27-29. Overall result, evidence, and worktree
 
 - Automated brand compliance: **PASS**.
-- Overall delivery result: **WARNING** due the documented database-access build blocker.
-- Evidence: `artifacts/brand-compliance/baseline/report.md`, `artifacts/brand-compliance/baseline/report.json`, `artifacts/brand-compliance/baseline/static-audit.json`, `artifacts/brand-compliance/baseline/route-inventory.json`, `artifacts/brand-compliance/final/report.md`, `artifacts/brand-compliance/final/report.json`, `artifacts/brand-compliance/final/static-audit.json`, `artifacts/brand-compliance/final/runtime-brand-audit.json`, `artifacts/brand-compliance/final/accessibility-results.json`, `artifacts/brand-compliance/final/link-audit.json`, `artifacts/brand-compliance/final/visual-regression-summary.json`.
+- Overall delivery result: **PASS**.
+- Evidence: `artifacts/brand-compliance/baseline/report.md`, `artifacts/brand-compliance/baseline/report.json`, `artifacts/brand-compliance/baseline/static-audit.json`, `artifacts/brand-compliance/baseline/route-inventory.json`, `artifacts/brand-compliance/final/report.md`, `artifacts/brand-compliance/final/report.json`, `artifacts/brand-compliance/final/static-audit.json`, `artifacts/brand-compliance/final/runtime-brand-audit.json`, `artifacts/brand-compliance/final/accessibility-results.json`, `artifacts/brand-compliance/final/link-audit.json`, `artifacts/brand-compliance/final/visual-regression-summary.json`, `artifacts/brand-compliance/final/production-build.json`, `artifacts/brand-compliance/final/playwright-results.json`.
 - Worktree and final commit state must be confirmed after the delivery commit; no licensed font binaries are included in evidence.

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T20:06:19.417Z",
+  "generatedAt": "2026-08-19T20:30:47.889Z",
   "guide": {
     "title": "Habitat for Humanity Brand User Guide",
     "edition": "June 2025",
@@ -8,13 +8,13 @@
   },
   "repository": {
     "branch": "codex/public-visual-system-refinement-v4",
-    "commit": "0307dd1a1d19d430761b1bc683347ac88185c0cf",
+    "commit": "2e6fad0249a15bbcd7ac147ffc21a20a14b2accf",
     "worktreeStatus": "reported separately after delivery commit"
   },
   "result": {
     "automatedBrandChecks": "PASS",
-    "overall": "WARNING",
-    "reason": "The brand checks pass, but the production build/release gate is WARNING because the current shell has no permitted database connection during public-route prerendering."
+    "overall": "PASS",
+    "reason": "Static/runtime brand checks, the completed disposable-database production build, and the guarded focused Playwright suite all pass."
   },
   "baseline": {
     "generatedAt": "2026-08-19T20:02:09.704Z",
@@ -34,7 +34,7 @@
     ]
   },
   "final": {
-    "generatedAt": "2026-08-19T20:03:48.026Z",
+    "generatedAt": "2026-08-19T20:28:27.317Z",
     "routeCount": 12,
     "fontFaceCount": 11,
     "logoReferenceCount": 2,
@@ -530,6 +530,59 @@
         "screenshots/campaigns-desktop.png",
         "screenshots/home-mobile.png"
       ]
+    },
+    "productionBuild": {
+      "phase": "final",
+      "status": "PASS",
+      "command": "APP_ENV=test with loopback disposable DATABASE_URL; secrets omitted; pnpm build:clean",
+      "environment": "APP_ENV=test, local nonproduction build environment",
+      "database": {
+        "type": "isolated disposable loopback PostgreSQL",
+        "databaseName": "habitat_brand_test",
+        "migrationsApplied": 21,
+        "seedCommand": "pnpm db:seed",
+        "seedStatus": "PASS"
+      },
+      "exitCode": 0,
+      "compiled": true,
+      "typechecked": true,
+      "staticPagesGenerated": "33/33",
+      "routeGeneration": {
+        "campaigns": "static prerender completed",
+        "summary": "All listed routes completed without prerender errors."
+      },
+      "warnings": [],
+      "originalBlockedAttempt": {
+        "command": "APP_ENV=development pnpm build",
+        "status": "BLOCKED",
+        "cause": "P1010 database access denied during /campaigns prerender because no permitted database configuration was supplied."
+      }
+    },
+    "playwright": {
+      "phase": "final",
+      "status": "PASS",
+      "command": "APP_ENV=test with isolated loopback database and explicit disposable-test opt-in; secrets omitted; pnpm exec playwright test tests/e2e/public-shell.spec.ts tests/e2e/public-link-integrity.spec.ts --project=chromium",
+      "browserProject": "chromium",
+      "database": {
+        "isolation": "fresh loopback PostgreSQL database habitat_brand_test, separate from development/preview/production",
+        "shadowDatabase": "habitat_brand_shadow_test",
+        "migrations": "21 committed migrations applied",
+        "seed": "pnpm db:seed completed",
+        "reset": "both disposable databases dropped after verification",
+        "destructiveGuardBypassed": false
+      },
+      "testsDiscovered": 6,
+      "testsRun": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": [
+        "Playwright/WebServer emitted NO_COLOR ignored because FORCE_COLOR was set; no test or application failure resulted."
+      ],
+      "originalBlockedAttempt": {
+        "status": "BLOCKED",
+        "cause": "The destructive-test database guard refused to start without explicit disposable-database opt-in and matching test-only URLs."
+      }
     }
   },
   "implementation": {
@@ -547,17 +600,61 @@
     "ReStore-specific rules beyond the June 2025 guide require the May 2024 ReStore Style Guide when a ReStore experience is implemented."
   ],
   "verificationNotes": [
-    "The focused Playwright public-shell suite was safely refused by the repository destructive-test database guard because ALLOW_DESTRUCTIVE_TEST_DATABASE=true was not explicitly authorized; no destructive-test override was used."
+    "The original build attempt was blocked by unavailable database access; the final build completed against habitat_brand_test after committed migrations and seed.",
+    "The original Playwright attempt was refused by the destructive-test database guard; the final focused suite ran against a fresh disposable database with the guard satisfied and not bypassed."
+  ],
+  "findingVerification": [
+    {
+      "ruleId": "IMAGE-001",
+      "category": "Imagery",
+      "status": "NOT APPLICABLE",
+      "affectedScope": "public/ non-logo image assets",
+      "rationale": "No non-logo public photographic asset exists in the implemented shell, so there is no image provenance, consent, dignity, or contextual-alt-text claim to approve yet.",
+      "evidence": "final/imagery-audit.json reports an empty non-logo asset list.",
+      "futureApplicability": "Becomes applicable when an approved non-logo image is added to public/ or a public route renders one."
+    },
+    {
+      "ruleId": "RESTORE-001",
+      "category": "ReStore identity",
+      "status": "NOT APPLICABLE",
+      "affectedScope": "public ReStore routes and content",
+      "rationale": "No ReStore route, identifier, or public content is implemented in the current scaffold; the guide exception is not being exercised.",
+      "evidence": "final/restore-audit.json reports no ReStore public route or content.",
+      "futureApplicability": "Becomes applicable when a verified ReStore route, identifier, logo relationship, or public content is introduced; the May 2024 ReStore source must then be obtained for remaining rules."
+    },
+    {
+      "ruleId": "PROGRAM-001",
+      "category": "Programs/events",
+      "status": "NOT APPLICABLE",
+      "affectedScope": "named program or event identity in public source",
+      "rationale": "No named program or event identity is present in the implemented public shell, so no separate lockup, ownership language, or mini-brand claim is being published.",
+      "evidence": "final/program-event-audit.json reports no named program/event identity.",
+      "futureApplicability": "Becomes applicable when verified program or event content is published in a public route or component."
+    },
+    {
+      "ruleId": "LINK-001",
+      "category": "Rendered link integrity",
+      "status": "PASS",
+      "affectedScope": "static and rendered public links",
+      "rationale": "This is the fourth final finding, but it is PASS rather than NOT APPLICABLE: static and rendered public-link checks completed with no reserved-host or destination failures.",
+      "evidence": "final/link-audit.json reports 30 rendered links and 0 failures.",
+      "futureApplicability": "A future invalid, stale, empty, fabricated, or otherwise ungoverned public destination would create a new failure finding."
+    }
   ],
   "commands": [
     "pnpm lint",
     "pnpm typecheck",
     "pnpm test:unit",
-    "APP_ENV=development pnpm build (compiled/type-checked, then blocked by database access during /campaigns prerender)",
+    "APP_ENV=test with disposable habitat_brand_test database pnpm build:clean (completed)",
+    "pnpm db:test:assert-migration-environment",
+    "pnpm db:migrate:deploy",
+    "pnpm db:migrate:status",
+    "pnpm db:migrate:diff",
+    "pnpm db:seed",
     "pnpm exec tsx scripts/brand-compliance-audit.ts baseline",
     "pnpm exec tsx scripts/brand-compliance-audit.ts final",
     "pnpm exec tsx scripts/brand-compliance-runtime.ts final",
-    "pnpm exec playwright test tests/e2e/public-shell.spec.ts --project=chromium",
+    "pnpm exec playwright test tests/e2e/public-shell.spec.ts tests/e2e/public-link-integrity.spec.ts --project=chromium",
     "pnpm verify:public",
     "pnpm format:check"
   ],
@@ -572,6 +669,8 @@
     "artifacts/brand-compliance/final/runtime-brand-audit.json",
     "artifacts/brand-compliance/final/accessibility-results.json",
     "artifacts/brand-compliance/final/link-audit.json",
-    "artifacts/brand-compliance/final/visual-regression-summary.json"
+    "artifacts/brand-compliance/final/visual-regression-summary.json",
+    "artifacts/brand-compliance/final/production-build.json",
+    "artifacts/brand-compliance/final/playwright-results.json"
   ]
 }

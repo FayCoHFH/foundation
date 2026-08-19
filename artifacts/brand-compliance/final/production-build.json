@@ -1,0 +1,27 @@
+{
+  "phase": "final",
+  "status": "PASS",
+  "command": "APP_ENV=test with loopback disposable DATABASE_URL; secrets omitted; pnpm build:clean",
+  "environment": "APP_ENV=test, local nonproduction build environment",
+  "database": {
+    "type": "isolated disposable loopback PostgreSQL",
+    "databaseName": "habitat_brand_test",
+    "migrationsApplied": 21,
+    "seedCommand": "pnpm db:seed",
+    "seedStatus": "PASS"
+  },
+  "exitCode": 0,
+  "compiled": true,
+  "typechecked": true,
+  "staticPagesGenerated": "33/33",
+  "routeGeneration": {
+    "campaigns": "static prerender completed",
+    "summary": "All listed routes completed without prerender errors."
+  },
+  "warnings": [],
+  "originalBlockedAttempt": {
+    "command": "APP_ENV=development pnpm build",
+    "status": "BLOCKED",
+    "cause": "P1010 database access denied during /campaigns prerender because no permitted database configuration was supplied."
+  }
+}
