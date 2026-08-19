@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+import { getDiscoverabilityPolicy } from "./src/platform/config/discoverability";
+
 export function buildContentSecurityPolicy() {
   const developmentScriptSource =
     process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
@@ -25,35 +27,40 @@ export function buildContentSecurityPolicy() {
 
 const contentSecurityPolicy = buildContentSecurityPolicy();
 
-const securityHeaders = [
-  { key: "Content-Security-Policy", value: contentSecurityPolicy },
-  { key: "Referrer-Policy", value: "no-referrer" },
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  {
-    key: "Permissions-Policy",
-    value:
-      "camera=(), display-capture=(), geolocation=(), microphone=(), payment=(), usb=()",
-  },
-  ...(process.env.APP_ENV === "production"
-    ? [
-        {
-          key: "Strict-Transport-Security",
-          // Domain-wide includeSubDomains/preload is deferred until G-05
-          // confirms canonical DNS and HTTPS coverage for every subdomain.
-          value: "max-age=31536000",
-        },
-      ]
-    : []),
-];
+export function buildSecurityHeaders() {
+  const discoverabilityPolicy = getDiscoverabilityPolicy();
+
+  return [
+    { key: "Content-Security-Policy", value: contentSecurityPolicy },
+    { key: "Referrer-Policy", value: "no-referrer" },
+    { key: "X-Content-Type-Options", value: "nosniff" },
+    { key: "X-Frame-Options", value: "DENY" },
+    { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+    {
+      key: "Permissions-Policy",
+      value:
+        "camera=(), display-capture=(), geolocation=(), microphone=(), payment=(), usb=()",
+    },
+    { key: "X-Robots-Tag", value: discoverabilityPolicy.xRobotsTag },
+    ...(process.env.APP_ENV === "production"
+      ? [
+          {
+            key: "Strict-Transport-Security",
+            // Domain-wide includeSubDomains/preload is deferred until G-05
+            // confirms canonical DNS and HTTPS coverage for every subdomain.
+            value: "max-age=31536000",
+          },
+        ]
+      : []),
+  ];
+}
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   reactStrictMode: true,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [{ source: "/:path*", headers: buildSecurityHeaders() }];
   },
 };
 

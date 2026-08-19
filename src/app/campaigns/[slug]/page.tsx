@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site/site-header";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicCampaignBySlug } from "@/modules/communications/campaigns";
+import { getCanonicalUrl } from "@/platform/config/discoverability";
 import { prisma } from "@/platform/database/prisma";
 import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 
@@ -17,11 +18,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const campaign = await getPublicCampaignBySlug(prisma, slug);
+  const canonical = campaign
+    ? getCanonicalUrl(`/campaigns/${campaign.slug}`)
+    : undefined;
   return campaign
     ? {
         title: campaign.title,
         description: campaign.summary,
-        alternates: { canonical: `/campaigns/${campaign.slug}` },
+        ...(canonical ? { alternates: { canonical } } : {}),
       }
     : { title: "Campaign not found" };
 }

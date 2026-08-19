@@ -21,6 +21,49 @@ falling back to development secrets, databases, or cookie policy.
 paths, queries, and fragments. Secret rotation may temporarily provide
 `BETTER_AUTH_PREVIOUS_SECRET` while `BETTER_AUTH_SECRET` is current.
 
+## Discoverability and preview protection
+
+Application discoverability is fail-closed. The existing `APP_ENV` value is the
+only environment classification used by the discoverability policy. Missing,
+malformed, development, test, preview, staging, or other non-production values
+produce all of the following:
+
+- `noindex, nofollow` robots metadata, including Googlebot directives;
+- `X-Robots-Tag: noindex, nofollow` on responses;
+- `User-agent: *` and `Disallow: /` in `robots.txt`;
+- no sitemap publication; and
+- no preview or non-production canonical URL.
+
+The centralized Next.js header rule applies the crawler directive to `/:path*`,
+including HTML, static assets, and framework responses. It is an advisory
+header and does not block asset delivery or replace authentication.
+
+The current release keeps indexing disabled even when `APP_ENV=production`.
+That is intentional: production indexing requires an explicit release decision
+and a reviewed change to the policy. An absent or malformed environment can
+never make the site indexable.
+
+Before creating or connecting a Vercel project, enable Preview Deployment
+Protection. The preferred baseline is:
+
+`Project Settings → Deployment Protection → Vercel Authentication → protect Preview Deployments`
+
+Use Standard Protection when it fits the selected Vercel plan and review
+workflow. Do not assume Password Protection is available unless the selected
+plan explicitly supports it; Vercel Authentication is the baseline and does
+not require that paid feature.
+
+Vercel normally adds `X-Robots-Tag: noindex` to Preview Deployments, but that
+automatic behavior may not apply when a custom domain is assigned to a
+non-production branch. Never assign `fchfh.org` or another public custom domain
+to a preview or branch deployment. If a custom staging domain is later needed,
+retain the application-level noindex/nofollow policy and Deployment Protection.
+
+Vercel Shareable Links or deliberate automation bypasses may later be used for
+reviewers or E2E automation. They must not be advertised as ordinary public
+URLs, and bypass secrets must never be generated, hardcoded, or committed in
+this repository.
+
 Better Auth rate limiting is explicitly enabled with database storage. IP
 resolution begins from Vercel’s platform-overwritten
 `x-vercel-forwarded-for`, but the application replaces it with a keyed

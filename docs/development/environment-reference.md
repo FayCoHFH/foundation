@@ -35,6 +35,30 @@ substitute for `APP_ENV`; mismatches are rejected where the runtime uses them.
 `NEXT_PUBLIC_APP_ENV` is optional nonsecret deployment metadata only and is not
 an authorization or credential channel.
 
+## Discoverability policy
+
+`APP_ENV` is the single source of truth for environment classification. The
+application's discoverability policy fails closed: only the exact string
+`production` is recognized as an explicit production classification, and the
+current release still keeps indexing disabled until production release approval.
+Missing or malformed values are treated as non-production for crawler safety.
+
+Development, test, preview, staging, branch, and other non-production
+deployments emit:
+
+- robots metadata with `noindex, nofollow` (including Googlebot);
+- `X-Robots-Tag: noindex, nofollow`;
+- `robots.txt` with `User-agent: *` and `Disallow: /`; and
+- no sitemap or preview-host canonical URL.
+
+Production indexing, the exact production canonical origin, and any future
+sitemap policy require an explicit release decision. `APP_BASE_URL` supplies a
+canonical origin only for an explicitly classified production environment and
+only when it is an exact HTTPS origin; it is never used to make a preview
+hostname canonical. Run `pnpm production:readiness` before a future production
+release; it is intentionally a blocking checklist until those decisions and
+the other documented production gates close.
+
 ## Database and one-time operator commands
 
 | Variable                              | Classification                                                                       | Purpose and boundary                                                                                                                                                                                                                                                                                         |

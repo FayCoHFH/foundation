@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site/site-header";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicNewsBySlug } from "@/modules/communications/news";
+import { getCanonicalUrl } from "@/platform/config/discoverability";
 import { prisma } from "@/platform/database/prisma";
 import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 export const dynamic = "force-dynamic";
@@ -17,10 +18,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const news = await getPublicNewsBySlug(prisma, (await params).slug);
   if (!news) return {};
+  const canonical = getCanonicalUrl(`/news/${news.slug}`);
   return {
     title: news.headline,
     description: news.summary,
-    alternates: { canonical: `/news/${news.slug}` },
+    ...(canonical ? { alternates: { canonical } } : {}),
     openGraph: {
       type: "article",
       title: news.headline,

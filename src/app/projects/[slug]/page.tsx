@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site/site-header";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicProjectBySlug } from "@/modules/communications/projects";
+import { getCanonicalUrl } from "@/platform/config/discoverability";
 import { prisma } from "@/platform/database/prisma";
 import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 export async function generateMetadata({
@@ -15,11 +16,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const project = await getPublicProjectBySlug(prisma, slug);
+  const canonical = project
+    ? getCanonicalUrl(`/projects/${project.slug}`)
+    : undefined;
   return project
     ? {
         title: project.title,
         description: project.summary,
-        alternates: { canonical: `/projects/${project.slug}` },
+        ...(canonical ? { alternates: { canonical } } : {}),
       }
     : { title: "Project not found" };
 }

@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site/site-header";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
 import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicStoryBySlug } from "@/modules/communications/stories";
+import { getCanonicalUrl } from "@/platform/config/discoverability";
 import { prisma } from "@/platform/database/prisma";
 import { SiteNoticeTargetArea } from "@/generated/prisma/client";
 
@@ -20,10 +21,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const story = await getPublicStoryBySlug(prisma, (await params).slug);
   if (!story) return {};
+  const canonical = getCanonicalUrl(`/stories/${story.slug}`);
   return {
     title: story.headline,
     description: story.excerpt,
-    alternates: { canonical: `/stories/${story.slug}` },
+    ...(canonical ? { alternates: { canonical } } : {}),
   };
 }
 

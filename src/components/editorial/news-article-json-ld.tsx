@@ -1,21 +1,15 @@
 import type { PublicNews } from "@/modules/communications/news";
-
-function canonicalNewsUrl(slug: string) {
-  return new URL(
-    `/news/${slug}`,
-    process.env.APP_BASE_URL ?? "http://localhost:3000",
-  ).toString();
-}
+import { getCanonicalUrl } from "@/platform/config/discoverability";
 
 export function NewsArticleJsonLd({ news }: { news: PublicNews }) {
-  const canonicalUrl = canonicalNewsUrl(news.slug);
+  const canonicalUrl = getCanonicalUrl(`/news/${news.slug}`);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     headline: news.headline,
     description: news.summary,
     datePublished: news.publishedAt.toISOString(),
-    mainEntityOfPage: canonicalUrl,
+    ...(canonicalUrl ? { mainEntityOfPage: canonicalUrl } : {}),
   };
 
   return (

@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
+import { getDiscoverabilityPolicy } from "@/platform/config/discoverability";
 import "./globals.css";
+
+const discoverabilityPolicy = getDiscoverabilityPolicy();
 
 export const metadata: Metadata = {
   title: {
@@ -10,10 +13,7 @@ export const metadata: Metadata = {
   },
   description:
     "Foundation environment for the Fayette County Habitat for Humanity digital platform.",
-  robots: {
-    index: false,
-    follow: false,
-  },
+  robots: discoverabilityPolicy.robots,
 };
 
 export const viewport: Viewport = {

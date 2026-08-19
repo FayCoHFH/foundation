@@ -15,6 +15,7 @@
     "start": "next start",
     "lint": "eslint .",
     "audit:temporary-reference": "tsx scripts/temporary-reference-audit.ts",
+    "production:readiness": "tsx scripts/production-readiness-check.ts",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
