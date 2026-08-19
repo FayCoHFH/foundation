@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-19T20:05:54.897Z",
+  "generatedAt": "2026-08-19T20:06:19.417Z",
   "guide": {
     "title": "Habitat for Humanity Brand User Guide",
     "edition": "June 2025",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "branch": "codex/public-visual-system-refinement-v4",
-    "commit": "208953e2f95f8babcadba10e10735adcc74521b5",
+    "commit": "0307dd1a1d19d430761b1bc683347ac88185c0cf",
     "worktreeStatus": "reported separately after delivery commit"
   },
   "result": {

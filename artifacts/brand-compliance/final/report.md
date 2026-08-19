@@ -11,7 +11,7 @@ The normative source is the supplied **Habitat for Humanity Brand User Guide, Ju
 ## 3. Repository / branch / commit
 
 - Branch: `codex/public-visual-system-refinement-v4`
-- Commit observed during report generation: `208953e2f95f8babcadba10e10735adcc74521b5`
+- Commit observed during report generation: `0307dd1a1d19d430761b1bc683347ac88185c0cf`
 
 ## 4-5. Baseline counts and major findings
 
