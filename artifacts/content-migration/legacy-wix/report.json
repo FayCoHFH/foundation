@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-08-19",
+  "task": "Content seeding and legacy content migration",
+  "repository": {
+    "branchAtStart": "codex/public-visual-system-refinement-v4",
+    "headAtStart": "b36b0e493674b3957f42914075c10edc35b541eb",
+    "worktreeAtStart": "clean",
+    "architecturePreserved": true
+  },
+  "answers": {
+    "legacyPagesInspected": "See source-inventory.json. Direct inspection covered the homepage, Project History, organization history, program/homeowner, volunteer, donation, planned giving, ReStore, campaign/event/raffle, blog, and selected project-history posts. The repository URL ledger was reviewed for all 91 indexed rows.",
+    "existingDestinationsReceivingContent": ["/projects", "/projects/[slug]"],
+    "databaseExecution": "NOT RUN IN THIS WORKSPACE: no DATABASE_URL or DIRECT_DATABASE_URL was configured. The seed implementation is ready and refuses to run without an explicit configured database and two existing active admin IDs.",
+    "noNewPublicSections": true,
+    "noNewNavigation": true,
+    "noNewContentModelsCreatedSolelyBecauseOfWix": true,
+    "noWixInformationArchitectureReproduced": true,
+    "projectHistoryCounts": {
+      "identified": 32,
+      "migratedBySeedSelection": 12,
+      "historicalOnly": 19,
+      "verificationRequired": 1,
+      "conflicting": 0,
+      "rejected": 0
+    }
+  },
+  "implementation": {
+    "dataSource": "src/modules/content/legacy-project-history.ts",
+    "seedScript": "scripts/seed-legacy-content.ts",
+    "command": "pnpm db:seed:legacy-content",
+    "workflow": [
+      "create draft",
+      "submit",
+      "send for approval",
+      "independent approval",
+      "release immutable snapshot"
+    ],
+    "idempotence": "Released records are skipped by deterministic greenfield slug.",
+    "separationOfDuties": "The seed requires distinct author and approver IDs and never creates admin users or grants access.",
+    "mediaMigrated": 0,
+    "publicCopyPolicy": "Selected copy is concise, substantially rewritten, historical, community-level, and free of participant-specific details."
+  },
+  "evidenceFiles": [
+    "new-site-destination-inventory.json",
+    "source-inventory.json",
+    "migration-map.json",
+    "verification-required.json",
+    "conflicts.json",
+    "no-current-destination.json",
+    "media-candidates.json",
+    "report.md"
+  ],
+  "validation": {
+    "formatCheck": { "command": "pnpm format:check", "status": "PASS" },
+    "lint": { "command": "pnpm lint", "status": "PASS" },
+    "typecheck": { "command": "pnpm typecheck", "status": "PASS" },
+    "unitTests": {
+      "command": "pnpm test",
+      "status": "PASS",
+      "testFiles": 39,
+      "tests": 263
+    },
+    "targetedMigrationUnitTest": {
+      "command": "pnpm exec vitest run tests/unit/content/legacy-project-history.test.ts",
+      "status": "PASS",
+      "tests": 3
+    },
+    "prismaValidate": { "command": "pnpm db:validate", "status": "PASS" },
+    "staticBrandAudit": {
+      "command": "pnpm brand:audit:strict",
+      "status": "PASS",
+      "failures": 0
+    },
+    "productionBuild": {
+      "command": "APP_ENV=development pnpm build",
+      "status": "BLOCKED",
+      "reason": "Compilation and TypeScript completed, but page generation could not access the unavailable PostgreSQL database."
+    },
+    "runtimeBrandAudit": {
+      "command": "pnpm brand:runtime:strict",
+      "status": "BLOCKED",
+      "reason": "The browser audit could not complete against the local app/database environment; /give timed out."
+    },
+    "migrationEnvironmentGuard": {
+      "command": "pnpm db:test:assert-migration-environment",
+      "status": "REFUSED_SAFELY",
+      "reason": "The explicit ALLOW_DESTRUCTIVE_TEST_DATABASE=true guard was not set."
+    },
+    "contentSeedExecution": {
+      "command": "pnpm db:seed:legacy-content",
+      "status": "REFUSED_SAFELY",
+      "reason": "No DATABASE_URL or DIRECT_DATABASE_URL was configured."
+    },
+    "playwright": {
+      "status": "NOT_RUN",
+      "reason": "No disposable database-backed app environment was available."
+    },
+    "visualReview": {
+      "status": "NOT_RUN",
+      "reason": "No valid seeded database-backed render was available; no screenshots were added to the evidence package."
+    }
+  },
+  "modelTelemetry": {
+    "userSelectedModel": "GPT-5.6 Luna (as specified in the task prompt)",
+    "userSelectedEffort": "Extra High (as specified in the task prompt)",
+    "genericRuntimeLabel": "Codex/GPT-5 runtime",
+    "explicitActiveModelTelemetry": "Not exposed",
+    "subagentsUsed": [],
+    "solInvoked": false,
+    "note": "No internal routing or model telemetry was inspected or fabricated."
+  }
+}

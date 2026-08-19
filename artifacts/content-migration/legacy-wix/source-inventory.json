@@ -1,0 +1,334 @@
+{
+  "auditDate": "2026-08-19",
+  "legacySite": "https://www.fchfh.org/",
+  "ledgerBasis": "docs/migration/legacy-url-ledger.csv and docs/migration/media-manifest.csv",
+  "ledgerCoverage": {
+    "indexedRows": 91,
+    "pages": 36,
+    "posts": 53,
+    "categoryIndexes": 2,
+    "note": "The repository ledger covers the indexed source universe. The records below are the pages and posts directly inspected for this content-seeding pass."
+  },
+  "inspectedPages": [
+    {
+      "legacyId": "P030",
+      "sourceUrl": "https://www.fchfh.org/",
+      "sourceTitle": "HOME",
+      "contentCategory": "HOMEPAGE_SOURCE",
+      "facts": [
+        "The page identifies Fayette County Habitat for Humanity and links to legacy sections.",
+        "It displays 16 years serving, 9 homes built, 4 repair projects, 2,500+ volunteers and donors, and $1.2 million added to the tax base."
+      ],
+      "historicalOrCurrent": "current-looking but freshness-sensitive",
+      "confidenceConcern": "Metrics conflict with other legacy pages and have no methodology or as-of context.",
+      "destination": "/",
+      "status": "CONFLICT"
+    },
+    {
+      "legacyId": "P018",
+      "sourceUrl": "https://www.fchfh.org/project-history",
+      "sourceTitle": "PROJECT HISTORY",
+      "contentCategory": "PROJECT_HISTORY",
+      "facts": [
+        "The page states the organization was founded in 2004 and lists 32 historical records with month/year, type, and community-level location.",
+        "The list includes Aging in Place, new-home work, critical home repair, community engagement, disaster response, and ramp installations."
+      ],
+      "historicalOrCurrent": "historical record",
+      "confidenceConcern": "Many entries are sparse and some associated media have unresolved rights, consent, or filename-only alt text.",
+      "destination": "/projects",
+      "status": "HISTORICAL"
+    },
+    {
+      "legacyId": "P013",
+      "sourceUrl": "https://www.fchfh.org/whoweare",
+      "sourceTitle": "WHO WE ARE",
+      "contentCategory": "ORGANIZATION_HISTORY",
+      "facts": [
+        "The page describes Fayette County Habitat for Humanity as a local nonprofit and says it has been part of the community for seventeen years.",
+        "It discusses affordable housing, collaboration, volunteer engagement, sustainability, and empowerment."
+      ],
+      "historicalOrCurrent": "mixed and freshness-sensitive",
+      "confidenceConcern": "The 17-year claim conflicts with the homepage and the page uses retired or non-preferred brand language.",
+      "destination": "/",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "P027",
+      "sourceUrl": "https://www.fchfh.org/aginginplace",
+      "sourceTitle": "AGING IN PLACE PROGRAM",
+      "contentCategory": "PROGRAM",
+      "facts": [
+        "The page describes practical modifications including ramps, handrails, grab bars, lighting, and accessible bathrooms.",
+        "It displays a $5,000 cap, an 80% AMI threshold, repayment terms, zero interest, and funding-availability language."
+      ],
+      "historicalOrCurrent": "current-looking but policy-sensitive",
+      "confidenceConcern": "Eligibility, financial, and availability details require current organizational verification; the linked assistance PDF requests SSNs and email submission.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "P022",
+      "sourceUrl": "https://www.fchfh.org/rapidresponse",
+      "sourceTitle": "RAPID RESPONSE PROGRAM",
+      "contentCategory": "PROGRAM",
+      "facts": [
+        "The page describes urgent repair examples such as a burst pipe, failing heater, fallen tree, or utility shutoff.",
+        "It displays a $1,000 cap, an 80% AMI threshold, repayment terms, zero interest, and funding-availability language."
+      ],
+      "historicalOrCurrent": "current-looking but policy-sensitive",
+      "confidenceConcern": "Eligibility, financial, and availability details require current organizational verification; the linked assistance PDF requests SSNs and email submission.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "P020",
+      "sourceUrl": "https://www.fchfh.org/potentialhomeowners",
+      "sourceTitle": "NEW BUILD",
+      "contentCategory": "HOMEOWNER_INFORMATION",
+      "facts": [
+        "The page says applications were not currently being accepted at its crawl time and describes a future information-session process.",
+        "It displays 30–80% AMI guidance and household, credit, residence, and program-participation statements."
+      ],
+      "historicalOrCurrent": "current-looking but eligibility-sensitive",
+      "confidenceConcern": "Applicant policy and intake details are changeable and private; the legacy process must not be reproduced.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "P011",
+      "sourceUrl": "https://www.fchfh.org/homerepair",
+      "sourceTitle": "HOME REPAIR",
+      "contentCategory": "PROGRAM",
+      "facts": [
+        "The page says the organization was not currently accepting applications for the home repair program at its crawl time."
+      ],
+      "historicalOrCurrent": "current-looking but stale-risk",
+      "confidenceConcern": "No existing public Program destination and no current intake verification.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "P017",
+      "sourceUrl": "https://www.fchfh.org/volunteer",
+      "sourceTitle": "VOLUNTEER",
+      "contentCategory": "VOLUNTEER",
+      "facts": [
+        "The page provides general volunteer participation guidance and points users to volunteer registration."
+      ],
+      "historicalOrCurrent": "operational and freshness-sensitive",
+      "confidenceConcern": "The registration destination and workflow remain DonorView-owned and require account confirmation.",
+      "destination": "/volunteer",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "P026",
+      "sourceUrl": "https://www.fchfh.org/copy-3-of-schutzenfest-booth",
+      "sourceTitle": "VOLUNTEER FAQs",
+      "contentCategory": "VOLUNTEER_COPY_ARTIFACT",
+      "facts": [
+        "The page contains general answers about Habitat and volunteer participation."
+      ],
+      "historicalOrCurrent": "mixed",
+      "confidenceConcern": "Copied legacy page and stale operational details; only verified, concise guidance may be transformed into the existing volunteer page.",
+      "destination": "/volunteer",
+      "status": "DO_NOT_MIGRATE"
+    },
+    {
+      "legacyId": "P016",
+      "sourceUrl": "https://www.fchfh.org/copy-3-of-schutzenfest-booth-1",
+      "sourceTitle": "JOIN A COMMITTEE",
+      "contentCategory": "VOLUNTEER_RECRUITMENT",
+      "facts": [
+        "The page describes fundraising, family selection, construction, and communications/outreach committees."
+      ],
+      "historicalOrCurrent": "operational and freshness-sensitive",
+      "confidenceConcern": "Committee names, responsibilities, and recruitment state require current verification; family-selection language requires remediation.",
+      "destination": "/volunteer",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "P001",
+      "sourceUrl": "https://www.fchfh.org/plannedgiving",
+      "sourceTitle": "PLANNED GIVING",
+      "contentCategory": "PLANNED_GIVING",
+      "facts": [
+        "The page describes bequests, life insurance, stock, real estate, and consulting an advisor.",
+        "It includes a named contact, phone number, email address, and a linked intent form."
+      ],
+      "historicalOrCurrent": "operational and legal-sensitive",
+      "confidenceConcern": "Legal/tax language, contact details, process, and form rights require verification; no current planned-giving destination exists.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "P029",
+      "sourceUrl": "https://www.fchfh.org/restore",
+      "sourceTitle": "ReStore Information",
+      "contentCategory": "RESTORE",
+      "facts": [
+        "The page describes ReStore as a nonprofit home-improvement store and lists 825 N. Main St., Schulenburg, Texas 78945.",
+        "It lists Friday and Saturday donation and sale hours of 9:00am–1:00pm."
+      ],
+      "historicalOrCurrent": "operational and freshness-sensitive",
+      "confidenceConcern": "The new site has no current ReStore destination; address and hours need current verification before any future use.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "P019",
+      "sourceUrl": "https://www.fchfh.org/donate",
+      "sourceTitle": "MAKE A DONATION",
+      "contentCategory": "DONATION",
+      "facts": [
+        "The page contains donation guidance and outbound giving links."
+      ],
+      "historicalOrCurrent": "operational and external-dependency-sensitive",
+      "confidenceConcern": "DonorView owns giving records and destinations; legacy URLs and attribution behavior cannot be assumed.",
+      "destination": "/give",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "P015",
+      "sourceUrl": "https://www.fchfh.org/campstcottages",
+      "sourceTitle": "CAMP ST. COTTAGES",
+      "contentCategory": "PROJECT_HISTORY",
+      "facts": [
+        "The page describes Camp St. Cottages as an older-adult neighborhood concept in La Grange.",
+        "It is a candidate historical Project or Story source, but the page does not establish a current project status in the new model."
+      ],
+      "historicalOrCurrent": "historical project candidate",
+      "confidenceConcern": "Needs factual status and outcome verification before a public Project or Story release.",
+      "destination": "/projects or /stories/[slug]",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "P008",
+      "sourceUrl": "https://www.fchfh.org/blog",
+      "sourceTitle": "BLOG",
+      "contentCategory": "COMMUNICATIONS_INDEX_SOURCE",
+      "facts": ["The page is a legacy index for posts and categories."],
+      "historicalOrCurrent": "legacy index",
+      "confidenceConcern": "It does not define the new Stories, News, taxonomy, or routes.",
+      "destination": "/stories and /news",
+      "status": "DO_NOT_MIGRATE"
+    },
+    {
+      "legacyId": "P005",
+      "sourceUrl": "https://www.fchfh.org/blueprintrules",
+      "sourceTitle": "BOURBON BLUEPRINT RULES",
+      "contentCategory": "EVENT_RULES",
+      "facts": [
+        "The page describes a 2026 raffle with ticket pricing, a May 23, 2026 drawing, and prize values."
+      ],
+      "historicalOrCurrent": "dated event and legal record",
+      "confidenceConcern": "The page has legal/compliance material and inconsistent or incomplete prize/timing details across related raffle pages.",
+      "destination": "/campaigns/[slug]",
+      "status": "CONFLICT"
+    },
+    {
+      "legacyId": "P025",
+      "sourceUrl": "https://www.fchfh.org/buildrules",
+      "sourceTitle": "BOURBON BUILD RULES",
+      "contentCategory": "EVENT_RULES",
+      "facts": [
+        "The page describes a 2026 raffle with a $100 ticket, a May 23, 2026 drawing, and a different stated drawing time from the Blueprint page."
+      ],
+      "historicalOrCurrent": "dated event and legal record",
+      "confidenceConcern": "Conflicting event editions/times, placeholder prize values, and legal review requirements block publication.",
+      "destination": "/campaigns/[slug]",
+      "status": "CONFLICT"
+    },
+    {
+      "legacyId": "P021",
+      "sourceUrl": "https://www.fchfh.org/casinonight",
+      "sourceTitle": "CASINO NIGHT",
+      "contentCategory": "EVENT",
+      "facts": [
+        "The page contains event marketing copy and calls to reserve tickets, sponsor, or donate a prize."
+      ],
+      "historicalOrCurrent": "dated event candidate",
+      "confidenceConcern": "No current edition, dates, or verified destination are established.",
+      "destination": "/campaigns/[slug]",
+      "status": "DO_NOT_MIGRATE"
+    },
+    {
+      "legacyId": "P023",
+      "sourceUrl": "https://www.fchfh.org/schutzenfest",
+      "sourceTitle": "SCHUTZENFEST",
+      "contentCategory": "EVENT",
+      "facts": [
+        "The page describes a Habitat booth at Bluff Schützenfest and lists food/service details."
+      ],
+      "historicalOrCurrent": "dated event candidate",
+      "confidenceConcern": "Future event date, partner recognition, and external event destination require verification.",
+      "destination": "/campaigns/[slug]",
+      "status": "DO_NOT_MIGRATE"
+    },
+    {
+      "legacyId": "B009",
+      "sourceUrl": "https://www.fchfh.org/post/new-project-announcement-camp-st-cottages",
+      "sourceTitle": "Camp St. Cottages",
+      "contentCategory": "PROJECT_HISTORY",
+      "facts": [
+        "The September 2021 post describes a planned 10-unit, 640-square-foot, ADA-compliant cottage concept and a September 10, 2021 public event."
+      ],
+      "historicalOrCurrent": "historical project announcement",
+      "confidenceConcern": "The post describes a plan, not an independently verified current outcome; associated image rights require review.",
+      "destination": "/projects or /stories/[slug]",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "B021",
+      "sourceUrl": "https://www.fchfh.org/post/wright-home-update",
+      "sourceTitle": "Wright Home Update",
+      "contentCategory": "PROJECT_HISTORY",
+      "facts": [
+        "The February 2025 post describes construction progress on a named household's home and mentions siding, volunteers, and construction participation."
+      ],
+      "historicalOrCurrent": "historical participant narrative",
+      "confidenceConcern": "Named household and minor details require current consent, privacy, and dignity review; source images require rights review.",
+      "destination": "/projects or /stories/[slug]",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyId": "B037",
+      "sourceUrl": "https://www.fchfh.org/post/fayette-county-habitat-for-humanity-selects-partner-family-for-new-home-build",
+      "sourceTitle": "Fayette County Habitat for Humanity Selects Partner Family for New Home Build",
+      "contentCategory": "PROJECT_HISTORY",
+      "facts": [
+        "The July 2023 post describes a selected household for a milestone tenth home build and includes household and program-participation details."
+      ],
+      "historicalOrCurrent": "historical participant and impact claim",
+      "confidenceConcern": "Participant consent, current privacy review, and conflict with the homepage's 9 homes built metric block direct migration.",
+      "destination": "/projects or /stories/[slug]",
+      "status": "CONFLICT"
+    },
+    {
+      "legacyId": "B023",
+      "sourceUrl": "https://www.fchfh.org/post/fayette-county-habitat-housing-survey-2020",
+      "sourceTitle": "Fayette County Habitat Housing Survey 2020",
+      "contentCategory": "IMPACT_EVIDENCE",
+      "facts": [
+        "The July 2020 post invites residents to complete an anonymous housing survey and identifies housing-needs research as its purpose."
+      ],
+      "historicalOrCurrent": "historical research evidence",
+      "confidenceConcern": "No methodology, results, owner, or approved public metric destination is present in the new site.",
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyId": "B005",
+      "sourceUrl": "https://www.fchfh.org/post/why-sweat-equity-matters-building-more-than-just-homes",
+      "sourceTitle": "Why Sweat Equity Matters: Building More Than Just Homes",
+      "contentCategory": "EVERGREEN_EDUCATION",
+      "facts": [
+        "The post explains the legacy concept of sweat equity and connects it to Habitat participation."
+      ],
+      "historicalOrCurrent": "evergreen candidate",
+      "confidenceConcern": "Legacy framing requires substantive language remediation and current policy verification before reuse.",
+      "destination": "/stories/[slug] or /volunteer",
+      "status": "VERIFICATION_REQUIRED"
+    }
+  ],
+  "inspectionNote": "The full indexed ledger was reviewed for coverage and risk flags; direct content inspection focused on the source pages and posts with plausible destinations in the existing application. Legacy navigation and page hierarchy were not reproduced."
+}

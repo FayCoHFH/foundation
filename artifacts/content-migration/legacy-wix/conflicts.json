@@ -1,0 +1,28 @@
+{
+  "auditDate": "2026-08-19",
+  "conflicts": [
+    {
+      "legacyIds": ["P030", "P013", "B037"],
+      "topic": "organization_age_and_homes_built",
+      "evidence": [
+        "The homepage displays 16 years serving and 9 homes built.",
+        "Who We Are displays 17 years in the community.",
+        "The July 2023 partner-family post describes a milestone tenth home build."
+      ],
+      "treatment": "Do not publish any of these cumulative metrics in the new site until an authoritative source, methodology, and as-of date resolve the conflict.",
+      "status": "CONFLICT"
+    },
+    {
+      "legacyIds": ["P005", "P025"],
+      "topic": "2026_raffle_edition_and_drawing_time",
+      "evidence": [
+        "The Bourbon Blueprint page states a 4:00 PM drawing.",
+        "The Bourbon Build page states a 6:00 PM drawing in its lead and also contains a 4:00 PM rule text.",
+        "The related pages contain placeholder prize values and different ticket structures."
+      ],
+      "treatment": "No raffle or event content is seeded. Preserve as dated evidence only pending legal/compliance and current-edition verification.",
+      "status": "CONFLICT"
+    }
+  ],
+  "policy": "Conflicting legacy evidence is reported, not reconciled by guessing."
+}

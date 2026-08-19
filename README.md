@@ -44,6 +44,21 @@ pnpm db:seed
 pnpm dev
 ```
 
+The selected legacy Project History records are seeded through the existing
+Projects workflow, including review, approval, release, audit, and immutable
+public projection creation. Run that optional content pass only after
+providing two existing active admin IDs with separate author and approver
+responsibilities:
+
+```bash
+CONTENT_SEED_AUTHOR_ADMIN_USER_ID=<active-author-id> \
+CONTENT_SEED_APPROVER_ADMIN_USER_ID=<active-approver-id> \
+pnpm db:seed:legacy-content
+```
+
+The content seed never creates admin users, grants access, imports legacy
+media, or publishes content marked for verification.
+
 Set the database URLs and development-only secrets in `.env.local` before
 running migrations. `DIRECT_DATABASE_URL` must include an explicit database
 role, and `SHADOW_DATABASE_URL` is a separate disposable database for migration

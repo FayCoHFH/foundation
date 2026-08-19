@@ -41,6 +41,7 @@
     "db:migrate:diff": "PRISMA_REQUIRE_DIRECT_DATABASE_URL=true PRISMA_REQUIRE_SHADOW_DATABASE_URL=true prisma migrate diff --from-migrations prisma/migrations --to-config-datasource --exit-code",
     "db:test:assert-migration-environment": "tsx tests/support/assert-prisma-migration-environment.ts",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed:legacy-content": "tsx scripts/seed-legacy-content.ts",
     "admin:bootstrap-super-admin": "tsx scripts/bootstrap-super-admin.ts",
     "auth:schema:generate": "auth generate --config ./src/platform/auth/schema-config.ts --output ./tmp/better-auth-schema.prisma --yes",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"

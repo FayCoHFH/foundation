@@ -1,0 +1,69 @@
+{
+  "auditDate": "2026-08-19",
+  "sourcePage": "https://www.fchfh.org/project-history",
+  "candidateCount": 4,
+  "migratedCount": 0,
+  "candidates": [
+    {
+      "manifestId": "M078",
+      "legacyAssetUrl": "https://static.wixstatic.com/media/cfaa59_6f68431c769943e684f9160003eaf7cd~mv2.png",
+      "legacyFilename": "IMG_2848.HEIC",
+      "associatedContext": "Community Engagement — February 2024 — The Red Door Fund for Mental Health",
+      "apparentSubject": "Unknown from filename/association alone",
+      "approximateDate": "February 2024",
+      "peopleVisible": "Unknown",
+      "caption": null,
+      "altText": "Filename-only source evidence; contextual alt text not established",
+      "resolutionOrQuality": "Wix-served PNG derivative; original/highest-quality export not obtained",
+      "provenanceUncertainty": "HEIC origin and ownership/usage rights require verification",
+      "consentUncertainty": "Required",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "manifestId": "M079",
+      "legacyAssetUrl": "https://static.wixstatic.com/media/cfaa59_f44c0ccd2d0a41698aab85249c191d8d~mv2.png",
+      "legacyFilename": "IMG_2345.HEIC",
+      "associatedContext": "Community Engagement — January 2023 — Rest Stop, Hostyn",
+      "apparentSubject": "Unknown from filename/association alone",
+      "approximateDate": "January 2023",
+      "peopleVisible": "Unknown",
+      "caption": null,
+      "altText": "Filename-only source evidence; contextual alt text not established",
+      "resolutionOrQuality": "Wix-served PNG derivative; original/highest-quality export not obtained",
+      "provenanceUncertainty": "HEIC origin and ownership/usage rights require verification",
+      "consentUncertainty": "Required",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "manifestId": "M080",
+      "legacyAssetUrl": "https://static.wixstatic.com/media/cfaa59_3722dbbbf1fe4b9989f35dc2501d81e4~mv2.png",
+      "legacyFilename": "IMG_3669.HEIC",
+      "associatedContext": "Critical Home Repair — November 2020 — La Grange",
+      "apparentSubject": "Unknown from filename/association alone",
+      "approximateDate": "November 2020",
+      "peopleVisible": "Unknown",
+      "caption": null,
+      "altText": "Filename-only source evidence; contextual alt text not established",
+      "resolutionOrQuality": "Wix-served PNG derivative; original/highest-quality export not obtained",
+      "provenanceUncertainty": "HEIC origin and ownership/usage rights require verification",
+      "consentUncertainty": "Required",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "manifestId": "M081",
+      "legacyAssetUrl": "https://static.wixstatic.com/media/cfaa59_96cd19d8af0442d8986433f5238e1f5d~mv2.png",
+      "legacyFilename": "IMG_3256.HEIC",
+      "associatedContext": "New Home Build — July 2020 — La Grange",
+      "apparentSubject": "Unknown from filename/association alone",
+      "approximateDate": "July 2020",
+      "peopleVisible": "Unknown",
+      "caption": null,
+      "altText": "Filename-only source evidence; contextual alt text not established",
+      "resolutionOrQuality": "Wix-served PNG derivative; original/highest-quality export not obtained",
+      "provenanceUncertainty": "HEIC origin and ownership/usage rights require verification",
+      "consentUncertainty": "Required",
+      "status": "VERIFICATION_REQUIRED"
+    }
+  ],
+  "treatment": "Do not copy these bytes into evidence or public storage. Obtain approved exports through normal MediaAsset handling only after rights, consent, sanitized metadata, and contextual alt text are verified."
+}

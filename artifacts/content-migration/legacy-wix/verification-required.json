@@ -1,0 +1,120 @@
+{
+  "auditDate": "2026-08-19",
+  "items": [
+    {
+      "legacyIds": ["P027", "P022", "P011", "P020", "P006"],
+      "category": "PROGRAM_OR_HOMEOWNER_POLICY",
+      "requiredChecks": [
+        "current program availability",
+        "geographic eligibility",
+        "AMI thresholds",
+        "caps",
+        "repayment terms",
+        "interest terms",
+        "safe intake destination",
+        "privacy review"
+      ],
+      "blockedMaterial": "The Aging in Place and Rapid Response assistance PDF requests Social Security Numbers and email submission. It is not migrated or served.",
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["P001"],
+      "category": "PLANNED_GIVING",
+      "requiredChecks": [
+        "legal and tax language",
+        "current contact and process",
+        "form rights and accessibility",
+        "professional-advice disclaimer"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["P017", "P016", "B007", "B045"],
+      "category": "VOLUNTEER_OPERATIONS",
+      "requiredChecks": [
+        "current committee structure",
+        "current recruitment state",
+        "DonorView destination",
+        "language remediation",
+        "photo and partner permissions"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["P004", "P031", "B036"],
+      "category": "PEOPLE_AND_LEADERSHIP",
+      "requiredChecks": [
+        "current roster",
+        "roles and biographies",
+        "consent",
+        "public contact safety",
+        "recognition source verification"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["B009", "B010", "B015", "B021", "B026", "B029", "B037"],
+      "category": "PROJECT_STORIES",
+      "requiredChecks": [
+        "current or historical outcome",
+        "participant consent",
+        "minor privacy",
+        "dignity review",
+        "media rights",
+        "claim verification"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["B005", "B022", "B034", "B047", "B048"],
+      "category": "EVERGREEN_COPY",
+      "requiredChecks": [
+        "current policy",
+        "donation/impact claim source",
+        "language remediation",
+        "external destination verification"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["B023", "B038"],
+      "category": "IMPACT_AND_RESEARCH",
+      "requiredChecks": [
+        "methodology",
+        "source owner",
+        "reporting period",
+        "public approval",
+        "partner attribution",
+        "current public destination"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["P029"],
+      "category": "RESTORE_OPERATIONS",
+      "requiredChecks": [
+        "current address",
+        "hours",
+        "accepted donations",
+        "operating status",
+        "future ReStore destination",
+        "special identity style guide"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    },
+    {
+      "legacyIds": ["M078", "M079", "M080", "M081"],
+      "category": "MEDIA",
+      "requiredChecks": [
+        "ownership",
+        "original/highest-quality export",
+        "metadata stripping",
+        "participant consent",
+        "contextual alt text",
+        "current media destination"
+      ],
+      "status": "VERIFICATION_REQUIRED"
+    }
+  ],
+  "publicationRule": "No item in this file is published by the content seed."
+}

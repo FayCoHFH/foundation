@@ -1,0 +1,99 @@
+{
+  "auditDate": "2026-08-19",
+  "sourceOfTruth": "Current greenfield application and accepted repository architecture",
+  "publicRoutesInspected": [
+    {
+      "route": "/",
+      "implementation": "src/app/page.tsx",
+      "destinations": [
+        "released Projects",
+        "released Stories",
+        "released News",
+        "released Campaigns",
+        "DonorView giving and volunteer handoffs"
+      ],
+      "legacyUse": "Only verified copy or dated evidence; no legacy homepage layout or metrics imported."
+    },
+    {
+      "route": "/projects",
+      "implementation": "src/app/projects/page.tsx",
+      "destinations": ["historical and current Project projections"],
+      "legacyUse": "Primary destination for selected Project History records."
+    },
+    {
+      "route": "/projects/[slug]",
+      "implementation": "src/app/projects/[slug]/page.tsx",
+      "destinations": ["one released Project projection"],
+      "legacyUse": "Selected historical records receive canonical greenfield slugs."
+    },
+    {
+      "route": "/stories and /stories/[slug]",
+      "implementation": "src/app/stories/[slug]/page.tsx and Communications Stories services",
+      "destinations": ["evergreen narrative Story records"],
+      "legacyUse": "Candidate destination inspected; no legacy post was published because dated source and consent/status evidence were insufficient for this pass."
+    },
+    {
+      "route": "/news and /news/[slug]",
+      "implementation": "src/app/news/page.tsx and src/app/news/[slug]/page.tsx",
+      "destinations": ["dated News records with optional expiry"],
+      "legacyUse": "Candidate destination inspected; stale legacy announcements were not reissued as current News."
+    },
+    {
+      "route": "/campaigns and /campaigns/[slug]",
+      "implementation": "src/app/campaigns/page.tsx and src/app/campaigns/[slug]/page.tsx",
+      "destinations": [
+        "bounded Campaign records and reviewed DonorView actions"
+      ],
+      "legacyUse": "Historical campaign evidence retained for later review; no incomplete or contradictory raffle/event edition was seeded."
+    },
+    {
+      "route": "/give",
+      "implementation": "src/app/give/page.tsx",
+      "destinations": ["giving explanation and verified DonorView handoff"],
+      "legacyUse": "No legacy donation URL or recurring-gift behavior was copied."
+    },
+    {
+      "route": "/volunteer",
+      "implementation": "src/app/volunteer/page.tsx",
+      "destinations": [
+        "volunteer explanation and verified DonorView handoff",
+        "current volunteer Campaigns"
+      ],
+      "legacyUse": "Legacy volunteer guidance was reviewed but no unverified registration destination or roster was added."
+    },
+    {
+      "route": "/share-your-story",
+      "implementation": "src/app/share-your-story/page.tsx",
+      "destinations": ["confidential public Story submission intake"],
+      "legacyUse": "Legacy participant stories and media were not copied into the intake or public Story records."
+    }
+  ],
+  "contentModelsInspected": [
+    "Publication and immutable PublicationSnapshot",
+    "typed Project and ProjectRevision",
+    "typed Story and PublicationRevision",
+    "typed NewsItem and PublicationRevision",
+    "typed Campaign and CampaignRevision",
+    "ContentPlacement",
+    "MediaAsset and bounded public media usage",
+    "DonorViewDestination and EngagementConfiguration",
+    "PublicStorySubmission"
+  ],
+  "legitimateDestinationMapping": {
+    "PROJECT_HISTORY": "/projects",
+    "PROJECT_RECORD": "/projects/[slug]",
+    "EVERGREEN_EDITORIAL": "/stories/[slug]",
+    "TIMELY_ANNOUNCEMENT": "/news/[slug]",
+    "BOUNDED_CAMPAIGN": "/campaigns/[slug]",
+    "GENERAL_GIVING": "/give",
+    "GENERAL_VOLUNTEERING": "/volunteer",
+    "CONFIDENTIAL_STORY_INTAKE": "/share-your-story",
+    "PROGRAM": null,
+    "PEOPLE_AND_LEADERSHIP": null,
+    "RESTORE": null,
+    "EVENT_EDITION": null,
+    "NEWSLETTER_ARCHIVE": null,
+    "IMPACT_METRIC": null
+  },
+  "architectureDecision": "No route, public section, navigation item, content model, or module was added to accommodate legacy material."
+}

@@ -1,0 +1,54 @@
+{
+  "auditDate": "2026-08-19",
+  "items": [
+    {
+      "legacyIds": ["P027", "P022", "P011", "P006"],
+      "category": "PROGRAM",
+      "usefulMaterial": "Program purpose and high-level descriptions; practical modification examples.",
+      "whyNoDestination": "The current public application has no Program route or Program model in this slice.",
+      "blockedBy": "Current policy verification and unsafe legacy intake PDF.",
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyIds": ["P029"],
+      "category": "RESTORE",
+      "usefulMaterial": "Store description, address, donation hours, and sale hours.",
+      "whyNoDestination": "The current public application has no ReStore route or ReStore content model in this slice.",
+      "blockedBy": "Freshness verification and the separate ReStore style guide.",
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyIds": ["P001"],
+      "category": "PLANNED_GIVING",
+      "usefulMaterial": "Educational overview of bequests, life insurance, stock, and real estate giving.",
+      "whyNoDestination": "The current public application has no planned-giving destination.",
+      "blockedBy": "Legal/tax review, current contact/process verification, and form accessibility/rights review.",
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyIds": ["P004", "P031"],
+      "category": "PEOPLE_AND_LEADERSHIP",
+      "usefulMaterial": "Staff, board, committee names, roles, and descriptions.",
+      "whyNoDestination": "The current public application has no implemented People, Board, or Committee destination.",
+      "blockedBy": "Current roster, consent, and privacy verification.",
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyIds": ["P032", "P034", "B023", "B038"],
+      "category": "NEWSLETTER_OR_IMPACT_ARCHIVE",
+      "usefulMaterial": "Historical newsletter, survey, and research evidence.",
+      "whyNoDestination": "The current application does not expose a newsletter archive or approved public impact-evidence model.",
+      "blockedBy": "Future Communications design, methodology, and public-approval decisions.",
+      "status": "NO_CURRENT_DESTINATION"
+    },
+    {
+      "legacyIds": ["M078", "M079", "M080", "M081"],
+      "category": "PROJECT_MEDIA",
+      "usefulMaterial": "Four project-history image associations with HEIC origins served as Wix PNG derivatives.",
+      "whyNoDestination": "The implemented public Project projection has no media field or project-media relation in this slice.",
+      "blockedBy": "Rights, consent, metadata, alt text, and future media placement review.",
+      "status": "NO_CURRENT_DESTINATION"
+    }
+  ],
+  "policy": "No new route or model was created to eliminate these findings."
+}

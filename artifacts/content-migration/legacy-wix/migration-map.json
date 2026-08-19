@@ -1,0 +1,201 @@
+{
+  "auditDate": "2026-08-19",
+  "destinationFirstRule": "Existing greenfield destination -> legacy content candidate",
+  "projectHistory": {
+    "sourceUrl": "https://www.fchfh.org/project-history",
+    "identified": 32,
+    "migrated": 12,
+    "historicalOnly": 19,
+    "verificationRequired": 1,
+    "conflicting": 0,
+    "rejected": 0,
+    "migratedRecords": [
+      {
+        "legacyRecordId": "PHR-001",
+        "destination": "/projects/aging-in-place-schulenburg-march-2026-phr-001",
+        "type": "ACCESSIBILITY",
+        "status": "COMPLETED",
+        "datePreservedAs": "March 2026 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-002",
+        "destination": "/projects/hammerbuild-house-schulenburg-february-2026-phr-002",
+        "type": "NEW_HOME",
+        "status": "COMPLETED",
+        "datePreservedAs": "February 2026 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-004",
+        "destination": "/projects/community-engagement-la-grange-june-2024-phr-004",
+        "type": "COMMUNITY",
+        "status": "COMPLETED",
+        "datePreservedAs": "June 2024 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-008",
+        "destination": "/projects/critical-home-repair-schulenburg-december-2023-phr-008",
+        "type": "HOME_REPAIR",
+        "status": "COMPLETED",
+        "datePreservedAs": "December 2023 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-011",
+        "destination": "/projects/disaster-response-flatonia-october-2022-phr-011",
+        "type": "OTHER",
+        "status": "COMPLETED",
+        "datePreservedAs": "October 2022 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-012",
+        "destination": "/projects/ramp-install-la-grange-september-2022-phr-012",
+        "type": "ACCESSIBILITY",
+        "status": "COMPLETED",
+        "datePreservedAs": "September 2022 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-014",
+        "destination": "/projects/ramp-install-fayetteville-september-2022-phr-014",
+        "type": "ACCESSIBILITY",
+        "status": "COMPLETED",
+        "datePreservedAs": "September 2022 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-018",
+        "destination": "/projects/ramp-install-ledbetter-july-2022-phr-018",
+        "type": "ACCESSIBILITY",
+        "status": "COMPLETED",
+        "datePreservedAs": "July 2022 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-023",
+        "destination": "/projects/community-engagement-la-grange-april-2021-phr-023",
+        "type": "COMMUNITY",
+        "status": "COMPLETED",
+        "datePreservedAs": "April 2021 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-026",
+        "destination": "/projects/critical-home-repair-la-grange-november-2020-phr-026",
+        "type": "HOME_REPAIR",
+        "status": "COMPLETED",
+        "datePreservedAs": "November 2020 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-028",
+        "destination": "/projects/new-home-build-la-grange-july-2020-phr-028",
+        "type": "NEW_HOME",
+        "status": "COMPLETED",
+        "datePreservedAs": "July 2020 in title, summary, and body; no false exact day added"
+      },
+      {
+        "legacyRecordId": "PHR-032",
+        "destination": "/projects/new-home-build-la-grange-august-2019-phr-032",
+        "type": "NEW_HOME",
+        "status": "COMPLETED",
+        "datePreservedAs": "August 2019 in title, summary, and body; no false exact day added"
+      }
+    ],
+    "notPublished": [
+      {
+        "legacyRecordId": "PHR-003",
+        "status": "VERIFICATION_REQUIRED",
+        "reason": "Named household and minor details require current consent and privacy review."
+      },
+      {
+        "legacyRecordIds": [
+          "PHR-005",
+          "PHR-006",
+          "PHR-007",
+          "PHR-009",
+          "PHR-010",
+          "PHR-013",
+          "PHR-015",
+          "PHR-016",
+          "PHR-017",
+          "PHR-019",
+          "PHR-020",
+          "PHR-021",
+          "PHR-022",
+          "PHR-024",
+          "PHR-025",
+          "PHR-027",
+          "PHR-029",
+          "PHR-030",
+          "PHR-031"
+        ],
+        "status": "HISTORICAL_ONLY",
+        "reason": "Sparse or duplicate records retained in the audit trail to avoid over-seeding low-detail public pages."
+      }
+    ]
+  },
+  "otherCandidateMappings": [
+    {
+      "legacyIds": [
+        "B009",
+        "P015",
+        "B010",
+        "B015",
+        "B021",
+        "B026",
+        "B029",
+        "B037"
+      ],
+      "destination": "/projects or /stories/[slug]",
+      "status": "VERIFICATION_REQUIRED",
+      "reason": "Historical posts contain useful project narrative but require current outcome, participant consent/privacy, media rights, or claim verification."
+    },
+    {
+      "legacyIds": ["B023", "B038"],
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION",
+      "reason": "Research/impact evidence has no approved public metric or evidence destination in the current application."
+    },
+    {
+      "legacyIds": ["P027", "P022", "P011", "P020", "P006"],
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION",
+      "reason": "Program and homeowner guidance has no current Program destination and contains changeable eligibility/intake policy."
+    },
+    {
+      "legacyIds": ["P001", "P029", "P004", "P031"],
+      "destination": null,
+      "status": "NO_CURRENT_DESTINATION",
+      "reason": "Planned giving, ReStore, and leadership material require destinations and current verification not present in this slice."
+    },
+    {
+      "legacyIds": ["P005", "P025", "P007", "P035", "B035", "B053"],
+      "destination": "/campaigns/[slug]",
+      "status": "CONFLICT",
+      "reason": "Raffle pages contain conflicting times/editions and placeholder or legally sensitive details; no edition was published."
+    },
+    {
+      "legacyIds": ["P021", "P023", "P024", "P002", "P014", "P016"],
+      "destination": null,
+      "status": "DO_NOT_MIGRATE",
+      "reason": "Stale event or copied-page material lacks a current edition and verified operational destination."
+    }
+  ],
+  "copyTreatment": {
+    "substantiallyRewritten": true,
+    "legacyProseCopiedVerbatim": false,
+    "retiredLanguageRemediated": true,
+    "legacyFontsColorsLayoutsOrNavigationImported": false,
+    "sourceProvenanceExposedPublicly": false
+  },
+  "mediaTreatment": {
+    "migrated": 0,
+    "reason": "The current Project public projection has no media destination in this slice, and rights/consent/alt-text evidence is incomplete.",
+    "candidateEvidence": "media-candidates.json"
+  },
+  "execution": {
+    "seedImplementation": "scripts/seed-legacy-content.ts",
+    "seedCommand": "pnpm db:seed:legacy-content",
+    "requires": [
+      "CONTENT_SEED_AUTHOR_ADMIN_USER_ID",
+      "CONTENT_SEED_APPROVER_ADMIN_USER_ID"
+    ],
+    "separationOfDuties": "Author and approver must be two distinct existing active admin users.",
+    "createsAdminUsers": false,
+    "publishesVerificationRequiredContent": false
+  }
+}
