@@ -21,7 +21,7 @@ export default function GlobalError({
       <h1
         ref={headingRef}
         tabIndex={-1}
-        className="text-foreground mt-4 font-serif text-4xl leading-tight"
+        className="text-foreground type-display mt-4 text-4xl leading-tight"
       >
         We could not load this page.
       </h1>

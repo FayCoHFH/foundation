@@ -81,13 +81,13 @@ export default async function HomePage() {
       <main id="main-content" tabIndex={-1} className="public-page-main flex-1">
         <SiteNoticeRegion targetArea={SiteNoticeTargetArea.HOMEPAGE} />
 
-        <section className="border-limestone bg-clean-white border-b">
+        <section className="border-brand-cool-gray bg-brand-white border-b">
           <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-12 lg:px-12 lg:py-20">
             <div className="editorial-arrival flex flex-col justify-center">
               <p className="public-kicker">
                 Fayette County Habitat for Humanity
               </p>
-              <h1 className="text-display-foreground mt-5 max-w-3xl font-serif text-5xl leading-[0.94] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]">
+              <h1 className="text-display-foreground type-display mt-5 max-w-3xl text-5xl leading-[0.94] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]">
                 Building and repairing homes with neighbors across Fayette
                 County.
               </h1>
@@ -144,13 +144,13 @@ export default async function HomePage() {
                   <li key={project.slug}>
                     <article className="grid gap-3 md:grid-cols-[0.8fr_1.2fr] md:gap-10">
                       <div>
-                        <p className="text-workshop-green text-sm font-bold">
+                        <p className="text-brand-traditional-blue text-sm font-bold">
                           {PROJECT_STATUS_LABELS[project.projectStatus]} ·{" "}
                           {project.community}
                         </p>
-                        <h3 className="text-charcoal mt-2 font-serif text-2xl font-semibold sm:text-3xl">
+                        <h3 className="text-brand-black type-display mt-2 text-2xl font-semibold sm:text-3xl">
                           <Link
-                            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                            className="decoration-brand-bright-blue hover:text-brand-traditional-blue underline underline-offset-4"
                             href={`/projects/${project.slug}`}
                           >
                             {project.title}
@@ -165,7 +165,7 @@ export default async function HomePage() {
                 ))}
               </ul>
             ) : (
-              <p className="border-limestone bg-pale-habitat-blue mt-8 border p-6">
+              <p className="border-brand-cool-gray bg-surface-subtle mt-8 border p-6">
                 Projects will appear here as they are ready to share.
               </p>
             )}
@@ -177,25 +177,25 @@ export default async function HomePage() {
           >
             <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
               <div>
-                <p className="text-clean-white text-sm font-bold tracking-[0.08em] uppercase">
+                <p className="text-brand-white text-sm font-bold tracking-[0.08em] uppercase">
                   Ways to help
                 </p>
                 <h2
                   id="ways-to-help"
-                  className="mt-3 font-serif text-4xl leading-tight font-semibold"
+                  className="type-display mt-3 text-4xl leading-tight font-semibold"
                 >
                   Bring what you can to the work.
                 </h2>
               </div>
-              <p className="text-clean-white/85 max-w-2xl text-lg leading-8">
+              <p className="text-brand-white max-w-2xl text-lg leading-8">
                 Giving and volunteering are different kinds of participation,
                 with the same local purpose.
               </p>
             </div>
-            <div className="border-clean-white/30 mt-9 grid gap-8 border-t pt-8 md:grid-cols-2">
+            <div className="border-brand-white mt-9 grid gap-8 border-t pt-8 md:grid-cols-2">
               <div>
-                <h3 className="font-serif text-2xl">Give</h3>
-                <p className="text-clean-white/85 mt-2 max-w-md leading-7">
+                <h3 className="type-display text-2xl">Give</h3>
+                <p className="text-brand-white mt-2 max-w-md leading-7">
                   Support Habitat’s building and repair work across Fayette
                   County.
                 </p>
@@ -205,7 +205,7 @@ export default async function HomePage() {
                   </Link>
                   {donateDestination ? (
                     <a
-                      className="text-clean-white inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
+                      className="text-brand-white inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
                       href={donateDestination.url}
                       aria-label="Donate (opens the secure DonorView giving page)"
                     >
@@ -215,8 +215,8 @@ export default async function HomePage() {
                 </div>
               </div>
               <div>
-                <h3 className="font-serif text-2xl">Volunteer</h3>
-                <p className="text-clean-white/85 mt-2 max-w-md leading-7">
+                <h3 className="type-display text-2xl">Volunteer</h3>
+                <p className="text-brand-white mt-2 max-w-md leading-7">
                   Bring time, skills, and practical care to a workday or the
                   wider effort.
                 </p>
@@ -226,7 +226,7 @@ export default async function HomePage() {
                   </Link>
                   {volunteerDestination ? (
                     <a
-                      className="text-clean-white inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
+                      className="text-brand-white inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
                       href={volunteerDestination.url}
                       aria-label="Volunteer (opens DonorView volunteer registration)"
                     >
@@ -257,15 +257,15 @@ export default async function HomePage() {
                   All Campaigns <span aria-hidden="true">→</span>
                 </Link>
               </div>
-              <div className="border-habitat-green bg-pale-habitat-green mt-8 grid gap-8 border-t-4 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+              <div className="border-brand-bright-green bg-surface-subtle mt-8 grid gap-8 border-t-4 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
                 <div>
-                  <p className="text-workshop-green text-sm font-bold">
+                  <p className="text-brand-traditional-blue text-sm font-bold">
                     {CAMPAIGN_STATUS_LABELS[activeCampaign.campaignStatus]} ·{" "}
                     {CAMPAIGN_TYPE_LABELS[activeCampaign.campaignType]}
                   </p>
-                  <h3 className="text-charcoal mt-3 font-serif text-3xl font-semibold">
+                  <h3 className="text-brand-black type-display mt-3 text-3xl font-semibold">
                     <Link
-                      className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                      className="decoration-brand-bright-blue hover:text-brand-traditional-blue underline underline-offset-4"
                       href={`/campaigns/${activeCampaign.slug}`}
                     >
                       {activeCampaign.title}
@@ -292,10 +292,10 @@ export default async function HomePage() {
                 <div>
                   <h2
                     id="featured-story"
-                    className="text-charcoal font-serif text-4xl leading-tight font-semibold sm:text-5xl"
+                    className="text-brand-black type-display text-4xl leading-tight font-semibold sm:text-5xl"
                   >
                     <Link
-                      className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                      className="decoration-brand-bright-blue hover:text-brand-traditional-blue underline underline-offset-4"
                       href={story.href}
                     >
                       {story.headline}
@@ -305,7 +305,7 @@ export default async function HomePage() {
                     {story.summary}
                   </p>
                   <Link
-                    className="text-habitat-blue mt-5 inline-flex font-semibold underline underline-offset-4"
+                    className="text-brand-traditional-blue mt-5 inline-flex font-semibold underline underline-offset-4"
                     href={story.href}
                   >
                     Read the Story{" "}
@@ -326,10 +326,10 @@ export default async function HomePage() {
               <p className="public-kicker">Selected update</p>
               <h2
                 id="selected-update"
-                className="text-charcoal mt-3 font-serif text-3xl font-semibold"
+                className="text-brand-black type-display mt-3 text-3xl font-semibold"
               >
                 <Link
-                  className="decoration-texas-clay/50 hover:text-habitat-blue underline underline-offset-4"
+                  className="decoration-brand-orange hover:text-brand-traditional-blue underline underline-offset-4"
                   href={selectedUpdate.href}
                 >
                   {selectedUpdate.headline}
@@ -359,9 +359,9 @@ export default async function HomePage() {
             {news ? (
               <article id="featured-news" className="public-clay-rule mt-8">
                 <p className="public-kicker">Featured news</p>
-                <h3 className="text-charcoal mt-3 font-serif text-3xl font-semibold">
+                <h3 className="text-brand-black type-display mt-3 text-3xl font-semibold">
                   <Link
-                    className="decoration-texas-clay/50 hover:text-habitat-blue underline underline-offset-4"
+                    className="decoration-brand-orange hover:text-brand-traditional-blue underline underline-offset-4"
                     href={news.href}
                   >
                     {news.headline}
@@ -380,7 +380,7 @@ export default async function HomePage() {
                   <li key={item.slug}>
                     <article className="grid gap-2 md:grid-cols-[0.25fr_0.75fr] md:gap-8">
                       <time
-                        className="text-workshop-green text-sm font-semibold"
+                        className="text-brand-traditional-blue text-sm font-semibold"
                         dateTime={item.publishedAt.toISOString()}
                       >
                         {new Intl.DateTimeFormat("en-US", {
@@ -389,9 +389,9 @@ export default async function HomePage() {
                         }).format(item.publishedAt)}
                       </time>
                       <div>
-                        <h3 className="text-charcoal font-serif text-2xl font-semibold">
+                        <h3 className="text-brand-black type-display text-2xl font-semibold">
                           <Link
-                            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+                            className="decoration-brand-bright-blue hover:text-brand-traditional-blue underline underline-offset-4"
                             href={`/news/${item.slug}`}
                           >
                             {item.headline}

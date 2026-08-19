@@ -54,7 +54,7 @@ export default async function StoryDraftPage({
       <p className="text-primary text-sm font-semibold">
         Communications · private draft
       </p>
-      <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
         {story.currentRevision.headline}
       </h1>
       <dl className="border-border mt-7 grid gap-4 border-y py-5 text-sm sm:grid-cols-3">

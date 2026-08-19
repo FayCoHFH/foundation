@@ -39,26 +39,22 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
       renderedHeight: rect.height,
     };
   });
-  expect(logoMetrics.naturalWidth).toBe(562);
-  expect(logoMetrics.naturalHeight).toBe(190);
+  expect(logoMetrics.naturalWidth).toBe(5487);
+  expect(logoMetrics.naturalHeight).toBe(1839);
   expect(logoMetrics.renderedWidth).toBeGreaterThan(0);
   expect(logoMetrics.renderedHeight).toBeGreaterThan(0);
   expect(logoMetrics.renderedWidth / logoMetrics.renderedHeight).toBeCloseTo(
-    562 / 190,
+    5487 / 1839,
     1,
   );
   const footerLogo = page
     .getByRole("contentinfo")
     .getByRole("img", { name: "Fayette County Habitat for Humanity" });
   await expect(footerLogo).toBeVisible();
-  await expect(
-    page
-      .getByRole("contentinfo")
-      .getByText("Fayette County Habitat", { exact: true }),
-  ).toHaveCount(0);
+  await expect(footerLogo).toHaveAttribute("data-logo-variant", "white");
   await expect(footerLogo).toHaveAttribute(
     "src",
-    /fayette-county-habitat-logo-2clr\.avif/,
+    /fayette-county-habitat-logo-horizontal-white\.png/,
   );
   const typography = await page.evaluate(() => ({
     display: getComputedStyle(document.querySelector("h1")!).fontFamily,
@@ -67,44 +63,30 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
       document.querySelector("main p.text-muted-foreground")!,
     ).fontFamily,
   }));
-  expect(typography.display.toLowerCase()).toContain("zilla slab");
-  expect(typography.section.toLowerCase()).toContain("zilla slab");
-  expect(typography.body.toLowerCase()).toContain("source sans 3");
-  const headingColors = await page.evaluate(() => {
-    const probe = document.createElement("span");
-    document.body.append(probe);
-    probe.style.color = "var(--timber)";
-    const timber = getComputedStyle(probe).color;
-    probe.style.color = "var(--display-foreground)";
-    const display = getComputedStyle(probe).color;
-    probe.style.color = "var(--charcoal)";
-    const charcoal = getComputedStyle(probe).color;
-    probe.remove();
-    return {
-      timber,
-      display,
-      charcoal,
-      headings: Array.from(document.querySelectorAll("main h1, main h2")).map(
-        (element) => ({
-          text: element.textContent?.trim(),
-          color: getComputedStyle(element).color,
-        }),
-      ),
-    };
-  });
-  expect(headingColors.display).toBe(headingColors.charcoal);
-  expect(headingColors.display).not.toBe(headingColors.timber);
-  for (const heading of headingColors.headings) {
-    expect(heading.color, heading.text).not.toBe(headingColors.timber);
+  expect(typography.display).toContain("Neue Haas Grotesk Display");
+  expect(typography.section).toContain("Neue Haas Grotesk Display");
+  expect(typography.body).toContain("Neue Haas Grotesk Text");
+  const headingColors = await page
+    .locator("main h1, main h2")
+    .evaluateAll((elements) =>
+      elements.map((element) => ({
+        text: element.textContent?.trim(),
+        color: getComputedStyle(element).color,
+      })),
+    );
+  for (const heading of headingColors) {
+    expect(heading.color, heading.text).toBe("rgb(0, 0, 0)");
   }
   await expect(page.locator(".public-hero-structure")).toHaveAttribute(
     "aria-hidden",
     "true",
   );
   await expect(page.locator(".public-hero-structure img")).toHaveCount(0);
-  await expect(page.locator(".bg-warm-paper, .bg-editorial-cream")).toHaveCount(
-    0,
-  );
+  await expect(
+    page.locator(
+      ".bg-warm-paper, .bg-editorial-cream, .bg-pale-habitat-blue, .bg-pale-habitat-green",
+    ),
+  ).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText(
     "Public experience foundation",
   );
@@ -163,26 +145,22 @@ test("public display headings use approved colors across core routes", async ({
       .poll(() =>
         heading.evaluate((element) => getComputedStyle(element).fontFamily),
       )
-      .toContain("Zilla Slab");
-    const colors = await page.evaluate(() => {
-      const probe = document.createElement("span");
-      document.body.append(probe);
-      probe.style.color = "var(--timber)";
-      const timber = getComputedStyle(probe).color;
-      probe.remove();
-      return Array.from(document.querySelectorAll("main h1, main h2")).map(
-        (element) => ({
+      .toContain("Neue Haas Grotesk Display");
+    const colors = await page
+      .locator("main h1, main h2")
+      .evaluateAll((elements) =>
+        elements.map((element) => ({
           text: element.textContent?.trim(),
           color: getComputedStyle(element).color,
-          timber,
-        }),
+        })),
       );
-    });
     for (const item of colors) {
-      expect(item.color, `${route}: ${item.text}`).not.toBe(item.timber);
+      expect(item.color, `${route}: ${item.text}`).toBe("rgb(0, 0, 0)");
     }
     await expect(
-      page.locator(".bg-warm-paper, .bg-editorial-cream"),
+      page.locator(
+        ".bg-warm-paper, .bg-editorial-cream, .bg-pale-habitat-blue, .bg-pale-habitat-green",
+      ),
     ).toHaveCount(0);
   }
 });

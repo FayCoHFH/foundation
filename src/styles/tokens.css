@@ -1,60 +1,57 @@
-/* Fayette County Habitat public visual system: workshop blue, civic green, paper, and clay. */
+/*
+ * Fayette County Habitat public brand system.
+ *
+ * Source: Habitat for Humanity Brand User Guide, June 2025. The guide is the
+ * authority; these semantic roles are the implementation surface for authors.
+ * Minion Pro webfont license provenance is pending formal documentation.
+ */
 :root {
-  --habitat-blue: #045797;
-  --habitat-green: #52b949;
-  --deep-blue: #173f59;
-  --workshop-green: #27533b;
-  --charcoal: #252723;
-  --clean-white: #ffffff;
-  --pale-habitat-blue: #edf5fa;
-  --pale-habitat-green: #eff8ed;
-  --display-foreground: var(--charcoal);
-  --warm-paper: #f8f5ed;
-  --limestone: #d9e2e4;
-  --texas-clay: #a65038;
-  --timber: #604938;
+  --brand-bright-blue: #0099cc;
+  --brand-bright-green: #c4d600;
+  --brand-cool-gray: #888b8d;
+  --brand-black: #000000;
+  --brand-white: #ffffff;
+  --brand-traditional-blue: #002f6c;
+  --brand-yellow: #ffd100;
+  --brand-traditional-green: #3aa047;
+  --brand-orange: #e55d25;
+  --brand-red: #a4343a;
 
-  --background: var(--clean-white);
-  --foreground: var(--charcoal);
-  --surface: var(--clean-white);
-  --surface-subtle: #edf3f4;
-  --card: var(--clean-white);
-  --card-foreground: var(--charcoal);
-  --popover: var(--clean-white);
-  --popover-foreground: var(--charcoal);
-  --border: var(--limestone);
-  --input: #b9b09f;
-  --muted: #f1eee7;
-  --muted-foreground: #56605d;
-  --primary: var(--habitat-blue);
-  --primary-foreground: #ffffff;
-  --secondary: #e3eee5;
-  --secondary-foreground: var(--workshop-green);
-  --accent: var(--workshop-green);
-  --accent-foreground: #ffffff;
-  --destructive: var(--texas-clay);
-  --destructive-foreground: #ffffff;
-  --ring: var(--habitat-blue);
-  --success: var(--habitat-green);
-  --warning: #8a621b;
-  --editorial-sky: #e7f0f4;
-  --editorial-denim: var(--habitat-blue);
-  --editorial-paintbrush: var(--texas-clay);
-  --editorial-bluebonnet: #485aa4;
-  --editorial-pecan: var(--timber);
-  --editorial-oak: var(--workshop-green);
-  --editorial-cream: var(--warm-paper);
-  --editorial-cream-muted: #e5ddcf;
+  --background: var(--brand-white);
+  --foreground: var(--brand-black);
+  --surface: var(--brand-white);
+  --surface-subtle: var(--brand-white);
+  --card: var(--brand-white);
+  --card-foreground: var(--brand-black);
+  --popover: var(--brand-white);
+  --popover-foreground: var(--brand-black);
+  --border: var(--brand-cool-gray);
+  --input: var(--brand-cool-gray);
+  --muted: var(--brand-white);
+  --muted-foreground: var(--brand-traditional-blue);
+  --primary: var(--brand-bright-blue);
+  --primary-foreground: var(--brand-black);
+  --secondary: var(--brand-white);
+  --secondary-foreground: var(--brand-traditional-blue);
+  --accent: var(--brand-bright-green);
+  --accent-foreground: var(--brand-black);
+  --destructive: var(--brand-red);
+  --destructive-foreground: var(--brand-white);
+  --ring: var(--brand-traditional-blue);
+  --success: var(--brand-traditional-green);
+  --warning: var(--brand-orange);
+  --display-foreground: var(--brand-black);
 
-  --habitat-font-sans:
-    var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
-  --habitat-font-serif:
-    var(--font-zilla-slab), Georgia, "Times New Roman", ui-serif, serif;
+  --habitat-font-display:
+    "Neue Haas Grotesk Display", "Helvetica Neue", Arial, sans-serif;
+  --habitat-font-text:
+    "Neue Haas Grotesk Text", "Helvetica Neue", Arial, sans-serif;
+  --habitat-font-minion: "Minion Pro", Georgia, "Times New Roman", serif;
 
-  --radius: 0.2rem;
-  --radius-control: 0.12rem;
-  --radius-surface: 0.18rem;
-  --shadow-subtle: 0 1px 2px rgb(37 39 35 / 10%);
+  --radius: 0.125rem;
+  --radius-control: 0.125rem;
+  --radius-surface: 0.125rem;
+  --shadow-subtle: none;
 }
 
 @theme inline {
@@ -81,27 +78,19 @@
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-warning: var(--warning);
-  --color-habitat-blue: var(--habitat-blue);
-  --color-habitat-green: var(--habitat-green);
-  --color-deep-blue: var(--deep-blue);
-  --color-workshop-green: var(--workshop-green);
-  --color-charcoal: var(--charcoal);
-  --color-clean-white: var(--clean-white);
-  --color-pale-habitat-blue: var(--pale-habitat-blue);
-  --color-pale-habitat-green: var(--pale-habitat-green);
-  --color-display-foreground: var(--display-foreground);
-  --color-warm-paper: var(--warm-paper);
-  --color-limestone: var(--limestone);
-  --color-texas-clay: var(--texas-clay);
-  --color-timber: var(--timber);
-  --color-editorial-pecan: var(--editorial-pecan);
-  --color-editorial-sky: var(--editorial-sky);
-  --color-editorial-oak: var(--editorial-oak);
-  --color-editorial-paintbrush: var(--editorial-paintbrush);
-  --color-editorial-cream: var(--editorial-cream);
-  --color-editorial-cream-muted: var(--editorial-cream-muted);
-  --font-sans: var(--habitat-font-sans);
-  --font-serif: var(--habitat-font-serif);
+  --color-brand-bright-blue: var(--brand-bright-blue);
+  --color-brand-bright-green: var(--brand-bright-green);
+  --color-brand-cool-gray: var(--brand-cool-gray);
+  --color-brand-black: var(--brand-black);
+  --color-brand-white: var(--brand-white);
+  --color-brand-traditional-blue: var(--brand-traditional-blue);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-traditional-green: var(--brand-traditional-green);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-red: var(--brand-red);
+  --font-display: var(--habitat-font-display);
+  --font-text: var(--habitat-font-text);
+  --font-editorial: var(--habitat-font-minion);
   --radius-sm: var(--radius-control);
   --radius-md: var(--radius-surface);
 }

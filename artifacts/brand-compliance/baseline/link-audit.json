@@ -1,0 +1,42 @@
+{
+  "phase": "baseline",
+  "internalLinks": [
+    "/campaigns",
+    "/campaigns",
+    "/",
+    "/#accessibility",
+    "/projects",
+    "/give",
+    "/projects",
+    "/give",
+    "/volunteer",
+    "/campaigns",
+    "/news",
+    "/campaigns",
+    "/admin",
+    "/",
+    "/give",
+    "/volunteer",
+    "/",
+    "/news",
+    "/projects",
+    "/campaigns",
+    "/volunteer",
+    "/"
+  ],
+  "externalLinks": ["http://localhost:3000", "https://schema.org"],
+  "invalidLinks": [],
+  "findings": [
+    {
+      "ruleId": "LINK-001",
+      "status": "PASS",
+      "severity": "info",
+      "source": "public source",
+      "observed": "22 static internal href(s), 2 static external URL(s), 0 reserved-host violation(s).",
+      "expected": "Rendered public links resolve intentionally; no empty hrefs, reserved .invalid hosts, fabricated replacements, or stale CTAs.",
+      "evidence": "No static .invalid URL detected.",
+      "guideReference": "Repository public-link integrity gate",
+      "recommendedRemediation": "Run rendered link checks against implemented public routes and governed external destinations."
+    }
+  ]
+}

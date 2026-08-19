@@ -1,0 +1,15 @@
+{
+  "phase": "final",
+  "findings": [
+    {
+      "ruleId": "PROGRAM-001",
+      "status": "NOT APPLICABLE",
+      "severity": "info",
+      "source": "public source",
+      "observed": "No named program/event identity is present in the implemented public shell.",
+      "expected": "Habitat identity leads; program/event names remain separate headline treatments and are introduced with clear ownership language.",
+      "guideReference": "June 2025 guide, Logo / Programs and events",
+      "recommendedRemediation": "Record as not applicable until verified program/event content is published."
+    }
+  ]
+}

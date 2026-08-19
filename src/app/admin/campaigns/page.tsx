@@ -43,7 +43,7 @@ export default async function CampaignsAdminPage() {
       <p className="text-primary text-sm font-semibold">Campaigns</p>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+          <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
             Campaigns
           </h1>
           <p className="text-muted-foreground mt-4 max-w-2xl text-lg leading-8">

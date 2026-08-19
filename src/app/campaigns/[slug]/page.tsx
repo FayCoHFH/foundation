@@ -42,7 +42,7 @@ export default async function CampaignPage({
       <main id="campaign-main" className="public-content-wrap">
         <p className="mb-10 text-sm">
           <Link
-            className="text-habitat-blue font-semibold underline underline-offset-4"
+            className="text-brand-traditional-blue font-semibold underline underline-offset-4"
             href="/campaigns"
           >
             ← All Campaigns

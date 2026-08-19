@@ -1,8 +1,14 @@
 # Public experience visual system and homepage refinement
 
-Status: **complete locally on 2026-08-18**. This slice refines the public
+Status: **historical implementation record; superseded as normative brand
+guidance by `docs/design/brand-compliance.md` on 2026-08-19**. This slice refines the public
 visual system and homepage composition without changing public domain
 semantics, projection reads, DonorView destinations, or engagement behavior.
+
+The V1-V4 visual vocabulary below documents the prior slice and its evidence.
+Do not use its colors or typefaces for new work; the supplied Habitat for
+Humanity Brand User Guide, June 2025, and the centralized June 2025 tokens are
+the current authority.
 
 ## Visual direction
 

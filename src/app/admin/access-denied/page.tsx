@@ -9,7 +9,7 @@ export default function AccessDeniedPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-5 py-16 sm:px-8">
       <p className="text-destructive text-sm font-semibold">Administration</p>
-      <h1 className="text-foreground mt-4 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-4 text-4xl leading-tight">
         Access denied
       </h1>
       <p className="text-muted-foreground mt-5 text-lg leading-8">

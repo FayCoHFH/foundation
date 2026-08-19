@@ -82,7 +82,7 @@ function Section({
 }) {
   return (
     <section aria-labelledby={id} className="border-border border-t pt-6">
-      <h2 id={id} className="font-serif text-2xl">
+      <h2 id={id} className="type-display text-2xl">
         {heading}
       </h2>
       <div className="mt-4">{children}</div>
@@ -443,7 +443,7 @@ export function DashboardContent({
   return (
     <div>
       <p className="text-primary text-sm font-semibold">Communications</p>
-      <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
         Communications Dashboard
       </h1>
       <p className="text-muted-foreground mt-5 max-w-2xl text-lg leading-8">

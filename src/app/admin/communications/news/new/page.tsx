@@ -20,7 +20,7 @@ export default async function NewNews() {
         "/admin/communications/news",
       )}
     >
-      <h1 className="font-serif text-4xl">Create News draft</h1>
+      <h1 className="type-display text-4xl">Create News draft</h1>
       <NewsForm action={createNewsForm} />
     </AdminShell>
   );

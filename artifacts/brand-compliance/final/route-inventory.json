@@ -1,0 +1,65 @@
+{
+  "phase": "final",
+  "routes": [
+    {
+      "route": "/campaigns/[slug]",
+      "source": "src/app/campaigns/[slug]/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/campaigns",
+      "source": "src/app/campaigns/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/give",
+      "source": "src/app/give/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/news/[slug]",
+      "source": "src/app/news/[slug]/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/news",
+      "source": "src/app/news/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/404",
+      "source": "src/app/not-found.tsx",
+      "kind": "error"
+    },
+    {
+      "route": "/",
+      "source": "src/app/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/projects/[slug]",
+      "source": "src/app/projects/[slug]/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/projects",
+      "source": "src/app/projects/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/share-your-story",
+      "source": "src/app/share-your-story/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/stories/[slug]",
+      "source": "src/app/stories/[slug]/page.tsx",
+      "kind": "page"
+    },
+    {
+      "route": "/volunteer",
+      "source": "src/app/volunteer/page.tsx",
+      "kind": "page"
+    }
+  ]
+}

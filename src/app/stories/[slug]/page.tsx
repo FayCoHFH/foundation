@@ -58,9 +58,9 @@ export default async function PublicStoryPage({
                     {story.deck}
                   </p>
                 ) : null}
-                <div className="text-workshop-green mt-10 flex items-center gap-3 text-sm font-semibold">
+                <div className="text-brand-traditional-blue mt-10 flex items-center gap-3 text-sm font-semibold">
                   <span
-                    className="bg-editorial-paintbrush h-px w-9"
+                    className="bg-brand-orange h-px w-9"
                     aria-hidden="true"
                   />
                   <time dateTime={story.publishedAt.toISOString()}>
@@ -71,7 +71,7 @@ export default async function PublicStoryPage({
             </div>
           </header>
           <div className="mx-auto max-w-[46rem] px-5 py-16 sm:px-8 sm:py-24">
-            <p className="border-habitat-green text-charcoal border-l-2 pl-5 font-serif text-2xl leading-9 sm:text-3xl">
+            <p className="border-brand-bright-green text-brand-black type-display border-l-2 pl-5 text-2xl leading-9 sm:text-3xl">
               {story.excerpt}
             </p>
             <div className="mt-12">

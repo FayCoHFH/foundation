@@ -1,0 +1,10 @@
+{
+  "phase": "baseline",
+  "status": "MANUAL REVIEW",
+  "viewports": ["390x844", "768x900", "1440x900"],
+  "screenshots": [
+    "screenshots/home-desktop.png",
+    "screenshots/home-mobile.png",
+    "screenshots/news-desktop.png"
+  ]
+}

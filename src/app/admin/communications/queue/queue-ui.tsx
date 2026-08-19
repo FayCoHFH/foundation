@@ -403,7 +403,7 @@ function QueueEmptyState({
   const definition = QUEUE_VIEW_DEFINITIONS.find((item) => item.view === view);
   return (
     <section className="border-border mt-8 border-y py-10" aria-live="polite">
-      <h2 className="font-serif text-2xl">Nothing here yet</h2>
+      <h2 className="type-display text-2xl">Nothing here yet</h2>
       <p className="text-muted-foreground mt-2 max-w-xl">
         {definition?.emptyMessage ?? "No communications match these filters."}
       </p>
@@ -437,7 +437,7 @@ function QueueErrorState({ message }: { message: string }) {
       className="border-destructive/50 bg-destructive/5 mt-8 border-y py-8"
       role="alert"
     >
-      <h2 className="font-serif text-2xl">Publication Queue unavailable</h2>
+      <h2 className="type-display text-2xl">Publication Queue unavailable</h2>
       <p className="text-muted-foreground mt-2 max-w-xl">{message}</p>
     </section>
   );
@@ -566,7 +566,7 @@ export function QueuePageHeader({ children }: { children?: ReactNode }) {
     <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
         <p className="text-primary text-sm font-semibold">Communications</p>
-        <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+        <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
           Publication Queue
         </h1>
         <p className="text-muted-foreground mt-3 max-w-2xl leading-7">

@@ -35,7 +35,7 @@ export default async function StoryDraftsPage() {
       }
     >
       <p className="text-primary text-sm font-semibold">Communications</p>
-      <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
         Story drafts
       </h1>
       <p className="text-muted-foreground mt-5 max-w-2xl text-lg leading-8">

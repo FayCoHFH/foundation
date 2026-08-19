@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getPublicGlobalDestination } from "@/modules/engagement";
 import { prisma } from "@/platform/database/prisma";
+import { HabitatLogo } from "./habitat-logo";
 
 export async function SiteFooter() {
   const [donate, volunteer] = await Promise.all([
@@ -9,23 +9,17 @@ export async function SiteFooter() {
     getPublicGlobalDestination(prisma, "GENERAL_VOLUNTEER"),
   ]);
   return (
-    <footer className="border-border bg-deep-blue text-clean-white border-t">
+    <footer className="border-border bg-brand-traditional-blue text-brand-white border-t">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr] lg:px-12">
         <div>
           <div className="site-footer-logo-inset">
-            <Image
-              className="site-footer-logo"
-              src="/brand/fayette-county-habitat-logo-2clr.avif"
-              alt="Fayette County Habitat for Humanity"
-              width={562}
-              height={190}
-            />
+            <HabitatLogo className="site-footer-logo" variant="white" />
           </div>
-          <p className="text-clean-white/80 mt-5 max-w-md text-sm leading-6">
+          <p className="text-brand-white mt-5 max-w-md text-sm leading-6">
             Building and repairing homes with neighbors across Fayette County.
           </p>
         </div>
-        <div className="text-clean-white/85 text-sm leading-6 md:text-right">
+        <div className="text-brand-white text-sm leading-6 md:text-right">
           <div className="flex flex-wrap justify-start gap-x-5 gap-y-2 md:justify-end">
             <Link href="/give">Why give</Link>
             <Link href="/volunteer">Volunteer</Link>
@@ -44,7 +38,7 @@ export async function SiteFooter() {
               </p>
             ) : null}
           </div>
-          <p className="text-clean-white/60 mt-5 text-xs tracking-[0.12em] uppercase">
+          <p className="text-brand-white mt-5 text-xs tracking-[0.12em] uppercase">
             Serving neighbors across Fayette County
           </p>
         </div>

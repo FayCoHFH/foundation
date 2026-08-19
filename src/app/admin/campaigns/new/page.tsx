@@ -44,7 +44,7 @@ export default async function NewCampaignPage() {
       <p className="text-primary text-sm font-semibold">
         Campaigns · new draft
       </p>
-      <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
         Create a Campaign
       </h1>
       <p className="text-muted-foreground mt-4 max-w-2xl">

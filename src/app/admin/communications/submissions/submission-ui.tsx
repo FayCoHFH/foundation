@@ -129,7 +129,7 @@ export function StorySubmissionsListContent({
           <p className="text-primary text-sm font-semibold tracking-[.14em] uppercase">
             Communications
           </p>
-          <h1 className="text-editorial-pecan mt-3 font-serif text-4xl">
+          <h1 className="text-brand-black type-display mt-3 text-4xl">
             Story Submissions
           </h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">
@@ -236,7 +236,7 @@ export function StorySubmissionsListContent({
                     <span>{submissionStatusLabel(submission.status)}</span>
                     <SubmissionSensitivityIndicators submission={submission} />
                   </div>
-                  <h2 className="text-editorial-pecan mt-2 font-serif text-2xl break-words">
+                  <h2 className="text-brand-black type-display mt-2 text-2xl break-words">
                     <Link
                       href={`/admin/communications/submissions/${submission.id}`}
                       prefetch={false}
@@ -270,7 +270,7 @@ export function StorySubmissionsListContent({
         </>
       ) : result ? (
         <div className="border-border mt-10 border-t pt-7">
-          <h2 className="font-serif text-2xl">
+          <h2 className="type-display text-2xl">
             {submissionEmptyMessage(state.status)}
           </h2>
           <p className="text-muted-foreground mt-2 max-w-xl">
@@ -363,7 +363,7 @@ export function StorySubmissionDetailContent({
       <p className="text-primary text-sm font-semibold tracking-[.14em] uppercase">
         Communications / Story Submissions
       </p>
-      <h1 className="text-editorial-pecan mt-3 font-serif text-4xl">
+      <h1 className="text-brand-black type-display mt-3 text-4xl">
         Review Story Submission
       </h1>
       <p className="text-muted-foreground mt-3 max-w-2xl">
@@ -392,7 +392,7 @@ export function StorySubmissionDetailContent({
       </aside>
 
       <section aria-labelledby="submission-contact-heading" className="mt-9">
-        <h2 id="submission-contact-heading" className="font-serif text-2xl">
+        <h2 id="submission-contact-heading" className="type-display text-2xl">
           Contact
         </h2>
         <dl className="border-border mt-4 grid gap-4 border-y py-5 text-sm sm:grid-cols-2">
@@ -427,7 +427,7 @@ export function StorySubmissionDetailContent({
       </section>
 
       <section aria-labelledby="submission-content-heading" className="mt-9">
-        <h2 id="submission-content-heading" className="font-serif text-2xl">
+        <h2 id="submission-content-heading" className="type-display text-2xl">
           Submission
         </h2>
         <dl className="border-border mt-4 grid gap-4 border-y py-5 text-sm sm:grid-cols-2">
@@ -464,7 +464,7 @@ export function StorySubmissionDetailContent({
       >
         <h2
           id="submission-acknowledgments-heading"
-          className="font-serif text-2xl"
+          className="type-display text-2xl"
         >
           Acknowledgments
         </h2>
@@ -519,7 +519,10 @@ export function StorySubmissionDetailContent({
         aria-labelledby="submission-sensitivity-heading"
         className="mt-9"
       >
-        <h2 id="submission-sensitivity-heading" className="font-serif text-2xl">
+        <h2
+          id="submission-sensitivity-heading"
+          className="type-display text-2xl"
+        >
           Sensitivity
         </h2>
         <div className="border-border mt-4 border-y py-5 text-sm">
@@ -540,7 +543,7 @@ export function StorySubmissionDetailContent({
       >
         <h2
           id="submission-administration-heading"
-          className="font-serif text-2xl"
+          className="type-display text-2xl"
         >
           Administrative review
         </h2>
@@ -594,7 +597,7 @@ export function StorySubmissionDetailContent({
       >
         <h2
           id="submission-story-handoff-heading"
-          className="font-serif text-2xl"
+          className="type-display text-2xl"
         >
           Story handoff
         </h2>

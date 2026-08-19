@@ -1,0 +1,6 @@
+{
+  "phase": "baseline",
+  "status": "MANUAL REVIEW",
+  "automated": false,
+  "note": "Static collection records source-level image alt attributes and semantic landmarks; browser axe, keyboard, focus, contrast, and reflow checks are recorded separately."
+}

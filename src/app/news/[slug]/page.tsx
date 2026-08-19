@@ -54,7 +54,7 @@ export default async function NewsDetail({
               <p className="public-kicker">News &amp; updates</p>
               <h1 className="public-page-title">{news.headline}</h1>
               <time
-                className="text-workshop-green mt-7 block text-sm font-semibold"
+                className="text-brand-traditional-blue mt-7 block text-sm font-semibold"
                 dateTime={news.publishedAt.toISOString()}
               >
                 Published {date}
@@ -62,7 +62,7 @@ export default async function NewsDetail({
             </div>
           </header>
           <div className="mx-auto max-w-[46rem] px-5 py-14 sm:px-8 sm:py-20">
-            <p className="text-charcoal font-serif text-3xl leading-tight">
+            <p className="text-brand-black type-display text-3xl leading-tight">
               {news.summary}
             </p>
             <div className="mt-10">

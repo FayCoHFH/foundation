@@ -35,7 +35,7 @@ export default async function NewSiteNoticePage() {
       <p className="text-primary text-sm font-semibold tracking-[.14em] uppercase">
         Communications / Site Notices
       </p>
-      <h1 className="text-editorial-pecan mt-3 font-serif text-4xl">
+      <h1 className="text-brand-black type-display mt-3 text-4xl">
         Create Site Notice
       </h1>
       <p className="text-muted-foreground mt-3 max-w-2xl">

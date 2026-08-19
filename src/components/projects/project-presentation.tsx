@@ -24,7 +24,7 @@ export function ProjectFacts({
       {facts.map((fact) => (
         <div
           key={`${fact.sortOrder}-${fact.label}`}
-          className="border-limestone border-l-2 pl-4"
+          className="border-brand-cool-gray border-l-2 pl-4"
         >
           <dt className="text-muted-foreground text-sm">{fact.label}</dt>
           <dd className="mt-1 font-semibold">
@@ -38,7 +38,7 @@ export function ProjectFacts({
 }
 function ProjectMeta({ project }: { project: PublicProject }) {
   return (
-    <dl className="border-limestone mt-8 grid gap-x-8 gap-y-5 border-y py-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
+    <dl className="border-brand-cool-gray mt-8 grid gap-x-8 gap-y-5 border-y py-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div>
         <dt className="text-muted-foreground">Type</dt>
         <dd className="mt-1 font-semibold">
@@ -92,13 +92,13 @@ export function ProjectCard({ project }: { project: PublicProject }) {
   return (
     <li className="py-7">
       <article>
-        <p className="text-workshop-green text-sm font-bold">
+        <p className="text-brand-traditional-blue text-sm font-bold">
           <ProjectStatus status={project.projectStatus} /> ·{" "}
           {PROJECT_TYPE_LABELS[project.projectType]}
         </p>
-        <h2 className="text-charcoal mt-2 font-serif text-3xl font-semibold">
+        <h2 className="text-brand-black type-display mt-2 text-3xl font-semibold">
           <Link
-            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+            className="decoration-brand-bright-blue hover:text-brand-traditional-blue underline underline-offset-4"
             href={`/projects/${project.slug}`}
           >
             {project.title}
@@ -107,7 +107,7 @@ export function ProjectCard({ project }: { project: PublicProject }) {
         <p className="text-muted-foreground mt-3 max-w-2xl leading-7">
           {project.summary}
         </p>
-        <p className="text-deep-blue mt-3 text-sm font-semibold">
+        <p className="text-brand-traditional-blue mt-3 text-sm font-semibold">
           {project.community}, {project.county}
         </p>
         <ProjectFacts facts={project.impactFacts.slice(0, 3)} />
@@ -118,11 +118,11 @@ export function ProjectCard({ project }: { project: PublicProject }) {
 export function ProjectDetail({ project }: { project: PublicProject }) {
   return (
     <>
-      <p className="text-workshop-green text-sm font-bold">
+      <p className="text-brand-traditional-blue text-sm font-bold">
         <ProjectStatus status={project.projectStatus} /> ·{" "}
         {PROJECT_TYPE_LABELS[project.projectType]}
       </p>
-      <h1 className="text-display-foreground mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
+      <h1 className="text-display-foreground type-display mt-3 text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
         {project.title}
       </h1>
       <p className="text-muted-foreground mt-5 max-w-3xl text-xl leading-8">
@@ -133,7 +133,7 @@ export function ProjectDetail({ project }: { project: PublicProject }) {
         <StoryBody node={project.body.root as StoryNode} />
       </div>
       <ProjectFacts facts={project.impactFacts} />
-      <p className="border-limestone text-muted-foreground mt-12 border-t pt-5 text-sm">
+      <p className="border-brand-cool-gray text-muted-foreground mt-12 border-t pt-5 text-sm">
         Published {formattedProjectDate(project.publishedAt)}
       </p>
     </>

@@ -45,7 +45,7 @@ export default async function NewsIndex() {
               <p className="public-kicker">Featured news</p>
               <h2
                 id="featured-news-heading"
-                className="text-charcoal mt-3 font-serif text-4xl leading-tight font-semibold sm:text-5xl"
+                className="text-brand-black type-display mt-3 text-4xl leading-tight font-semibold sm:text-5xl"
               >
                 <Link
                   className="underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
@@ -58,7 +58,7 @@ export default async function NewsIndex() {
                 {featured.summary}
               </p>
               <time
-                className="text-workshop-green mt-5 block text-sm font-semibold"
+                className="text-brand-traditional-blue mt-5 block text-sm font-semibold"
                 dateTime={featured.publishedAt.toISOString()}
               >
                 {formatted(featured.publishedAt)}
@@ -77,12 +77,12 @@ export default async function NewsIndex() {
                 {latest.map((item) => (
                   <li key={item.slug} className="py-7">
                     <time
-                      className="text-workshop-green text-sm font-semibold"
+                      className="text-brand-traditional-blue text-sm font-semibold"
                       dateTime={item.publishedAt.toISOString()}
                     >
                       {formatted(item.publishedAt)}
                     </time>
-                    <h3 className="text-charcoal mt-2 font-serif text-2xl font-semibold">
+                    <h3 className="text-brand-black type-display mt-2 text-2xl font-semibold">
                       <Link
                         className="underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                         href={`/news/${item.slug}`}

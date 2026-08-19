@@ -80,7 +80,7 @@ export default async function CampaignsPage() {
           </div>
         ) : (
           <div className="public-content-wrap">
-            <p className="border-limestone bg-pale-habitat-blue border p-6">
+            <p className="border-brand-cool-gray bg-surface-subtle border p-6">
               Campaigns will appear here as they are ready to share.
             </p>
           </div>

@@ -1,0 +1,14 @@
+{
+  "phase": "final",
+  "logoReferences": [
+    {
+      "source": "src/components/site/habitat-logo.tsx",
+      "asset": "fayette-county-habitat-logo-horizontal-black.png"
+    },
+    {
+      "source": "src/components/site/habitat-logo.tsx",
+      "asset": "fayette-county-habitat-logo-horizontal-white.png"
+    }
+  ],
+  "findings": []
+}

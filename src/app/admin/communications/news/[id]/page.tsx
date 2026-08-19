@@ -72,7 +72,7 @@ export default async function NewsDraft({
         "/admin/communications/news",
       )}
     >
-      <h1 className="font-serif text-4xl">{item.currentRevision.headline}</h1>
+      <h1 className="type-display text-4xl">{item.currentRevision.headline}</h1>
       <p className="text-muted-foreground mt-3">
         {item.workflow.replaceAll("_", " ")} ·{" "}
         {item.releaseState.replaceAll("_", " ")} ·{" "}

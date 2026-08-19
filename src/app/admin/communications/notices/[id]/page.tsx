@@ -66,7 +66,7 @@ export default async function SiteNoticeDetailPage({
       <p className="text-primary text-sm font-semibold tracking-[.14em] uppercase">
         Communications / Site Notices
       </p>
-      <h1 className="text-editorial-pecan mt-3 font-serif text-4xl">
+      <h1 className="text-brand-black type-display mt-3 text-4xl">
         Edit Site Notice
       </h1>
       <p className="text-muted-foreground mt-3 max-w-2xl">
@@ -86,7 +86,7 @@ export default async function SiteNoticeDetailPage({
         aria-labelledby="site-notice-summary-heading"
         className="border-border mt-8 border-y py-6"
       >
-        <h2 id="site-notice-summary-heading" className="font-serif text-2xl">
+        <h2 id="site-notice-summary-heading" className="type-display text-2xl">
           Current status
         </h2>
         <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
@@ -134,7 +134,7 @@ export default async function SiteNoticeDetailPage({
       >
         <h2
           id="site-notice-effectiveness-heading"
-          className="font-serif text-2xl"
+          className="type-display text-2xl"
         >
           Public effectiveness
         </h2>

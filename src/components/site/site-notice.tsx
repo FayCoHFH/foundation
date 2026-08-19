@@ -9,11 +9,11 @@ import { formatEditorialDateTime } from "@/platform/time/editorial";
 
 const severityStyles: Record<SiteNoticeSeverity, string> = {
   [SiteNoticeSeverity.INFO]:
-    "border-editorial-denim bg-editorial-sky/55 text-charcoal",
+    "border-brand-bright-blue bg-brand-white text-brand-black",
   [SiteNoticeSeverity.IMPORTANT]:
-    "border-editorial-oak bg-pale-habitat-green text-charcoal",
+    "border-brand-traditional-green bg-surface-subtle text-brand-black",
   [SiteNoticeSeverity.URGENT]:
-    "border-editorial-paintbrush bg-clean-white text-charcoal",
+    "border-brand-orange bg-brand-white text-brand-black",
 };
 
 const severityLabels: Record<SiteNoticeSeverity, string> = {
@@ -32,7 +32,7 @@ function NoticeItem({ notice }: { notice: SiteNoticePublic }) {
         <p className="text-sm font-bold tracking-[.14em] uppercase">
           {severityLabels[notice.severity]}
         </p>
-        <h3 className="mt-2 font-serif text-2xl leading-tight">
+        <h3 className="type-display mt-2 text-2xl leading-tight">
           {notice.title}
         </h3>
         <p className="mt-3 max-w-3xl leading-7">{notice.message}</p>

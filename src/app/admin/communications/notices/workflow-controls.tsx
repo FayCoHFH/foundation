@@ -41,7 +41,7 @@ export function NoticeWorkflowControls({
       aria-labelledby="site-notice-workflow-heading"
       className="border-border mt-10 border-t pt-7"
     >
-      <h2 id="site-notice-workflow-heading" className="font-serif text-2xl">
+      <h2 id="site-notice-workflow-heading" className="type-display text-2xl">
         Publication actions
       </h2>
       <p className="text-muted-foreground mt-2 max-w-2xl text-sm">

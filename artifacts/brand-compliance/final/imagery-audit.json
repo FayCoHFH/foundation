@@ -1,0 +1,16 @@
+{
+  "phase": "final",
+  "assets": [],
+  "findings": [
+    {
+      "ruleId": "IMAGE-001",
+      "status": "NOT APPLICABLE",
+      "severity": "info",
+      "source": "public/",
+      "observed": "No non-logo public photographic asset is present.",
+      "expected": "Use authentic approved imagery with contextual alt text; do not use AI-generated photography.",
+      "guideReference": "June 2025 guide, Creative / Our story in images and accessibility",
+      "recommendedRemediation": "Keep the image slot empty until approved local/DAN imagery is available."
+    }
+  ]
+}

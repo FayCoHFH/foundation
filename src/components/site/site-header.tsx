@@ -1,8 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
-
 import { getPublicGlobalDestination } from "@/modules/engagement";
 import { prisma } from "@/platform/database/prisma";
+import { HabitatLogo } from "./habitat-logo";
 
 export async function SiteHeader() {
   const donate = await getPublicGlobalDestination(prisma, "GENERAL_DONATE");
@@ -50,12 +49,9 @@ export async function SiteHeader() {
     <header className="site-header">
       <div className="site-header-inner mx-auto max-w-7xl">
         <Link href="/" className="site-wordmark">
-          <Image
+          <HabitatLogo
             className="site-wordmark-logo"
-            src="/brand/fayette-county-habitat-logo-2clr.avif"
-            alt="Fayette County Habitat for Humanity"
-            width={562}
-            height={190}
+            variant="black"
             priority
           />
         </Link>

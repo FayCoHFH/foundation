@@ -29,7 +29,7 @@ export default async function NewProjectPage() {
       }
     >
       <p className="text-primary text-sm font-semibold">Projects · new draft</p>
-      <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
         Create a Project
       </h1>
       <p className="text-muted-foreground mt-4 max-w-2xl">

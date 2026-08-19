@@ -1,0 +1,419 @@
+{
+  "phase": "final",
+  "baseURL": "http://127.0.0.1:3200",
+  "crawlRoutes": [
+    "/",
+    "/give",
+    "/volunteer",
+    "/projects",
+    "/news",
+    "/campaigns",
+    "/share-your-story",
+    "/projects/preview-carmine-community-pause",
+    "/projects/preview-schulenburg-accessibility-plan",
+    "/projects/preview-la-grange-new-home",
+    "/campaigns/preview-campaign-repair-drive-paused",
+    "/stories/preview-story-8ed3e867-72a8-4295-b87c-9d87cce8ffbd",
+    "/stories/preview-story-5bcc7f86-f895-41ed-8aba-483be193d75d",
+    "/news/preview-news-a68ebcad-0ec3-400c-8c9e-e1a918bc5e78",
+    "/news/preview-news-d400d1e5-bac9-4f18-8d5e-b0611024e0a1",
+    "/news/preview-news-9c54b16d-959b-48f9-8b2f-2f526f939227",
+    "/projects/preview-other-historical-cancelled",
+    "/projects/preview-fayetteville-rehabilitation",
+    "/campaigns/preview-campaign-volunteer-build-week",
+    "/campaigns/preview-campaign-community-match",
+    "/campaigns/preview-campaign-neighborhood-build",
+    "/campaigns/preview-campaign-home-dedication-complete"
+  ],
+  "findings": [
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/",
+      "observed": "18 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/",
+      "observed": "8 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/ @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/give",
+      "observed": "5 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/give",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/give",
+      "observed": "6 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/give @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/volunteer",
+      "observed": "5 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/volunteer",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/volunteer",
+      "observed": "6 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/volunteer @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/projects",
+      "observed": "10 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/projects",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/projects",
+      "observed": "6 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/projects @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/news",
+      "observed": "8 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/news",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/news",
+      "observed": "7 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/news @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/campaigns",
+      "observed": "10 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/campaigns",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/campaigns",
+      "observed": "6 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/campaigns @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-TYPE-001",
+      "status": "PASS",
+      "source": "/share-your-story",
+      "observed": "4 representative text role(s) inspected; 0 family mismatch(es).",
+      "expected": "Display headings use Neue Haas Grotesk Display, UI roles use Neue Haas Grotesk Text, and article body uses Minion Pro.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-LOGO-001",
+      "status": "PASS",
+      "source": "/share-your-story",
+      "observed": "2 official logo instance(s) inspected; 0 contract failure(s).",
+      "expected": "Official horizontal extended black/white asset, correct alt text, no filter, and at least 10px declared digital H-height contract.",
+      "evidence": [
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-black.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "black",
+          "minimumHHeight": "10",
+          "width": 224,
+          "height": 75,
+          "filter": "none"
+        },
+        {
+          "src": "http://127.0.0.1:3200/_next/image?url=%2Fbrand%2Ffayette-county-habitat-logo-horizontal-white.png&w=3840&q=75",
+          "alt": "Fayette County Habitat for Humanity",
+          "variant": "white",
+          "minimumHHeight": "10",
+          "width": 240,
+          "height": 92,
+          "filter": "none"
+        }
+      ]
+    },
+    {
+      "ruleId": "RUNTIME-COLOR-001",
+      "status": "PASS",
+      "source": "/share-your-story",
+      "observed": "6 computed color value(s) inspected; 0 unknown value(s).",
+      "expected": "Visible foreground, background, and border colors use the approved palette or transparent.",
+      "evidence": []
+    },
+    {
+      "ruleId": "RUNTIME-A11Y-REFLOW-001",
+      "status": "PASS",
+      "source": "/share-your-story @ 1440px",
+      "observed": "Document width 1440px; viewport 1440px.",
+      "expected": "Public content reflows without horizontal overflow at supported widths."
+    },
+    {
+      "ruleId": "RUNTIME-LINK-001",
+      "status": "PASS",
+      "source": "rendered public links",
+      "observed": "30 unique rendered links; 28 internal and 2 external; 0 failure(s).",
+      "expected": "Rendered links resolve intentionally with no empty hrefs, .invalid hosts, credentials, or broken internal destinations.",
+      "evidence": []
+    }
+  ],
+  "accessibility": [
+    {
+      "route": "/",
+      "violations": []
+    },
+    {
+      "route": "/give",
+      "violations": []
+    },
+    {
+      "route": "/volunteer",
+      "violations": []
+    },
+    {
+      "route": "/projects",
+      "violations": []
+    },
+    {
+      "route": "/news",
+      "violations": []
+    },
+    {
+      "route": "/campaigns",
+      "violations": []
+    },
+    {
+      "route": "/share-your-story",
+      "violations": []
+    }
+  ],
+  "linkFailures": []
+}

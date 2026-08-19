@@ -23,7 +23,7 @@ export function SiteNoticeListContent({
           <p className="text-primary text-sm font-semibold tracking-[.14em] uppercase">
             Communications
           </p>
-          <h1 className="text-editorial-pecan mt-3 font-serif text-4xl">
+          <h1 className="text-brand-black type-display mt-3 text-4xl">
             Site Notices
           </h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">
@@ -60,7 +60,7 @@ export function SiteNoticeListContent({
                     Status: {noticeStatusLabel(notice.status)}
                   </span>
                 </div>
-                <h2 className="text-editorial-pecan mt-2 font-serif text-2xl">
+                <h2 className="text-brand-black type-display mt-2 text-2xl">
                   <Link
                     href={`/admin/communications/notices/${notice.id}`}
                     className="underline underline-offset-4"
@@ -115,7 +115,7 @@ export function SiteNoticeListContent({
         </ul>
       ) : (
         <div className="border-border mt-10 border-t pt-7">
-          <h2 className="font-serif text-2xl">No Site Notices yet</h2>
+          <h2 className="type-display text-2xl">No Site Notices yet</h2>
           <p className="text-muted-foreground mt-2 max-w-xl">
             Temporary operational messages will appear here as they are created.
           </p>

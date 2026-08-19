@@ -88,9 +88,9 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
   return (
     <section
       aria-labelledby="campaign-progress-heading"
-      className="border-habitat-green bg-pale-habitat-green mt-10 border-t-4 p-6 sm:p-8"
+      className="border-brand-bright-green bg-surface-subtle mt-10 border-t-4 p-6 sm:p-8"
     >
-      <h2 id="campaign-progress-heading" className="font-serif text-2xl">
+      <h2 id="campaign-progress-heading" className="type-display text-2xl">
         Campaign progress
       </h2>
       {campaign.goalStatement ? (
@@ -114,9 +114,12 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
           <div className="sr-only">
             {progress} of {goal}; {percent}% of the editorial goal.
           </div>
-          <div aria-hidden="true" className="bg-limestone h-3 overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="bg-brand-cool-gray h-3 overflow-hidden"
+          >
             <div
-              className="bg-habitat-green h-full"
+              className="bg-brand-bright-green h-full"
               style={{ width: `${Math.min(percent, 100)}%` }}
             />
           </div>
@@ -131,11 +134,11 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
 
 export function CampaignFacts({ facts }: { facts: PublicCampaign["facts"] }) {
   return facts.length ? (
-    <dl className="border-limestone mt-8 grid gap-4 border-y py-6 sm:grid-cols-2">
+    <dl className="border-brand-cool-gray mt-8 grid gap-4 border-y py-6 sm:grid-cols-2">
       {facts.map((fact) => (
         <div
           key={`${fact.sortOrder}-${fact.label}`}
-          className="border-limestone border-l-2 pl-4"
+          className="border-brand-cool-gray border-l-2 pl-4"
         >
           <dt className="text-muted-foreground text-sm">{fact.label}</dt>
           <dd className="mt-1 font-semibold">
@@ -160,9 +163,12 @@ export function CampaignProjectLinks({
       </h2>
       <ul className="mt-3">
         {campaign.projects.map((project) => (
-          <li key={project.slug} className="border-limestone border-t py-5">
+          <li
+            key={project.slug}
+            className="border-brand-cool-gray border-t py-5"
+          >
             <Link
-              className="text-habitat-blue decoration-habitat-blue/40 text-lg font-semibold underline underline-offset-4"
+              className="text-brand-traditional-blue decoration-brand-bright-blue text-lg font-semibold underline underline-offset-4"
               href={`/projects/${project.slug}`}
             >
               {project.title}
@@ -178,13 +184,13 @@ export function CampaignCard({ campaign }: { campaign: PublicCampaign }) {
   return (
     <li className="py-7">
       <article>
-        <p className="text-workshop-green text-sm font-bold">
+        <p className="text-brand-traditional-blue text-sm font-bold">
           {CAMPAIGN_STATUS_LABELS[campaign.campaignStatus]} ·{" "}
           {CAMPAIGN_TYPE_LABELS[campaign.campaignType]}
         </p>
-        <h2 className="text-charcoal mt-2 font-serif text-3xl font-semibold">
+        <h2 className="text-brand-black type-display mt-2 text-3xl font-semibold">
           <Link
-            className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
+            className="decoration-brand-bright-blue hover:text-brand-traditional-blue underline underline-offset-4"
             href={`/campaigns/${campaign.slug}`}
           >
             {campaign.title}
@@ -211,11 +217,11 @@ export function CampaignCard({ campaign }: { campaign: PublicCampaign }) {
 export function CampaignDetail({ campaign }: { campaign: PublicCampaign }) {
   return (
     <>
-      <p className="text-workshop-green text-sm font-bold">
+      <p className="text-brand-traditional-blue text-sm font-bold">
         {CAMPAIGN_STATUS_LABELS[campaign.campaignStatus]} ·{" "}
         {CAMPAIGN_TYPE_LABELS[campaign.campaignType]}
       </p>
-      <h1 className="text-display-foreground mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
+      <h1 className="text-display-foreground type-display mt-3 text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
         {campaign.title}
       </h1>
       <p className="text-muted-foreground mt-5 max-w-3xl text-xl leading-8">

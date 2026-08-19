@@ -59,7 +59,7 @@ export default async function HomepageCuration({
         "/admin/communications/homepage",
       )}
     >
-      <h1 className="font-serif text-4xl">Homepage curation</h1>
+      <h1 className="type-display text-4xl">Homepage curation</h1>
       <p className="text-muted-foreground mt-3">
         Select currently public Stories and News for the three code-owned
         homepage placements.
@@ -85,7 +85,7 @@ export default async function HomepageCuration({
                 : [...stories, ...news];
           return (
             <section key={key} className="border-border border-t pt-6">
-              <h2 className="font-serif text-2xl">
+              <h2 className="type-display text-2xl">
                 {key.replaceAll("_", " ")}
               </h2>
               <p className="text-muted-foreground mt-2">

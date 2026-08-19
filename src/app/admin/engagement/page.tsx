@@ -48,7 +48,7 @@ export default async function EngagementDestinationsPage() {
       }
     >
       <p className="text-primary text-sm font-semibold">Giving & Volunteer</p>
-      <h1 className="text-foreground mt-3 font-serif text-4xl leading-tight">
+      <h1 className="text-foreground type-display mt-3 text-4xl leading-tight">
         DonorView Destinations
       </h1>
       <p className="text-muted-foreground mt-4 max-w-3xl text-lg leading-8">

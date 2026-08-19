@@ -1,0 +1,204 @@
+{
+  "phase": "baseline",
+  "fontFaceCount": 0,
+  "findings": [
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/error.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "24: className=\"text-foreground mt-4 font-serif text-4xl leading-tight\"",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/give/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "88: className=\"text-charcoal decoration-habitat-blue/40 hover:text-habitat-blue font-serif text-2xl font-semibold underline underline-offset-4\"",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/globals.css",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "14: --habitat-font-sans:",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/layout.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "2: import { Source_Sans_3, Zilla_Slab } from \"next/font/google\";",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/news/[slug]/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "65: <p className=\"text-charcoal font-serif text-3xl leading-tight\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/news/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "48: className=\"text-charcoal mt-3 font-serif text-4xl leading-tight font-semibold sm:text-5xl\"",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/not-found.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "11: <h1 className=\"text-foreground mt-4 font-serif text-4xl leading-tight\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "90: <h1 className=\"text-display-foreground mt-5 max-w-3xl font-serif text-5xl leading-[0.94] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/share-your-story/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "40: <h1 className=\"text-display-foreground mt-4 font-serif text-5xl tracking-[-.035em] sm:text-6xl\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/share-your-story/share-your-story-form.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "533: <h2 className=\"text-charcoal font-serif text-3xl\">Thank you.</h2>",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/stories/[slug]/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "74: <p className=\"border-habitat-green text-charcoal border-l-2 pl-5 font-serif text-2xl leading-9 sm:text-3xl\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/app/volunteer/page.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "87: className=\"text-charcoal decoration-habitat-blue/40 hover:text-habitat-blue font-serif text-2xl font-semibold underline underline-offset-4\"",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/campaigns/campaign-presentation.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "93: <h2 id=\"campaign-progress-heading\" className=\"font-serif text-2xl\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/editorial/participation-invitation.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "19: className=\"mt-4 max-w-xl font-serif text-4xl leading-tight font-semibold\"",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/editorial/story-body.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "44: <h3 className=\"text-charcoal mt-10 font-serif text-3xl leading-tight font-semibold\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/projects/project-presentation.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "99: <h2 className=\"text-charcoal mt-2 font-serif text-3xl font-semibold\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/site/site-notice.tsx",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "35: <h3 className=\"mt-2 font-serif text-2xl leading-tight\">",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    },
+    {
+      "ruleId": "TYPE-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/styles/tokens.css",
+      "observed": "Public source contains legacy font configuration or non-semantic font utility classes.",
+      "expected": "Public typography resolves through semantic roles backed by Neue Haas Grotesk or Minion Pro.",
+      "evidence": "49: --habitat-font-sans:",
+      "guideReference": "June 2025 guide, Creative / Typography; supplied HFHI Neue Haas Grotesk and Minion Pro assets",
+      "recommendedRemediation": "Replace legacy font configuration and raw utility choices with the semantic typography system."
+    }
+  ]
+}

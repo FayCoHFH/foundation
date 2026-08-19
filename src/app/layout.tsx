@@ -1,18 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Source_Sans_3, Zilla_Slab } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
-
-const zillaSlab = Zilla_Slab({
-  subsets: ["latin"],
-  variable: "--font-zilla-slab",
-  weight: ["400", "500", "600", "700"],
-});
-const sourceSans = Source_Sans_3({
-  subsets: ["latin"],
-  variable: "--font-source-sans",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +18,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#f7f5f0",
+  themeColor: "#FFFFFF",
   width: "device-width",
   initialScale: 1,
 };
@@ -39,9 +28,7 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${zillaSlab.variable} ${sourceSans.variable}`}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

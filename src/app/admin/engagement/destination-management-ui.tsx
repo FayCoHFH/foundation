@@ -163,7 +163,7 @@ function DestinationRow({
           <p className="text-primary text-sm font-semibold">
             {destination.purposeLabel} · {destination.statusLabel}
           </p>
-          <h2 className="mt-1 font-serif text-2xl">{destination.label}</h2>
+          <h2 className="type-display mt-1 text-2xl">{destination.label}</h2>
           <p className="text-muted-foreground mt-2 text-sm break-all">
             {destination.url}
           </p>
@@ -278,7 +278,7 @@ export function DestinationManagementUI({
   return (
     <div className="mt-8 space-y-12">
       <section aria-labelledby="global-destinations-heading">
-        <h2 id="global-destinations-heading" className="font-serif text-3xl">
+        <h2 id="global-destinations-heading" className="type-display text-3xl">
           Global entry points
         </h2>
         <p className="text-muted-foreground mt-2 max-w-2xl text-sm">
@@ -306,7 +306,7 @@ export function DestinationManagementUI({
 
       {canConfigure ? (
         <section aria-labelledby="new-destination-heading">
-          <h2 id="new-destination-heading" className="font-serif text-3xl">
+          <h2 id="new-destination-heading" className="type-display text-3xl">
             Add a DonorView destination
           </h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-sm">
@@ -368,7 +368,7 @@ export function DestinationManagementUI({
       ) : null}
 
       <section aria-labelledby="destination-list-heading">
-        <h2 id="destination-list-heading" className="font-serif text-3xl">
+        <h2 id="destination-list-heading" className="type-display text-3xl">
           Managed destinations
         </h2>
         {destinations.length ? (

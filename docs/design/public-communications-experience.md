@@ -1,6 +1,7 @@
 # Public Communications Experience
 
-Status: implemented experience direction, 2026-08-15.
+Status: implemented experience direction, 2026-08-15; visual tokens and
+typography superseded by the June 2025 brand-compliance package.
 
 ## Design purpose
 
@@ -11,15 +12,15 @@ and how they can participate without turning every page into a solicitation.
 
 ## Visual language
 
-The palette draws from Fayette County material and light: limestone ground,
-pecan text, faded denim/sky openness, oak restraint, and small bluebonnet or
-paintbrush moments. The public system uses these as semantic tokens, with the
-wildflower accents limited to emphasis, rules, and links rather than surfaces.
+The June 2025 Habitat brand guide is the visual authority. The public system
+uses its Bright Blue, Bright Green, Cool Gray, Black, White, Traditional Blue,
+Yellow, Traditional Green, Orange, and Red tokens through the centralized
+implementation documented in [brand compliance](./brand-compliance.md).
 
-Literata supplies the deliberate, regional editorial voice for display and
-long-form reading. Source Sans 3 keeps navigation, metadata, controls, and
-supporting copy direct and highly legible. Both are loaded through Next.js from
-Google Fonts with system fallbacks.
+Neue Haas Grotesk Display leads display typography, Neue Haas Grotesk Text
+supports interface and short copy, and Minion Pro is reserved for substantial
+editorial prose. The earlier regional palette and Google-hosted Literata/Source
+Sans treatment are historical context only and must not be used for new work.
 
 ## Story rhythm
 

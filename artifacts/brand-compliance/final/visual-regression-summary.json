@@ -1,0 +1,13 @@
+{
+  "phase": "final",
+  "status": "PASS",
+  "routes": ["/", "/projects", "/news", "/campaigns"],
+  "viewports": ["390x844", "1440x900"],
+  "screenshots": [
+    "screenshots/home-desktop.png",
+    "screenshots/projects-desktop.png",
+    "screenshots/news-desktop.png",
+    "screenshots/campaigns-desktop.png",
+    "screenshots/home-mobile.png"
+  ]
+}

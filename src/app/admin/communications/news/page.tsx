@@ -32,7 +32,7 @@ export default async function NewsAdmin() {
       }
     >
       <p className="text-primary text-sm font-semibold">Communications</p>
-      <h1 className="mt-3 font-serif text-4xl">News</h1>
+      <h1 className="type-display mt-3 text-4xl">News</h1>
       {hasCapability(access.principal, "news.create") ? (
         <Link
           className="bg-primary text-primary-foreground mt-7 inline-flex min-h-11 items-center rounded-sm px-4 font-semibold"

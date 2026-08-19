@@ -1,0 +1,37 @@
+{
+  "phase": "baseline",
+  "logoReferences": [
+    {
+      "source": "src/components/site/site-footer.tsx",
+      "asset": "fayette-county-habitat-logo-2clr.avif"
+    },
+    {
+      "source": "src/components/site/site-header.tsx",
+      "asset": "fayette-county-habitat-logo-2clr.avif"
+    }
+  ],
+  "findings": [
+    {
+      "ruleId": "LOGO-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/site/site-footer.tsx",
+      "observed": "Public source references the supplied two-color logo treatment.",
+      "expected": "Default public use is the official horizontal extended black logo; official white is used on dark backgrounds.",
+      "evidence": "18: src=\"/brand/fayette-county-habitat-logo-2clr.avif\"",
+      "guideReference": "June 2025 guide, Logo / Color and Logo formats",
+      "recommendedRemediation": "Use the controlled HabitatLogo component with official black or white artwork."
+    },
+    {
+      "ruleId": "LOGO-001",
+      "status": "FAIL",
+      "severity": "high",
+      "source": "src/components/site/site-header.tsx",
+      "observed": "Public source references the supplied two-color logo treatment.",
+      "expected": "Default public use is the official horizontal extended black logo; official white is used on dark backgrounds.",
+      "evidence": "55: src=\"/brand/fayette-county-habitat-logo-2clr.avif\"",
+      "guideReference": "June 2025 guide, Logo / Color and Logo formats",
+      "recommendedRemediation": "Use the controlled HabitatLogo component with official black or white artwork."
+    }
+  ]
+}

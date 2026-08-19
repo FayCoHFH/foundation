@@ -107,7 +107,7 @@ function Section({
     <section aria-labelledby={id} className="border-border mt-10 border-t pt-7">
       <h2
         id={id}
-        className="font-serif text-2xl text-[color:var(--color-editorial-pecan)]"
+        className="type-display text-2xl text-[color:var(--color-brand-black)]"
       >
         {title}
       </h2>
@@ -261,7 +261,7 @@ export function SubmissionMediaSummarySection({
                   Image {media.ordinal ?? "—"}
                   {media.ordinal === 1 ? " · Suggested lead" : ""}
                 </p>
-                <h3 className="mt-1 font-serif text-xl">Submitted image</h3>
+                <h3 className="type-display mt-1 text-xl">Submitted image</h3>
                 <div className="mt-3">
                   <MediaStatus media={media} />
                 </div>
@@ -860,7 +860,7 @@ export function SubmissionMediaDetailContent({
       <p className="text-primary text-sm font-semibold tracking-[.14em] uppercase">
         Communications / Story Submissions / Media
       </p>
-      <h1 className="text-editorial-pecan mt-3 font-serif text-4xl">
+      <h1 className="text-brand-black type-display mt-3 text-4xl">
         Review submitted image
       </h1>
       <p className="text-muted-foreground mt-3 max-w-2xl">

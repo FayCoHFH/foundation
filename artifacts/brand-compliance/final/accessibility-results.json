@@ -1,0 +1,41 @@
+{
+  "phase": "final",
+  "status": "PASS",
+  "routes": [
+    {
+      "route": "/",
+      "violations": []
+    },
+    {
+      "route": "/give",
+      "violations": []
+    },
+    {
+      "route": "/volunteer",
+      "violations": []
+    },
+    {
+      "route": "/projects",
+      "violations": []
+    },
+    {
+      "route": "/news",
+      "violations": []
+    },
+    {
+      "route": "/campaigns",
+      "violations": []
+    },
+    {
+      "route": "/share-your-story",
+      "violations": []
+    }
+  ],
+  "violationCount": 0,
+  "manualReview": [
+    "keyboard-only traversal",
+    "screen-reader reading order",
+    "400% zoom/reflow",
+    "reduced-motion review"
+  ]
+}

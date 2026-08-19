@@ -67,7 +67,7 @@ export function SubmissionWorkflowControls({
       aria-labelledby="submission-actions-heading"
       className="border-border mt-10 border-t pt-7"
     >
-      <h2 id="submission-actions-heading" className="font-serif text-2xl">
+      <h2 id="submission-actions-heading" className="type-display text-2xl">
         Lifecycle actions
       </h2>
       <p className="text-muted-foreground mt-2 max-w-2xl text-sm">

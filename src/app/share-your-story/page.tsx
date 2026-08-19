@@ -32,12 +32,12 @@ export default function ShareYourStoryPage() {
       <SkipLink targetId="main-content" />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="flex-1">
-        <header className="border-border bg-editorial-sky/30 border-b">
+        <header className="border-border bg-brand-white border-b">
           <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">
             <p className="text-foreground text-sm font-bold tracking-[.16em] uppercase">
               <OrganizationNameLockup />
             </p>
-            <h1 className="text-display-foreground mt-4 font-serif text-5xl tracking-[-.035em] sm:text-6xl">
+            <h1 className="text-display-foreground type-display mt-4 text-5xl tracking-[-.035em] sm:text-6xl">
               Share Your Story
             </h1>
             <p className="text-foreground mt-5 max-w-2xl text-lg leading-8">
@@ -58,7 +58,7 @@ export default function ShareYourStoryPage() {
             <section aria-labelledby="share-unavailable" className="max-w-2xl">
               <h2
                 id="share-unavailable"
-                className="text-charcoal font-serif text-3xl"
+                className="text-brand-black type-display text-3xl"
               >
                 Share Your Story is not accepting submissions right now.
               </h2>

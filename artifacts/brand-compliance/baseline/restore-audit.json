@@ -1,0 +1,15 @@
+{
+  "phase": "baseline",
+  "findings": [
+    {
+      "ruleId": "RESTORE-001",
+      "status": "NOT APPLICABLE",
+      "severity": "info",
+      "source": "public routes and source",
+      "observed": "No ReStore public route or content is implemented in this scaffold.",
+      "expected": "ReStore is treated as the authorized identifier exception; missing May 2024 source rules remain manual review.",
+      "guideReference": "June 2025 guide, Our ReStores",
+      "recommendedRemediation": "Record as not applicable until a verified ReStore experience is introduced."
+    }
+  ]
+}

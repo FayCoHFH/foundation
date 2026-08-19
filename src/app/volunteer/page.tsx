@@ -84,7 +84,7 @@ export default async function VolunteerPage() {
                 {volunteerCampaigns.map((campaign) => (
                   <li key={campaign.slug} className="py-5">
                     <Link
-                      className="text-charcoal decoration-habitat-blue/40 hover:text-habitat-blue font-serif text-2xl font-semibold underline underline-offset-4"
+                      className="text-brand-black decoration-brand-bright-blue hover:text-brand-traditional-blue type-display text-2xl font-semibold underline underline-offset-4"
                       href={`/campaigns/${campaign.slug}`}
                     >
                       {campaign.title}
@@ -96,7 +96,7 @@ export default async function VolunteerPage() {
                 ))}
               </ul>
             ) : (
-              <p className="border-limestone bg-pale-habitat-blue mt-8 max-w-2xl border p-6">
+              <p className="border-brand-cool-gray bg-surface-subtle mt-8 max-w-2xl border p-6">
                 Campaign-specific volunteer opportunities will appear here when
                 they are ready to share.
               </p>
