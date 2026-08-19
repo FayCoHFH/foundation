@@ -63,9 +63,14 @@ Detailed evidence and exact source URLs are in `source-inventory.json`.
 
 Program eligibility and repayment details remain verification-required. The
 legacy assistance PDF that requests Social Security Numbers and email intake is
-blocked and was not migrated. Planned-giving legal/tax language, leadership
-rosters, volunteer operations, ReStore facts, research metrics, and participant
-stories remain gated or have no current destination. Raffle pages contain
+blocked and was not migrated. Sven supplied the current leadership facts:
+Kenny Couch is Executive Director, and the ten Board of Directors members and
+roles are recorded as `VERIFIED` in `leadership-verification.json`. They remain
+unpublished because the current application has no People or Board destination;
+biographies, contacts, photos, consent, and term dates were not inferred.
+Planned-giving legal/tax language, volunteer operations, ReStore facts, research
+metrics, and participant stories remain gated or have no current destination.
+Raffle pages contain
 conflicting drawing times, editions, and placeholder prize values, so no raffle
 or incomplete event content was published.
 

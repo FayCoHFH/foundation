@@ -1,0 +1,28 @@
+{
+  "auditDate": "2026-08-19",
+  "source": "Sven's explicit current instruction in the task conversation",
+  "status": "VERIFIED",
+  "publicDestination": null,
+  "publicationStatus": "NOT_PUBLISHED_NO_CURRENT_DESTINATION",
+  "executiveDirector": {
+    "name": "Kenny Couch",
+    "role": "Executive Director"
+  },
+  "boardOfDirectors": [
+    { "name": "Kyle Hartmann", "role": "President" },
+    { "name": "Marissa Anderson", "role": "Vice-President" },
+    { "name": "CJ Malota", "role": "Treasurer" },
+    { "name": "Eric Green", "role": "Secretary" },
+    { "name": "Khalil Coltrain", "role": "Director" },
+    { "name": "Steve Hardin", "role": "Director" },
+    { "name": "Curtis Bradbury", "role": "Director" },
+    { "name": "Annette Holdeman", "role": "Director" },
+    { "name": "Laura George", "role": "Director" },
+    { "name": "Matt Holdeman", "role": "Director" }
+  ],
+  "notes": [
+    "Authoritative current roster supplied by Sven; no legacy inference used.",
+    "No biography, contact, photo, consent, or historical term dates were inferred.",
+    "Future publication still requires the existing People/Board destination and public privacy/consent review."
+  ]
+}

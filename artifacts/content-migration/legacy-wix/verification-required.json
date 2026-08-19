@@ -41,16 +41,16 @@
       "status": "VERIFICATION_REQUIRED"
     },
     {
-      "legacyIds": ["P004", "P031", "B036"],
+      "legacyIds": ["B036"],
       "category": "PEOPLE_AND_LEADERSHIP",
       "requiredChecks": [
-        "current roster",
         "roles and biographies",
         "consent",
         "public contact safety",
         "recognition source verification"
       ],
-      "status": "VERIFICATION_REQUIRED"
+      "status": "VERIFICATION_REQUIRED",
+      "note": "The current leadership roster is verified separately in leadership-verification.json; biographies, consent, public contact safety, and historical recognition remain unresolved."
     },
     {
       "legacyIds": ["B009", "B010", "B015", "B021", "B026", "B029", "B037"],

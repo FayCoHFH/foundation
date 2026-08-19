@@ -160,7 +160,7 @@
       "legacyIds": ["P001", "P029", "P004", "P031"],
       "destination": null,
       "status": "NO_CURRENT_DESTINATION",
-      "reason": "Planned giving, ReStore, and leadership material require destinations and current verification not present in this slice."
+      "reason": "Planned giving, ReStore, and leadership material require destinations; the leadership roster is now current-user verified, but biographies, consent, and a People/Board destination remain absent."
     },
     {
       "legacyIds": ["P005", "P025", "P007", "P035", "B035", "B053"],

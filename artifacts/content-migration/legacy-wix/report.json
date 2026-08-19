@@ -15,6 +15,7 @@
     "noNewNavigation": true,
     "noNewContentModelsCreatedSolelyBecauseOfWix": true,
     "noWixInformationArchitectureReproduced": true,
+    "leadershipVerification": "VERIFIED from Sven's explicit instruction; not published because no People/Board destination exists.",
     "projectHistoryCounts": {
       "identified": 32,
       "migratedBySeedSelection": 12,
@@ -48,6 +49,7 @@
     "conflicts.json",
     "no-current-destination.json",
     "media-candidates.json",
+    "leadership-verification.json",
     "report.md"
   ],
   "validation": {
