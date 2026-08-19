@@ -52,6 +52,21 @@ migrate or seed a database during a Vercel build. Apply committed migrations
 once through a separately controlled release job using the direct database URL,
 confirm `pnpm db:migrate:status`, and only then promote traffic.
 
+The Campaigns surface is statically generated from the public campaign
+projection, so PostgreSQL must be reachable during a Preview or Production
+build. The build database must already have the committed migrations and the
+code-defined baseline seed data required by the public read model. Do not point
+the build at a production database before the release migration has been
+verified, and do not make a Vercel build responsible for migration or seeding.
+
+Preview requires a persistent, isolated nonproduction PostgreSQL database. It
+must not use Production PostgreSQL, a shared valuable development database, or
+a disposable local database. The provider and region remain a later manual
+decision; this repository does not select or provision one. `DIRECT_DATABASE_URL`
+belongs only to the controlled migration operator, while `SHADOW_DATABASE_URL`
+is for disposable migration authoring/drift checks and is not a Preview
+runtime variable.
+
 Production responses use host-only one-year HSTS. Do not add
 `includeSubDomains` or submit the domain for preload until G-05 confirms
 canonical DNS ownership and HTTPS coverage for every affected subdomain.
@@ -75,4 +90,23 @@ production public/private object-store implementation and operational exercise
 remain a later storage slice. Production validation rejects the local ephemeral
 adapter.
 
-No deployment or provider-side mutation was performed in Slice 1.
+## Future manual provider sequence
+
+Provider setup is intentionally pending. When explicitly authorized, the
+release sequence is:
+
+1. Create/connect the fresh GitHub repository and preserve the reviewed history.
+2. Create/connect a fresh Vercel project without importing stale `.vercel`
+   linkage metadata.
+3. Configure separate Preview and Production variables, PostgreSQL databases,
+   storage, secret custody, backups/PITR, observability, and migration ownership.
+4. Apply committed migrations with the controlled direct credential; verify
+   status and the database-backed build.
+5. Deploy and review a Vercel Preview, then verify the approved Production
+   deployment.
+6. Only after those checks, perform the explicitly authorized `fchfh.org`
+   DNS/domain cutover.
+
+No deployment, provider-side mutation, DNS change, GitHub connection, or Vercel
+project linkage was performed in this readiness pass. See the [safe environment
+reference](environment-reference.md) for the complete variable inventory.

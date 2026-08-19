@@ -10,6 +10,12 @@ playwright-report/
 test-results/
 output/playwright/
 
+# Local application and provider state
+.data/
+.vercel/
+.cache/
+.turbo/
+
 # Local configuration and secrets
 .env
 .env.*
@@ -19,6 +25,14 @@ output/playwright/
 src/generated/prisma/
 tmp/
 *.tsbuildinfo
+
+# Logs and local tool caches
+*.log
+*.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # Editors and operating systems
 .DS_Store

@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-08-19T20:32:02.645Z",
+  "generatedAt": "2026-08-19T21:33:30.985Z",
   "guide": {
     "title": "Habitat for Humanity Brand User Guide",
     "edition": "June 2025",
-    "suppliedPDF": "/Users/svenmesecke/Desktop/HFH_Brand_Guide_2025_English-Guide.pdf",
+    "suppliedPDF": "external user-supplied source; the proprietary PDF is not stored in this repository",
     "replacesPreviousGuidance": true
   },
   "repository": {
     "branch": "codex/public-visual-system-refinement-v4",
-    "commit": "abb4f6d3158131cd3caebbb7531caba71ee07d54",
+    "commit": "2f43b66c7ebe68aefb13a8af512b1be74007fe3f",
     "worktreeStatus": "reported separately after delivery commit"
   },
   "result": {

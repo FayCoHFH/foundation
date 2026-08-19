@@ -74,6 +74,12 @@ privacy-notice version must be configured before an isolated test or approved
 deployment may enable the boundary. See the
 [C6B-1B intake-security record](docs/development/c6b1b-public-story-intake-security.md).
 
+The public shell uses the June 2025 Habitat for Humanity brand standards:
+Neue Haas Grotesk Display/Text, Minion Pro for semantic editorial body text,
+the June 2025 palette, and controlled official Fayette County Habitat logo
+assets. Formal Minion Pro license provenance documentation remains pending.
+See the [brand implementation record](docs/design/brand-compliance.md).
+
 Projects administration is available at `/admin/projects` for authorized
 Project authors, reviewers, and publishers. See the [Projects P2 UI record](docs/development/p2-projects-ui.md).
 
@@ -148,6 +154,21 @@ volunteer records where its supported account capabilities fit. Stripe remains
 the accepted merchandise checkout provider. This slice does not introduce a
 competing donor ledger, commerce implementation, content-management feature, or
 private applicant/grants system.
+
+## Repository and deployment readiness
+
+Node.js 22.22.3 and pnpm 10.13.1 are pinned in `.node-version`, `.nvmrc`,
+`package.json`, and the lockfile. Production builds are database-backed because
+the statically generated Campaigns surface reads the public campaign projection;
+PostgreSQL access and the committed migrations are therefore required during a
+production or Preview build. A build does not apply migrations or seed data.
+See the [safe environment reference](docs/development/environment-reference.md)
+and [deployment readiness guide](docs/development/deployment-environments.md).
+
+Fresh GitHub and Vercel provider setup is intentionally pending. No remote,
+repository linkage, Vercel project, DNS change, or deployment is configured by
+this checkout. The current public domain `fchfh.org` is a later, explicit
+release/cutover step after Preview review and production verification.
 
 Read [AGENTS.md](AGENTS.md) before changing the repository. Consequential
 technical decisions belong in ADRs, while product requirements and data

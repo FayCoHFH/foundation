@@ -95,8 +95,9 @@ Help and News treatments remain structurally unchanged. Mobile and desktop
 header, menu disclosure, logo sizing, contrast, axe, and overflow checks are
 covered by focused browser tests.
 
-V2 review screenshots are stored outside committed source in
-`/Users/svenmesecke/Documents/ChatGPT/public-visual-system-v2-review/INDEX.md`.
+V2 review screenshots are stored outside committed source in an external
+human-review packet; its machine-specific local path is intentionally not
+recorded here.
 The existing visual-preview
 databases and port 3200 server remain preserved.
 

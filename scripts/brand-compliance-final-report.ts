@@ -195,7 +195,7 @@ async function main() {
       title: "Habitat for Humanity Brand User Guide",
       edition: "June 2025",
       suppliedPDF:
-        "/Users/svenmesecke/Desktop/HFH_Brand_Guide_2025_English-Guide.pdf",
+        "external user-supplied source; the proprietary PDF is not stored in this repository",
       replacesPreviousGuidance: true,
     },
     repository: {
