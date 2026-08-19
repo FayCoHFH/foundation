@@ -6,16 +6,18 @@
   --workshop-green: #27533b;
   --charcoal: #252723;
   --clean-white: #ffffff;
+  --pale-habitat-blue: #edf5fa;
+  --pale-habitat-green: #eff8ed;
   --display-foreground: var(--charcoal);
   --warm-paper: #f8f5ed;
-  --limestone: #d8d0bf;
+  --limestone: #d9e2e4;
   --texas-clay: #a65038;
   --timber: #604938;
 
   --background: var(--clean-white);
   --foreground: var(--charcoal);
-  --surface: var(--warm-paper);
-  --surface-subtle: #e9e4d8;
+  --surface: var(--clean-white);
+  --surface-subtle: #edf3f4;
   --card: var(--clean-white);
   --card-foreground: var(--charcoal);
   --popover: var(--clean-white);
@@ -85,6 +87,8 @@
   --color-workshop-green: var(--workshop-green);
   --color-charcoal: var(--charcoal);
   --color-clean-white: var(--clean-white);
+  --color-pale-habitat-blue: var(--pale-habitat-blue);
+  --color-pale-habitat-green: var(--pale-habitat-green);
   --color-display-foreground: var(--display-foreground);
   --color-warm-paper: var(--warm-paper);
   --color-limestone: var(--limestone);

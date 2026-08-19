@@ -88,7 +88,7 @@ export function CampaignProgress({ campaign }: { campaign: PublicCampaign }) {
   return (
     <section
       aria-labelledby="campaign-progress-heading"
-      className="border-habitat-green bg-warm-paper mt-10 border-t-4 p-6 sm:p-8"
+      className="border-habitat-green bg-pale-habitat-green mt-10 border-t-4 p-6 sm:p-8"
     >
       <h2 id="campaign-progress-heading" className="font-serif text-2xl">
         Campaign progress

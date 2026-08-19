@@ -5,6 +5,7 @@ import {
   hashCampaignCandidate,
   isCurrentCampaignStatus,
   isHistoricalCampaignStatus,
+  usablePublicExternalDestination,
   validateCampaignCandidate,
 } from "@/modules/communications/campaigns";
 import { ValidationError } from "@/platform/errors/app-error";
@@ -153,6 +154,25 @@ describe("Campaign content contract", () => {
           {
             ...donateAction,
             destination: "https://user:secret@example.org/give",
+          },
+        ],
+      }),
+    ).toThrow(ValidationError);
+    expect(
+      usablePublicExternalDestination(
+        "https://preview.invalid/campaigns/repair-drive",
+      ),
+    ).toBeNull();
+    expect(usablePublicExternalDestination("https://www.habitat.org/")).toBe(
+      "https://www.habitat.org/",
+    );
+    expect(() =>
+      validateCampaignCandidate({
+        ...candidate,
+        actions: [
+          {
+            ...donateAction,
+            destination: "https://preview.invalid/campaigns/repair-drive",
           },
         ],
       }),

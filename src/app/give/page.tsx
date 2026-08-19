@@ -97,7 +97,7 @@ export default async function GivePage() {
                 ))}
               </ul>
             ) : (
-              <p className="border-limestone bg-warm-paper mt-8 max-w-2xl border p-6">
+              <p className="border-limestone bg-pale-habitat-blue mt-8 max-w-2xl border p-6">
                 Campaign-specific giving opportunities will appear here when
                 they are ready to share.
               </p>

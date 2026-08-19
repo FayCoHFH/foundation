@@ -76,7 +76,7 @@ export default async function ProjectsPage() {
           </div>
         ) : (
           <div className="public-content-wrap">
-            <p className="border-limestone bg-warm-paper border p-6">
+            <p className="border-limestone bg-pale-habitat-blue border p-6">
               Project updates will appear here as they are ready to share.
             </p>
           </div>

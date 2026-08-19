@@ -102,6 +102,9 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
     "true",
   );
   await expect(page.locator(".public-hero-structure img")).toHaveCount(0);
+  await expect(page.locator(".bg-warm-paper, .bg-editorial-cream")).toHaveCount(
+    0,
+  );
   await expect(page.locator("body")).not.toContainText(
     "Public experience foundation",
   );
@@ -178,6 +181,9 @@ test("public display headings use approved colors across core routes", async ({
     for (const item of colors) {
       expect(item.color, `${route}: ${item.text}`).not.toBe(item.timber);
     }
+    await expect(
+      page.locator(".bg-warm-paper, .bg-editorial-cream"),
+    ).toHaveCount(0);
   }
 });
 

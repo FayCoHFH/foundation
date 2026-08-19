@@ -29,6 +29,7 @@ import {
   type CampaignActionInput,
   type CampaignCandidate,
   type CampaignFactInput,
+  usablePublicExternalDestination,
   validateCampaignCandidate,
   validateCampaignDocument,
 } from "./content";
@@ -1375,9 +1376,9 @@ function publicCampaign(row: {
     const destination = action.destinationId
       ? action.donorViewDestination?.purpose === expectedPurpose &&
         action.donorViewDestination.status === "VERIFIED"
-        ? action.donorViewDestination.url
+        ? usablePublicExternalDestination(action.donorViewDestination.url)
         : null
-      : action.destination;
+      : usablePublicExternalDestination(action.destination);
     return destination
       ? [
           {

@@ -165,7 +165,7 @@ export default async function HomePage() {
                 ))}
               </ul>
             ) : (
-              <p className="border-limestone bg-warm-paper mt-8 border p-6">
+              <p className="border-limestone bg-pale-habitat-blue mt-8 border p-6">
                 Projects will appear here as they are ready to share.
               </p>
             )}
@@ -257,7 +257,7 @@ export default async function HomePage() {
                   All Campaigns <span aria-hidden="true">→</span>
                 </Link>
               </div>
-              <div className="border-habitat-green bg-warm-paper mt-8 grid gap-8 border-t-4 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+              <div className="border-habitat-green bg-pale-habitat-green mt-8 grid gap-8 border-t-4 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
                 <div>
                   <p className="text-workshop-green text-sm font-bold">
                     {CAMPAIGN_STATUS_LABELS[activeCampaign.campaignStatus]} ·{" "}

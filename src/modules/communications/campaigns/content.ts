@@ -53,6 +53,29 @@ export const CAMPAIGN_HISTORICAL_STATUSES = [
   "CANCELLED",
 ] as const satisfies readonly CampaignStatus[];
 
+export function usablePublicExternalDestination(
+  value: string | null | undefined,
+) {
+  if (!value) return null;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
+  }
+  const hostname = url.hostname.toLowerCase().replace(/\.$/, "");
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    !hostname ||
+    hostname.endsWith(".invalid")
+  ) {
+    return null;
+  }
+  return url.toString();
+}
+
 export type CampaignDocument = StoryDocument;
 
 export type CampaignFactInput = Readonly<{
@@ -259,14 +282,9 @@ function validateActions(actions: readonly CampaignActionInput[] | undefined) {
         } catch {
           reject("Campaign action destination must be a valid HTTPS URL.");
         }
-        if (
-          url.protocol !== "https:" ||
-          url.username ||
-          url.password ||
-          url.hostname.length === 0
-        ) {
+        if (!usablePublicExternalDestination(url.toString())) {
           reject(
-            "Campaign action destination must use HTTPS without credentials.",
+            "Campaign action destination must use a usable public HTTPS URL.",
           );
         }
       }

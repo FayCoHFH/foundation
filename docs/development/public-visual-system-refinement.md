@@ -9,11 +9,12 @@ semantics, projection reads, DonorView destinations, or engagement behavior.
 The public experience now uses a Texas workshop and Hill Country civic
 language: Habitat blue for primary structure and action, workshop green for
 participation, Texas clay for editorial rules and consequence, charcoal and
-deep blue for display text, timber for specific material accents, warm paper
-for editorial surfaces, and limestone for quiet division. Surfaces are
-intentionally mostly flat and rectangular, with rules, spacing, and typography
-carrying hierarchy instead of generic cards, pills, gradients, glass, or
-decorative shadows.
+deep blue for display text, timber for specific material accents, clean white
+for the primary public field, pale Habitat blue and green for selective support
+surfaces, and cool limestone for quiet division. Surfaces are intentionally
+mostly flat and rectangular, with rules, spacing, and typography carrying
+hierarchy instead of generic cards, pills, gradients, glass, or decorative
+shadows.
 
 Typography is locked to Zilla Slab for display and Source Sans 3 for body and
 interface text. The official supplied logo is the preferred organization
@@ -129,3 +130,35 @@ V3 focused browser coverage verifies semantic heading colors, official footer
 logo rendering and accessible naming, unchanged Zilla Slab typography, public
 route coverage, responsive overflow at 320/375/390/768, and axe results. The
 V3 screenshot package is kept outside committed source for human review.
+
+## V4 public link and surface correction
+
+V4 establishes two permanent public-UI rules. Every actionable rendered link
+must have a valid intentional destination under its routing or integration
+contract. Internal links must resolve to implemented eligible public routes;
+governed external actions must use an active, verified, purpose-matched
+destination; and unavailable or knowingly non-resolving preview destinations
+must not render as functioning anchors. Public browser coverage audits
+rendered internal links without crawling arbitrary third-party hosts.
+
+The paused preview Repair Drive action contained a direct `https://preview.invalid`
+Learn More URL. This was a fixture URL, not a valid destination. Campaign action
+validation now rejects reserved `.invalid` hosts, and the public Campaign read
+model omits any stale invalid action already present in an immutable projection.
+The preview therefore shows no broken Repair Drive CTA and does not fabricate a
+DonorView destination.
+
+The public surface vocabulary now defaults to clean white. Pale Habitat blue
+(`--pale-habitat-blue: #EDF5FA`) and pale Habitat green
+(`--pale-habitat-green: #EFF8ED`) provide restrained secondary fields derived
+from the supplied logo colors. Cool limestone replaces the former warm
+yellow-taupe separator tone. Warm paper remains available for non-public or
+explicit print/editorial contexts but is no longer used by generic public
+headers, feature panels, Campaign panels, empty states, News/Story feature
+surfaces, or Give/Volunteer supporting sections. The dark-green Ways to Help
+band and deep-blue footer remain accepted treatments.
+
+V4 preserves charcoal/deep-blue display text, blue interactive states, visible
+underlines/focus, the official logo, the V2 hero, editorial row structure, and
+the Projects/Campaigns/Give/Volunteer/News distinctions. Fresh V4 screenshots
+and a preview link-audit artifact are stored outside committed source.

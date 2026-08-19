@@ -96,7 +96,7 @@ export default async function VolunteerPage() {
                 ))}
               </ul>
             ) : (
-              <p className="border-limestone bg-warm-paper mt-8 max-w-2xl border p-6">
+              <p className="border-limestone bg-pale-habitat-blue mt-8 max-w-2xl border p-6">
                 Campaign-specific volunteer opportunities will appear here when
                 they are ready to share.
               </p>

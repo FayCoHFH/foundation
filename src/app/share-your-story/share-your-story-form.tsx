@@ -528,7 +528,7 @@ export function PublicStorySubmissionForm({
       state.outcome?.code === "DUPLICATE_ACCEPTED" ? (
         <section
           aria-live="polite"
-          className="border-editorial-oak/50 bg-editorial-cream border-l-4 p-6"
+          className="border-editorial-oak/50 bg-pale-habitat-green border-l-4 p-6"
         >
           <h2 className="text-charcoal font-serif text-3xl">Thank you.</h2>
           <p className="mt-3 leading-7">
@@ -538,7 +538,7 @@ export function PublicStorySubmissionForm({
         </section>
       ) : null}
       <aside
-        className="border-border bg-editorial-cream border-y px-5 py-6"
+        className="border-border bg-pale-habitat-blue border-y px-5 py-6"
         aria-labelledby="privacy-summary-heading"
       >
         <h2

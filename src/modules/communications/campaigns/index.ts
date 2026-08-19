@@ -13,6 +13,7 @@ export {
   hashCampaignCandidate,
   isCurrentCampaignStatus,
   isHistoricalCampaignStatus,
+  usablePublicExternalDestination,
   validateCampaignCandidate,
   validateCampaignDocument,
   type CampaignCandidate,

@@ -239,7 +239,7 @@
 
 .public-page-header {
   border-bottom: 1px solid var(--limestone);
-  background: var(--warm-paper);
+  background: var(--clean-white);
 }
 
 .public-page-header-inner {
@@ -414,7 +414,7 @@
 
 .public-clay-rule {
   border-left: 0.35rem solid var(--texas-clay);
-  background: var(--warm-paper);
+  background: var(--pale-habitat-blue);
   padding: 1.75rem;
 }
 
@@ -451,7 +451,7 @@
 }
 
 .public-help-band .public-action-primary:hover {
-  background: var(--warm-paper);
+  background: var(--pale-habitat-blue);
 }
 
 @media (min-width: 640px) {
