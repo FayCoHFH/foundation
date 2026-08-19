@@ -11,7 +11,7 @@ The normative source is the supplied **Habitat for Humanity Brand User Guide, Ju
 ## 3. Repository / branch / commit
 
 - Branch: `codex/public-visual-system-refinement-v4`
-- Commit observed during report generation: `2e6fad0249a15bbcd7ac147ffc21a20a14b2accf`
+- Commit observed during report generation: `abb4f6d3158131cd3caebbb7531caba71ee07d54`
 
 ## 3A. Verification gap provenance
 
