@@ -123,6 +123,16 @@
   height: auto;
 }
 
+.organization-name-lockup {
+  display: inline-grid;
+  gap: 0.04rem;
+  line-height: 1.05;
+}
+
+.organization-name-lockup > span {
+  white-space: nowrap;
+}
+
 .site-nav-links {
   display: flex;
   align-items: center;
@@ -249,7 +259,7 @@
 .public-page-title {
   max-width: 48rem;
   margin-top: 0.75rem;
-  color: var(--timber);
+  color: var(--display-foreground);
   font-family: var(--habitat-font-serif);
   font-size: clamp(2.65rem, 5vw, 4.5rem);
   font-weight: 600;
@@ -277,7 +287,7 @@
 }
 
 .public-section-heading {
-  color: var(--timber);
+  color: var(--display-foreground);
   font-family: var(--habitat-font-serif);
   font-size: clamp(2rem, 3vw, 2.8rem);
   font-weight: 600;
@@ -417,6 +427,21 @@
 
 .public-help-band a {
   color: var(--clean-white);
+}
+
+.site-footer-logo-inset {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  border: 1px solid var(--limestone);
+  background: var(--clean-white);
+  padding: 0.8rem 1rem;
+}
+
+.site-footer-logo {
+  display: block;
+  width: min(15rem, 100%);
+  height: auto;
 }
 
 .public-help-band .public-action-primary {

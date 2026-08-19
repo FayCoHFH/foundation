@@ -8,15 +8,16 @@ semantics, projection reads, DonorView destinations, or engagement behavior.
 
 The public experience now uses a Texas workshop and Hill Country civic
 language: Habitat blue for primary structure and action, workshop green for
-participation, Texas clay for editorial rules and consequence, timber for
-display text, warm paper for editorial surfaces, and limestone for quiet
-division. Surfaces are intentionally mostly flat and rectangular, with rules,
-spacing, and typography carrying hierarchy instead of generic cards, pills,
-gradients, glass, or decorative shadows.
+participation, Texas clay for editorial rules and consequence, charcoal and
+deep blue for display text, timber for specific material accents, warm paper
+for editorial surfaces, and limestone for quiet division. Surfaces are
+intentionally mostly flat and rectangular, with rules, spacing, and typography
+carrying hierarchy instead of generic cards, pills, gradients, glass, or
+decorative shadows.
 
 Typography is locked to Zilla Slab for display and Source Sans 3 for body and
-interface text. The public wordmark remains a truthful typographic treatment;
-no unverified logo asset was introduced.
+interface text. The official supplied logo is the preferred organization
+identity treatment wherever the organization is presented as a brand mark.
 
 ## Homepage composition
 
@@ -101,3 +102,30 @@ coverage; the pre-existing Projects workflow test remains a separate baseline
 failure because its freshly released `Cedar Grove Home` projection is not
 observed by the index assertion even though the database row is
 `PUBLISHED`/`ACTIVE`. No Projects code was changed for V2.
+
+## V3 brand-consistency correction
+
+V3 completed locally on 2026-08-18. Major public display headings use the
+semantic `--display-foreground` token, which maps to charcoal, rather than the
+timber/material token. Section headings, page titles, Project and Campaign
+titles, News and Story headings, and public action-list titles therefore use
+approved high-contrast display colors without removing timber from the
+material palette. Timber remains available for restrained editorial details
+such as selected quote treatment and material surfaces.
+
+Organization name lockup rule:
+
+- One line: `Fayette County Habitat for Humanity`
+- Two lines: `Fayette County` / `Habitat for Humanity`
+- `Habitat for Humanity` must never be smaller than `Fayette County`.
+
+The official logo is preferred over recreating the organization name in
+styled text. The shared public header and footer use the unchanged official
+asset at `public/brand/fayette-county-habitat-logo-2clr.avif`. The footer places
+the two-color logo on a light inset surface for contrast and does not recolor,
+distort, or repeat the organization name as an unequal-size text lockup.
+
+V3 focused browser coverage verifies semantic heading colors, official footer
+logo rendering and accessible naming, unchanged Zilla Slab typography, public
+route coverage, responsive overflow at 320/375/390/768, and axe results. The
+V3 screenshot package is kept outside committed source for human review.

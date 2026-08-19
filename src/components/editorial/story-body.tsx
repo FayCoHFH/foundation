@@ -41,11 +41,11 @@ export function StoryBody({ node }: { node: StoryNode }) {
       );
     case "heading":
       return node.attrs?.level === 3 ? (
-        <h3 className="text-timber mt-10 font-serif text-3xl leading-tight font-semibold">
+        <h3 className="text-charcoal mt-10 font-serif text-3xl leading-tight font-semibold">
           {children}
         </h3>
       ) : (
-        <h2 className="text-timber mt-14 font-serif text-4xl leading-[1.08] font-semibold sm:text-5xl">
+        <h2 className="text-charcoal mt-14 font-serif text-4xl leading-[1.08] font-semibold sm:text-5xl">
           {children}
         </h2>
       );

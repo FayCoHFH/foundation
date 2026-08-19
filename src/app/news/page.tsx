@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { OrganizationNameLockup } from "@/components/site/organization-name-lockup";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteNoticeRegion } from "@/components/site/site-notice-region";
@@ -26,7 +27,9 @@ export default async function NewsIndex() {
       <main id="main-content" tabIndex={-1} className="flex-1">
         <header className="public-page-header">
           <div className="public-page-header-inner">
-            <p className="public-kicker">Fayette County Habitat</p>
+            <p className="public-kicker">
+              <OrganizationNameLockup />
+            </p>
             <h1 className="public-page-title">News &amp; updates</h1>
             <p className="public-page-deck">
               Timely news from our work alongside Fayette County neighbors.
@@ -42,7 +45,7 @@ export default async function NewsIndex() {
               <p className="public-kicker">Featured news</p>
               <h2
                 id="featured-news-heading"
-                className="text-timber mt-3 font-serif text-4xl leading-tight font-semibold sm:text-5xl"
+                className="text-charcoal mt-3 font-serif text-4xl leading-tight font-semibold sm:text-5xl"
               >
                 <Link
                   className="underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
@@ -79,7 +82,7 @@ export default async function NewsIndex() {
                     >
                       {formatted(item.publishedAt)}
                     </time>
-                    <h3 className="text-timber mt-2 font-serif text-2xl font-semibold">
+                    <h3 className="text-charcoal mt-2 font-serif text-2xl font-semibold">
                       <Link
                         className="underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                         href={`/news/${item.slug}`}

@@ -87,7 +87,7 @@ export default async function HomePage() {
               <p className="public-kicker">
                 Fayette County Habitat for Humanity
               </p>
-              <h1 className="text-timber mt-5 max-w-3xl font-serif text-5xl leading-[0.94] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]">
+              <h1 className="text-display-foreground mt-5 max-w-3xl font-serif text-5xl leading-[0.94] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[4.25rem]">
                 Building and repairing homes with neighbors across Fayette
                 County.
               </h1>
@@ -148,7 +148,7 @@ export default async function HomePage() {
                           {PROJECT_STATUS_LABELS[project.projectStatus]} ·{" "}
                           {project.community}
                         </p>
-                        <h3 className="text-timber mt-2 font-serif text-2xl font-semibold sm:text-3xl">
+                        <h3 className="text-charcoal mt-2 font-serif text-2xl font-semibold sm:text-3xl">
                           <Link
                             className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
                             href={`/projects/${project.slug}`}
@@ -263,7 +263,7 @@ export default async function HomePage() {
                     {CAMPAIGN_STATUS_LABELS[activeCampaign.campaignStatus]} ·{" "}
                     {CAMPAIGN_TYPE_LABELS[activeCampaign.campaignType]}
                   </p>
-                  <h3 className="text-timber mt-3 font-serif text-3xl font-semibold">
+                  <h3 className="text-charcoal mt-3 font-serif text-3xl font-semibold">
                     <Link
                       className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
                       href={`/campaigns/${activeCampaign.slug}`}
@@ -292,7 +292,7 @@ export default async function HomePage() {
                 <div>
                   <h2
                     id="featured-story"
-                    className="text-timber font-serif text-4xl leading-tight font-semibold sm:text-5xl"
+                    className="text-charcoal font-serif text-4xl leading-tight font-semibold sm:text-5xl"
                   >
                     <Link
                       className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
@@ -326,7 +326,7 @@ export default async function HomePage() {
               <p className="public-kicker">Selected update</p>
               <h2
                 id="selected-update"
-                className="text-timber mt-3 font-serif text-3xl font-semibold"
+                className="text-charcoal mt-3 font-serif text-3xl font-semibold"
               >
                 <Link
                   className="decoration-texas-clay/50 hover:text-habitat-blue underline underline-offset-4"
@@ -359,7 +359,7 @@ export default async function HomePage() {
             {news ? (
               <article id="featured-news" className="public-clay-rule mt-8">
                 <p className="public-kicker">Featured news</p>
-                <h3 className="text-timber mt-3 font-serif text-3xl font-semibold">
+                <h3 className="text-charcoal mt-3 font-serif text-3xl font-semibold">
                   <Link
                     className="decoration-texas-clay/50 hover:text-habitat-blue underline underline-offset-4"
                     href={news.href}
@@ -389,7 +389,7 @@ export default async function HomePage() {
                         }).format(item.publishedAt)}
                       </time>
                       <div>
-                        <h3 className="text-timber font-serif text-2xl font-semibold">
+                        <h3 className="text-charcoal font-serif text-2xl font-semibold">
                           <Link
                             className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
                             href={`/news/${item.slug}`}

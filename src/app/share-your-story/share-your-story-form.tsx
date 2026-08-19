@@ -530,9 +530,7 @@ export function PublicStorySubmissionForm({
           aria-live="polite"
           className="border-editorial-oak/50 bg-editorial-cream border-l-4 p-6"
         >
-          <h2 className="text-editorial-pecan font-serif text-3xl">
-            Thank you.
-          </h2>
+          <h2 className="text-charcoal font-serif text-3xl">Thank you.</h2>
           <p className="mt-3 leading-7">
             Your story has been received for confidential review. We won’t send
             email from this form.
@@ -545,7 +543,7 @@ export function PublicStorySubmissionForm({
       >
         <h2
           id="privacy-summary-heading"
-          className="text-editorial-pecan font-serif text-2xl"
+          className="text-charcoal font-serif text-2xl"
         >
           A private place to begin
         </h2>
@@ -570,7 +568,7 @@ export function PublicStorySubmissionForm({
       <section aria-labelledby="story-details-heading" className="space-y-7">
         <h2
           id="story-details-heading"
-          className="text-editorial-pecan font-serif text-3xl"
+          className="text-charcoal font-serif text-3xl"
         >
           Your story
         </h2>
@@ -712,7 +710,7 @@ export function PublicStorySubmissionForm({
         </label>
       </section>
       <fieldset className="border-border space-y-4 border-t pt-7">
-        <legend className="text-editorial-pecan font-serif text-2xl">
+        <legend className="text-charcoal font-serif text-2xl">
           Before you send it
         </legend>
         <p className="text-muted-foreground text-sm">
@@ -844,10 +842,7 @@ export function PublicStorySubmissionForm({
       </fieldset>
       <section aria-labelledby="image-heading" className="space-y-6">
         <div>
-          <h2
-            id="image-heading"
-            className="text-editorial-pecan font-serif text-3xl"
-          >
+          <h2 id="image-heading" className="text-charcoal font-serif text-3xl">
             Images{" "}
             <span className="text-muted-foreground font-sans text-base font-normal">
               (optional)
@@ -1030,7 +1025,7 @@ export function PublicStorySubmissionForm({
         ) : null}
         {retained.length > 0 ? (
           <fieldset className="border-border space-y-4 border-t pt-6">
-            <legend className="text-editorial-pecan font-serif text-2xl">
+            <legend className="text-charcoal font-serif text-2xl">
               Image permissions
             </legend>
             <label className="block">

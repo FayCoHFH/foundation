@@ -6,6 +6,7 @@
   --workshop-green: #27533b;
   --charcoal: #252723;
   --clean-white: #ffffff;
+  --display-foreground: var(--charcoal);
   --warm-paper: #f8f5ed;
   --limestone: #d8d0bf;
   --texas-clay: #a65038;
@@ -84,6 +85,7 @@
   --color-workshop-green: var(--workshop-green);
   --color-charcoal: var(--charcoal);
   --color-clean-white: var(--clean-white);
+  --color-display-foreground: var(--display-foreground);
   --color-warm-paper: var(--warm-paper);
   --color-limestone: var(--limestone);
   --color-texas-clay: var(--texas-clay);

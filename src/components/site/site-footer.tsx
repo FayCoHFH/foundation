@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getPublicGlobalDestination } from "@/modules/engagement";
 import { prisma } from "@/platform/database/prisma";
 
@@ -11,8 +12,15 @@ export async function SiteFooter() {
     <footer className="border-border bg-deep-blue text-clean-white border-t">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr] lg:px-12">
         <div>
-          <p className="font-serif text-2xl">Fayette County Habitat</p>
-          <p className="text-clean-white/80 mt-1 font-semibold">for Humanity</p>
+          <div className="site-footer-logo-inset">
+            <Image
+              className="site-footer-logo"
+              src="/brand/fayette-county-habitat-logo-2clr.avif"
+              alt="Fayette County Habitat for Humanity"
+              width={562}
+              height={190}
+            />
+          </div>
           <p className="text-clean-white/80 mt-5 max-w-md text-sm leading-6">
             Building and repairing homes with neighbors across Fayette County.
           </p>

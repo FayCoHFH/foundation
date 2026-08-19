@@ -23,9 +23,11 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
       name: "Building and repairing homes with neighbors across Fayette County.",
     }),
   ).toBeVisible();
-  const logo = page.getByRole("img", {
-    name: "Fayette County Habitat for Humanity",
-  });
+  const logo = page
+    .getByRole("img", {
+      name: "Fayette County Habitat for Humanity",
+    })
+    .first();
   await expect(logo).toBeVisible();
   const logoMetrics = await logo.evaluate((element) => {
     const image = element as HTMLImageElement;
@@ -45,6 +47,19 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
     562 / 190,
     1,
   );
+  const footerLogo = page
+    .getByRole("contentinfo")
+    .getByRole("img", { name: "Fayette County Habitat for Humanity" });
+  await expect(footerLogo).toBeVisible();
+  await expect(
+    page
+      .getByRole("contentinfo")
+      .getByText("Fayette County Habitat", { exact: true }),
+  ).toHaveCount(0);
+  await expect(footerLogo).toHaveAttribute(
+    "src",
+    /fayette-county-habitat-logo-2clr\.avif/,
+  );
   const typography = await page.evaluate(() => ({
     display: getComputedStyle(document.querySelector("h1")!).fontFamily,
     section: getComputedStyle(document.querySelector("#home-work")!).fontFamily,
@@ -55,6 +70,33 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
   expect(typography.display.toLowerCase()).toContain("zilla slab");
   expect(typography.section.toLowerCase()).toContain("zilla slab");
   expect(typography.body.toLowerCase()).toContain("source sans 3");
+  const headingColors = await page.evaluate(() => {
+    const probe = document.createElement("span");
+    document.body.append(probe);
+    probe.style.color = "var(--timber)";
+    const timber = getComputedStyle(probe).color;
+    probe.style.color = "var(--display-foreground)";
+    const display = getComputedStyle(probe).color;
+    probe.style.color = "var(--charcoal)";
+    const charcoal = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      timber,
+      display,
+      charcoal,
+      headings: Array.from(document.querySelectorAll("main h1, main h2")).map(
+        (element) => ({
+          text: element.textContent?.trim(),
+          color: getComputedStyle(element).color,
+        }),
+      ),
+    };
+  });
+  expect(headingColors.display).toBe(headingColors.charcoal);
+  expect(headingColors.display).not.toBe(headingColors.timber);
+  for (const heading of headingColors.headings) {
+    expect(heading.color, heading.text).not.toBe(headingColors.timber);
+  }
   await expect(page.locator(".public-hero-structure")).toHaveAttribute(
     "aria-hidden",
     "true",
@@ -100,18 +142,62 @@ test("@smoke public shell provides a usable landmark and skip-navigation structu
   }
 });
 
-test("public display headings use Zilla Slab across core routes", async ({
+test("public display headings use approved colors across core routes", async ({
   page,
 }) => {
-  for (const route of ["/", "/projects", "/campaigns", "/give", "/volunteer"]) {
+  for (const route of [
+    "/",
+    "/projects",
+    "/campaigns",
+    "/give",
+    "/volunteer",
+    "/news",
+  ]) {
     await page.goto(route);
-    const heading = page.getByRole("heading", { level: 1 });
+    const heading = page.getByRole("heading", { level: 1 }).first();
     await expect(heading).toBeVisible();
     await expect
       .poll(() =>
         heading.evaluate((element) => getComputedStyle(element).fontFamily),
       )
       .toContain("Zilla Slab");
+    const colors = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      document.body.append(probe);
+      probe.style.color = "var(--timber)";
+      const timber = getComputedStyle(probe).color;
+      probe.remove();
+      return Array.from(document.querySelectorAll("main h1, main h2")).map(
+        (element) => ({
+          text: element.textContent?.trim(),
+          color: getComputedStyle(element).color,
+          timber,
+        }),
+      );
+    });
+    for (const item of colors) {
+      expect(item.color, `${route}: ${item.text}`).not.toBe(item.timber);
+    }
+  }
+});
+
+test("textual organization identity uses the deliberate two-line lockup", async ({
+  page,
+}) => {
+  for (const route of ["/news", "/share-your-story"]) {
+    await page.goto(route);
+    const lockup = page.locator(".organization-name-lockup");
+    await expect(lockup).toHaveCount(1);
+    await expect(lockup.locator("> span")).toHaveText([
+      "Fayette County",
+      "Habitat for Humanity",
+    ]);
+    const sizes = await lockup
+      .locator("> span")
+      .evaluateAll((elements) =>
+        elements.map((element) => getComputedStyle(element).fontSize),
+      );
+    expect(sizes[1]).toBe(sizes[0]);
   }
 });
 

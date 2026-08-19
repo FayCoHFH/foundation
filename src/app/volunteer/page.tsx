@@ -84,7 +84,7 @@ export default async function VolunteerPage() {
                 {volunteerCampaigns.map((campaign) => (
                   <li key={campaign.slug} className="py-5">
                     <Link
-                      className="text-timber decoration-habitat-blue/40 hover:text-habitat-blue font-serif text-2xl font-semibold underline underline-offset-4"
+                      className="text-charcoal decoration-habitat-blue/40 hover:text-habitat-blue font-serif text-2xl font-semibold underline underline-offset-4"
                       href={`/campaigns/${campaign.slug}`}
                     >
                       {campaign.title}

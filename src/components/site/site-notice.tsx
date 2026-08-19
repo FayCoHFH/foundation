@@ -9,11 +9,11 @@ import { formatEditorialDateTime } from "@/platform/time/editorial";
 
 const severityStyles: Record<SiteNoticeSeverity, string> = {
   [SiteNoticeSeverity.INFO]:
-    "border-editorial-denim bg-editorial-sky/55 text-editorial-pecan",
+    "border-editorial-denim bg-editorial-sky/55 text-charcoal",
   [SiteNoticeSeverity.IMPORTANT]:
-    "border-editorial-oak bg-editorial-cream text-editorial-pecan",
+    "border-editorial-oak bg-editorial-cream text-charcoal",
   [SiteNoticeSeverity.URGENT]:
-    "border-editorial-paintbrush bg-editorial-cream text-editorial-pecan",
+    "border-editorial-paintbrush bg-editorial-cream text-charcoal",
 };
 
 const severityLabels: Record<SiteNoticeSeverity, string> = {

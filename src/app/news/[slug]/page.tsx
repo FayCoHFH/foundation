@@ -62,7 +62,7 @@ export default async function NewsDetail({
             </div>
           </header>
           <div className="mx-auto max-w-[46rem] px-5 py-14 sm:px-8 sm:py-20">
-            <p className="text-timber font-serif text-3xl leading-tight">
+            <p className="text-charcoal font-serif text-3xl leading-tight">
               {news.summary}
             </p>
             <div className="mt-10">

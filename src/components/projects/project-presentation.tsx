@@ -96,7 +96,7 @@ export function ProjectCard({ project }: { project: PublicProject }) {
           <ProjectStatus status={project.projectStatus} /> ·{" "}
           {PROJECT_TYPE_LABELS[project.projectType]}
         </p>
-        <h2 className="text-timber mt-2 font-serif text-3xl font-semibold">
+        <h2 className="text-charcoal mt-2 font-serif text-3xl font-semibold">
           <Link
             className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
             href={`/projects/${project.slug}`}
@@ -122,7 +122,7 @@ export function ProjectDetail({ project }: { project: PublicProject }) {
         <ProjectStatus status={project.projectStatus} /> ·{" "}
         {PROJECT_TYPE_LABELS[project.projectType]}
       </p>
-      <h1 className="text-timber mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
+      <h1 className="text-display-foreground mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
         {project.title}
       </h1>
       <p className="text-muted-foreground mt-5 max-w-3xl text-xl leading-8">

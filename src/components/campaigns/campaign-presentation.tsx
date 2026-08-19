@@ -182,7 +182,7 @@ export function CampaignCard({ campaign }: { campaign: PublicCampaign }) {
           {CAMPAIGN_STATUS_LABELS[campaign.campaignStatus]} ·{" "}
           {CAMPAIGN_TYPE_LABELS[campaign.campaignType]}
         </p>
-        <h2 className="text-timber mt-2 font-serif text-3xl font-semibold">
+        <h2 className="text-charcoal mt-2 font-serif text-3xl font-semibold">
           <Link
             className="decoration-habitat-blue/40 hover:text-habitat-blue underline underline-offset-4"
             href={`/campaigns/${campaign.slug}`}
@@ -215,7 +215,7 @@ export function CampaignDetail({ campaign }: { campaign: PublicCampaign }) {
         {CAMPAIGN_STATUS_LABELS[campaign.campaignStatus]} ·{" "}
         {CAMPAIGN_TYPE_LABELS[campaign.campaignType]}
       </p>
-      <h1 className="text-timber mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
+      <h1 className="text-display-foreground mt-3 font-serif text-5xl leading-[0.98] font-semibold tracking-[-0.03em] sm:text-6xl">
         {campaign.title}
       </h1>
       <p className="text-muted-foreground mt-5 max-w-3xl text-xl leading-8">

@@ -71,7 +71,7 @@ export default async function PublicStoryPage({
             </div>
           </header>
           <div className="mx-auto max-w-[46rem] px-5 py-16 sm:px-8 sm:py-24">
-            <p className="border-habitat-green text-timber border-l-2 pl-5 font-serif text-2xl leading-9 sm:text-3xl">
+            <p className="border-habitat-green text-charcoal border-l-2 pl-5 font-serif text-2xl leading-9 sm:text-3xl">
               {story.excerpt}
             </p>
             <div className="mt-12">

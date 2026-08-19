@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { OrganizationNameLockup } from "@/components/site/organization-name-lockup";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { SkipLink } from "@/components/ui/skip-link";
@@ -34,9 +35,9 @@ export default function ShareYourStoryPage() {
         <header className="border-border bg-editorial-sky/30 border-b">
           <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">
             <p className="text-foreground text-sm font-bold tracking-[.16em] uppercase">
-              Fayette County Habitat
+              <OrganizationNameLockup />
             </p>
-            <h1 className="text-editorial-pecan mt-4 font-serif text-5xl tracking-[-.035em] sm:text-6xl">
+            <h1 className="text-display-foreground mt-4 font-serif text-5xl tracking-[-.035em] sm:text-6xl">
               Share Your Story
             </h1>
             <p className="text-foreground mt-5 max-w-2xl text-lg leading-8">
@@ -57,7 +58,7 @@ export default function ShareYourStoryPage() {
             <section aria-labelledby="share-unavailable" className="max-w-2xl">
               <h2
                 id="share-unavailable"
-                className="text-editorial-pecan font-serif text-3xl"
+                className="text-charcoal font-serif text-3xl"
               >
                 Share Your Story is not accepting submissions right now.
               </h2>
