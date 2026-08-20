@@ -2,11 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 
-const expectedRemote = "https://github.com/FayCoHFH/foundation.git";
-const expectedGitHubUser = "FayCoHFH";
-const expectedVercelUser = "tech-9723";
-const expectedVercelTeamId = "team_rnWDylEaUNN9I5IgOrgRZojc";
-const expectedVercelProjectName = "faycohfh-foundation";
+import {
+  type VercelProjectLink,
+  validateDeploymentPreflight,
+} from "./deploy-preflight-policy";
 
 function command(file: string, args: string[]): string {
   try {
@@ -21,53 +20,22 @@ function command(file: string, args: string[]): string {
   }
 }
 
-function requireExact(label: string, actual: string, expected: string): void {
-  if (actual !== expected) {
-    throw new Error(
-      `${label} must be ${expected}; received ${actual || "<empty>"}`,
-    );
-  }
-}
-
 try {
-  requireExact(
-    "Git remote",
-    command("git", ["remote", "get-url", "origin"]),
-    expectedRemote,
-  );
-  requireExact(
-    "GitHub identity",
-    command("gh", ["api", "user", "--jq", ".login"]),
-    expectedGitHubUser,
-  );
-  requireExact(
-    "Vercel CLI identity",
-    command("vercel", ["whoami"]),
-    expectedVercelUser,
-  );
-
   const localVercelLink = resolve(process.cwd(), ".vercel", "project.json");
-  if (existsSync(localVercelLink)) {
-    if (process.env.ALLOW_VERIFIED_HABITAT_LINK !== "true") {
-      throw new Error(
-        "Remove local .vercel/project.json before any provider mutation; stale linkage is not permitted.",
-      );
-    }
+  const linkage = existsSync(localVercelLink)
+    ? (JSON.parse(readFileSync(localVercelLink, "utf8")) as VercelProjectLink)
+    : undefined;
 
-    const linkage = JSON.parse(readFileSync(localVercelLink, "utf8")) as {
-      orgId?: string;
-      projectName?: string;
-    };
-    requireExact(
-      "Temporary Vercel team linkage",
-      linkage.orgId ?? "",
-      expectedVercelTeamId,
-    );
-    requireExact(
-      "Temporary Vercel project linkage",
-      linkage.projectName ?? "",
-      expectedVercelProjectName,
-    );
+  validateDeploymentPreflight({
+    remote: command("git", ["remote", "get-url", "origin"]),
+    githubUser: command("gh", ["api", "user", "--jq", ".login"]),
+    vercelUser: command("vercel", ["whoami"]),
+    localVercelLink: linkage,
+    allowVerifiedHabitatLink:
+      process.env.ALLOW_VERIFIED_HABITAT_LINK === "true",
+  });
+
+  if (linkage) {
     console.log(
       "Temporary Habitat Vercel linkage verified for the explicitly scoped connection step.",
     );

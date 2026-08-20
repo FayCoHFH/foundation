@@ -10,13 +10,32 @@ configuration; never commit them.
 The approved deployment identities are GitHub `FayCoHFH/foundation` with write
 identity `FayCoHFH` and Vercel user `tech-9723` (`tech@fchfh.org`). The personal
 Vercel user/scope `elconejodiablo` / `elconejodiablos-projects` is forbidden for
-this repository. Run `pnpm deploy:preflight` before every provider mutation.
+this repository. The Preview project is `FCHFH / fchfh` project
+`faycohfh-foundation` (`prj_9aYpfojsfQ47zvIo5fKvzsL4I6ZF`). Run
+`pnpm deploy:preflight` before every provider mutation.
 The command fails closed if the Git remote, GitHub identity, or Vercel identity
 is wrong, or if local `.vercel/project.json` linkage exists. It prints no
 credential, token, connection string, or provider secret.
 The one-time GitHub connection step may use
 `ALLOW_VERIFIED_HABITAT_LINK=true` only with the exact Habitat project link;
 that local link must be removed immediately after connection.
+
+## Current Preview provider state
+
+The Habitat-owned Vercel project is connected to `FayCoHFH/foundation` and
+protects Preview deployments with Vercel Authentication. Its stable branch
+alias is the configured single origin for both `APP_BASE_URL` and
+`BETTER_AUTH_URL`; the provider values are intentionally not recorded here.
+
+Preview uses the owned Neon integration resource
+`faycohfh-foundation-preview` in `iad1`, connected only to this project and only
+to Preview. The integration-managed `DATABASE_*` values remain Sensitive.
+`BETTER_AUTH_SECRET` is also Sensitive. The nonsecret application controls
+`APP_ENV`, `NEXT_PUBLIC_APP_ENV`, `APP_BASE_URL`, `BETTER_AUTH_URL`,
+`AUTH_ENABLED`, `STORAGE_DRIVER`, `LOCAL_STORAGE_ROOT`,
+`PUBLIC_STORY_SUBMISSIONS_ENABLED`, and `LOG_LEVEL` are ordinary
+Preview-scoped configuration so their intent can be audited without revealing
+credentials. Test-auth variables are absent.
 
 ## Application runtime
 
@@ -33,8 +52,8 @@ that local link must be removed immediately after connection.
 | `GOOGLE_WORKSPACE_DOMAIN`                         | Required runtime when deployment auth is enabled; nonsecret policy value        | Expected Workspace domain; it does not grant application access.                                                                                                                       |
 | `AUTH_ENABLED`                                    | Optional runtime; nonsecret; local/preview/production                           | Enables the configured authentication boundary. Preview defaults off; enabled deployments still require invitations and local authorization.                                           |
 | `AUTH_TRUSTED_ORIGINS`                            | Runtime; nonsecret; local/preview/production                                    | Exact comma-separated HTTP(S) origins. No wildcard Vercel domains.                                                                                                                     |
-| `STORAGE_DRIVER`                                  | Required by deployment policy; nonsecret; local/test/preview/production         | `local` is for development/test only. Production must use the approved durable adapter after that adapter is implemented and operationally verified.                                   |
-| `LOCAL_STORAGE_ROOT`                              | Optional runtime; nonsecret path; development/test only                         | Local object-store root. Keep it under ignored `.data/`; never use it for production.                                                                                                  |
+| `STORAGE_DRIVER`                                  | Required by deployment policy; nonsecret; local/test/preview/production         | `local` is permitted in Preview only while upload and mutation features are disabled and its ephemeral behavior is explicit.                                                           |
+| `LOCAL_STORAGE_ROOT`                              | Optional runtime; nonsecret path; development/test/ephemeral Preview            | Local object-store root. Preview function files can disappear between invocations or deployments and must never be presented as durable storage.                                       |
 | `PUBLIC_STORAGE_BASE_URL`                         | Optional runtime; nonsecret; development/test or approved storage adapter       | Base URL used by the storage adapter. It must not be treated as private-object authorization.                                                                                          |
 | `LOG_LEVEL`                                       | Optional runtime; nonsecret; all environments                                   | `debug`, `info`, `warn`, or `error`. Logs must remain redacted.                                                                                                                        |
 | `PUBLIC_STORY_SUBMISSIONS_ENABLED`                | Optional runtime; nonsecret feature gate; default off                           | Enables the public Story Submission boundary only after its privacy and operational review.                                                                                            |
@@ -108,15 +127,14 @@ this repository.
 - Local development uses local resources only.
 - CI/test uses disposable PostgreSQL and local storage, with the destructive
   test guard enabled only inside the isolated job.
-- Preview requires a persistent, isolated nonproduction PostgreSQL database and
-  nonproduction storage. It must not use production PostgreSQL, a shared
-  valuable development database, or a disposable local database.
+- Preview uses its persistent, isolated Neon database and an explicitly
+  ephemeral local storage adapter. Public Story Submission and upload mutation
+  are disabled, so Preview does not promise file persistence. It must not use a
+  shared valuable development database or a disposable local database.
 - Production requires its own PostgreSQL, direct migration credential, durable
   public/private storage, secrets, backups/PITR, and operational ownership.
 
-The repository does not store provider credentials or perform provider
-provisioning automatically. Future setup is a controlled release activity:
-pass the identity preflight, connect the Habitat-owned Vercel project, configure
-separate Preview/Production environments, apply committed migrations with the
-controlled direct credential, verify a Preview, verify Production, and only
-then consider `fchfh.org` DNS/cutover.
+The repository does not store provider credentials. Preview schema changes use
+committed migrations applied with `prisma migrate deploy`; `prisma migrate
+status` is a read-only deployment gate. All 21 committed migrations were
+applied before the protected Preview was validated.

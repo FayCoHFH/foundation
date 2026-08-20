@@ -10,7 +10,7 @@ Better Auth secrets, test-auth secrets, or operator bootstrap state.
 | ----------------- | ------------- | ----------------------------------- | -------------------------------------------------------------------------- |
 | Local development | `development` | Optional local client               | Local-only resources                                                       |
 | CI/test           | `test`        | Disabled; guarded test session only | Disposable PostgreSQL and local adapter                                    |
-| Preview           | `preview`     | Off by default                      | Isolated preview database/store; exact stable origin if explicitly enabled |
+| Preview           | `preview`     | Off at the application boundary     | Isolated Neon database; explicitly ephemeral local storage                 |
 | Production        | `production`  | Required when deployed              | Production database, direct migration URL, durable private/public stores   |
 
 `NEXT_PUBLIC_APP_ENV` contains classification only and never a credential.
@@ -43,8 +43,8 @@ That is intentional: production indexing requires an explicit release decision
 and a reviewed change to the policy. An absent or malformed environment can
 never make the site indexable.
 
-Before creating or connecting a Vercel project, enable Preview Deployment
-Protection. The preferred baseline is:
+The Habitat project currently protects all Preview deployments with Vercel
+Authentication (`all_except_custom_domains`). The required baseline is:
 
 `Project Settings → Deployment Protection → Vercel Authentication → protect Preview Deployments`
 
@@ -81,6 +81,9 @@ identities below:
 
 - GitHub repository and write identity: `FayCoHFH/foundation` and `FayCoHFH`.
 - Vercel user: `tech-9723` (`tech@fchfh.org`).
+- Vercel team/scope: `FCHFH` / `fchfh`.
+- Vercel project: `faycohfh-foundation`
+  (`prj_9aYpfojsfQ47zvIo5fKvzsL4I6ZF`).
 - Forbidden Vercel scope: `elconejodiablos-projects` / `elconejodiablo`.
 
 Before any Vercel project, GitHub connection, database integration, environment
@@ -90,9 +93,9 @@ returns exactly `tech-9723`, and no local `.vercel/project.json` linkage exists.
 Do not replace this guard with a personal token, personal scope, or stale local
 linkage. The only exception is the one-time GitHub connection step, which may
 run `ALLOW_VERIFIED_HABITAT_LINK=true pnpm deploy:preflight` after `vercel link`
-has created a link whose project name is `faycohfh-foundation` and whose team ID
-is the verified Habitat team; remove that local link immediately afterward. If
-the check fails, stop and correct the authenticated Habitat account before
+has created a link whose project name, project ID, and team ID are the exact
+verified Habitat values; remove that local link immediately afterward. If the
+check fails, stop and correct the authenticated Habitat account before
 continuing. The guard does not delete cloud resources; cloud cleanup requires
 separate explicit authorization for the exact resource.
 
@@ -111,11 +114,11 @@ database role rather than rely on an inherited shell user.
 
 ## Build and migration
 
-`vercel.json` uses frozen pnpm installation and generates the Prisma client
-before `next build`; those are the only build steps. It intentionally does not
-migrate or seed a database during a Vercel build. Apply committed migrations
-once through a separately controlled release job using the direct database URL,
-confirm `pnpm db:migrate:status`, and only then promote traffic.
+`vercel.json` uses frozen pnpm installation. A Preview build first runs the
+read-only `prisma migrate status` check against the Neon unpooled connection,
+then generates the Prisma client and runs `next build`. It intentionally does
+not migrate or seed a database during a Vercel build. Apply committed migrations
+once through a separately controlled operation using `prisma migrate deploy`.
 
 The Campaigns surface is statically generated from the public campaign
 projection, so PostgreSQL must be reachable during a Preview or Production
@@ -124,13 +127,16 @@ code-defined baseline seed data required by the public read model. Do not point
 the build at a production database before the release migration has been
 verified, and do not make a Vercel build responsible for migration or seeding.
 
-Preview requires a persistent, isolated nonproduction PostgreSQL database. It
-must not use Production PostgreSQL, a shared valuable development database, or
-a disposable local database. The provider and region remain a later manual
-decision; this repository does not select or provision one. `DIRECT_DATABASE_URL`
-belongs only to the controlled migration operator, while `SHADOW_DATABASE_URL`
-is for disposable migration authoring/drift checks and is not a Preview
-runtime variable.
+Preview uses the owned Neon resource `faycohfh-foundation-preview` in `iad1`,
+connected only to the Habitat Vercel project and Preview environment. All 21
+committed migrations are applied. `DIRECT_DATABASE_URL` belongs only to the
+controlled migration operator, while `SHADOW_DATABASE_URL` is for disposable
+migration authoring/drift checks and is not a Preview runtime variable.
+
+Preview storage is intentionally the local adapter rooted in the function's
+temporary filesystem. Files are not durable across invocations or deployments.
+Public Story Submission and upload mutation remain disabled, and the rendered
+Preview exposes no form that promises durable persistence.
 
 Production responses use host-only one-year HSTS. Do not add
 `includeSubDomains` or submit the domain for preload until G-05 confirms
@@ -154,22 +160,6 @@ The `vercel-blob` environment value reserves the accepted adapter boundary; a
 production public/private object-store implementation and operational exercise
 remain a later storage slice. Production validation rejects the local ephemeral
 adapter.
-
-## Remaining production provider sequence
-
-The Habitat-owned Vercel project and Preview Neon resource are provisioned for
-this foundation pass. Production provider setup remains intentionally pending.
-When explicitly authorized and after `pnpm deploy:preflight` passes, the
-remaining release sequence is:
-
-1. Configure separate Production variables, PostgreSQL database, storage,
-   secret custody, backups/PITR, observability, and migration ownership.
-2. Apply committed migrations with the controlled direct credential; verify
-   status and safe bootstrap data without importing protected records.
-3. Deploy and review a protected Production candidate, then verify routes,
-   database-backed reads, links, crawler headers, logs, and failure states.
-4. Only after those checks, perform the explicitly authorized `fchfh.org`
-   DNS/domain cutover.
 
 See the [safe environment reference](environment-reference.md) for the complete
 variable inventory.

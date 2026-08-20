@@ -5,13 +5,17 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
 import { readServerEnvironment } from "@/platform/config/environment";
 
+import { normalizePostgresTlsVerification } from "./connection-string";
+
 const globalForPrisma = globalThis as unknown as {
   habitatPrisma?: PrismaClient;
 };
 
 function createPrismaClient() {
   const environment = readServerEnvironment();
-  const adapter = new PrismaPg({ connectionString: environment.databaseUrl });
+  const adapter = new PrismaPg({
+    connectionString: normalizePostgresTlsVerification(environment.databaseUrl),
+  });
   return new PrismaClient({
     adapter,
     log: environment.appEnv === "development" ? ["warn", "error"] : ["error"],
