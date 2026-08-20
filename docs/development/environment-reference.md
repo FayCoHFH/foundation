@@ -5,6 +5,19 @@ contains no credentials, tokens, connection strings, or provider values. Keep
 actual values in the local environment or the future provider's encrypted
 configuration; never commit them.
 
+## Provider identity and preflight
+
+The approved deployment identities are GitHub `FayCoHFH/foundation` with write
+identity `FayCoHFH` and Vercel user `tech-9723` (`tech@fchfh.org`). The personal
+Vercel user/scope `elconejodiablo` / `elconejodiablos-projects` is forbidden for
+this repository. Run `pnpm deploy:preflight` before every provider mutation.
+The command fails closed if the Git remote, GitHub identity, or Vercel identity
+is wrong, or if local `.vercel/project.json` linkage exists. It prints no
+credential, token, connection string, or provider secret.
+The one-time GitHub connection step may use
+`ALLOW_VERIFIED_HABITAT_LINK=true` only with the exact Habitat project link;
+that local link must be removed immediately after connection.
+
 ## Application runtime
 
 | Variable                                          | Classification                                                                  | Purpose and boundary                                                                                                                                                                   |
@@ -101,8 +114,9 @@ this repository.
 - Production requires its own PostgreSQL, direct migration credential, durable
   public/private storage, secrets, backups/PITR, and operational ownership.
 
-The repository does not provision or select any provider. Future setup is a
-manual release activity: create the fresh GitHub repository, connect a fresh
-Vercel project, configure separate Preview/Production environments, apply
-committed migrations with the controlled direct credential, verify a Preview,
-verify Production, and only then consider `fchfh.org` DNS/cutover.
+The repository does not store provider credentials or perform provider
+provisioning automatically. Future setup is a controlled release activity:
+pass the identity preflight, connect the Habitat-owned Vercel project, configure
+separate Preview/Production environments, apply committed migrations with the
+controlled direct credential, verify a Preview, verify Production, and only
+then consider `fchfh.org` DNS/cutover.

@@ -74,6 +74,28 @@ IP and user-agent fields remain null. Rate-limit rows contain the pseudonym plus
 auth path and need a defined cleanup/retention job before production because the
 table has no expiry column.
 
+## Provider identity guard
+
+Provider mutations for this repository are allowed only under the Habitat
+identities below:
+
+- GitHub repository and write identity: `FayCoHFH/foundation` and `FayCoHFH`.
+- Vercel user: `tech-9723` (`tech@fchfh.org`).
+- Forbidden Vercel scope: `elconejodiablos-projects` / `elconejodiablo`.
+
+Before any Vercel project, GitHub connection, database integration, environment
+variable, or deployment mutation, run `pnpm deploy:preflight`. It fails closed
+unless the origin and GitHub identity match the values above, `vercel whoami`
+returns exactly `tech-9723`, and no local `.vercel/project.json` linkage exists.
+Do not replace this guard with a personal token, personal scope, or stale local
+linkage. The only exception is the one-time GitHub connection step, which may
+run `ALLOW_VERIFIED_HABITAT_LINK=true pnpm deploy:preflight` after `vercel link`
+has created a link whose project name is `faycohfh-foundation` and whose team ID
+is the verified Habitat team; remove that local link immediately afterward. If
+the check fails, stop and correct the authenticated Habitat account before
+continuing. The guard does not delete cloud resources; cloud cleanup requires
+separate explicit authorization for the exact resource.
+
 ## Configuration and database credentials
 
 Operator-facing Prisma, seed, bootstrap, and auth-schema commands preserve
@@ -133,23 +155,21 @@ production public/private object-store implementation and operational exercise
 remain a later storage slice. Production validation rejects the local ephemeral
 adapter.
 
-## Future manual provider sequence
+## Remaining production provider sequence
 
-Provider setup is intentionally pending. When explicitly authorized, the
-release sequence is:
+The Habitat-owned Vercel project and Preview Neon resource are provisioned for
+this foundation pass. Production provider setup remains intentionally pending.
+When explicitly authorized and after `pnpm deploy:preflight` passes, the
+remaining release sequence is:
 
-1. Create/connect the fresh GitHub repository and preserve the reviewed history.
-2. Create/connect a fresh Vercel project without importing stale `.vercel`
-   linkage metadata.
-3. Configure separate Preview and Production variables, PostgreSQL databases,
-   storage, secret custody, backups/PITR, observability, and migration ownership.
-4. Apply committed migrations with the controlled direct credential; verify
-   status and the database-backed build.
-5. Deploy and review a Vercel Preview, then verify the approved Production
-   deployment.
-6. Only after those checks, perform the explicitly authorized `fchfh.org`
+1. Configure separate Production variables, PostgreSQL database, storage,
+   secret custody, backups/PITR, observability, and migration ownership.
+2. Apply committed migrations with the controlled direct credential; verify
+   status and safe bootstrap data without importing protected records.
+3. Deploy and review a protected Production candidate, then verify routes,
+   database-backed reads, links, crawler headers, logs, and failure states.
+4. Only after those checks, perform the explicitly authorized `fchfh.org`
    DNS/domain cutover.
 
-No deployment, provider-side mutation, DNS change, GitHub connection, or Vercel
-project linkage was performed in this readiness pass. See the [safe environment
-reference](environment-reference.md) for the complete variable inventory.
+See the [safe environment reference](environment-reference.md) for the complete
+variable inventory.
