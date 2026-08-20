@@ -75,7 +75,7 @@ jobs:
         run: pnpm audit --audit-level high
 
       - name: Create isolated Prisma migration shadow database
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'CREATE DATABASE habitat_shadow_test'
+        run: psql "${DATABASE_URL%%\?*}" -v ON_ERROR_STOP=1 -c 'CREATE DATABASE habitat_shadow_test'
 
       - name: Guard disposable PostgreSQL target
         run: pnpm exec tsx tests/support/assert-destructive-test-database.ts

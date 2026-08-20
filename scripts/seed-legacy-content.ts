@@ -162,8 +162,8 @@ async function seed() {
 }
 
 seed()
-  .catch((error: unknown) => {
-    console.error(error);
+  .catch(() => {
+    console.error("Historical Project content seed failed.");
     process.exitCode = 1;
   })
   .finally(async () => prisma.$disconnect());

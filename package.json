@@ -15,6 +15,7 @@
     "start": "next start",
     "lint": "eslint .",
     "audit:temporary-reference": "tsx scripts/temporary-reference-audit.ts",
+    "deploy:preflight": "tsx scripts/deploy-preflight.ts",
     "production:readiness": "tsx scripts/production-readiness-check.ts",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
@@ -96,7 +97,8 @@
   },
   "pnpm": {
     "overrides": {
-      "auth>@mrleebo/prisma-ast": "0.16.0"
+      "auth>@mrleebo/prisma-ast": "0.16.0",
+      "deepmerge-ts": "8.0.0"
     }
   }
 }

@@ -2,5 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm db:generate && pnpm build"
+  "buildCommand": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then DIRECT_DATABASE_URL=\"$DATABASE_URL_UNPOOLED\" pnpm db:migrate:status; fi && pnpm db:generate && pnpm build"
 }

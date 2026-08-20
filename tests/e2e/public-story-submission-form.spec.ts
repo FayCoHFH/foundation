@@ -14,6 +14,11 @@ const database = new PrismaClient({
 });
 const enabledForRun = process.env.PUBLIC_STORY_SUBMISSIONS_ENABLED === "true";
 const baseUrl = "http://127.0.0.1:3100";
+const allowedRequestOrigins = new Set([
+  new URL(baseUrl).origin,
+  "https://fonts.googleapis.com",
+  "https://fonts.gstatic.com",
+]);
 const recoveryStorageKey = "habitat.share-your-story.recovery-token";
 const fixturePrefix = "c6b4b-browser";
 const browserSuiteStartedAt = new Date();
@@ -62,11 +67,10 @@ async function diagnostics(page: Page) {
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("request", (request) => {
     const url = request.url();
+    const parsedUrl = new URL(url);
     if (
-      url.startsWith("http") &&
-      !url.startsWith(baseUrl) &&
-      !url.startsWith("https://fonts.googleapis.com") &&
-      !url.startsWith("https://fonts.gstatic.com")
+      (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") &&
+      !allowedRequestOrigins.has(parsedUrl.origin)
     ) {
       unexpectedRequests.push(url);
     }
