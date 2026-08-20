@@ -29,8 +29,8 @@
   --input: var(--brand-cool-gray);
   --muted: var(--brand-white);
   --muted-foreground: var(--brand-traditional-blue);
-  --primary: var(--brand-bright-blue);
-  --primary-foreground: var(--brand-black);
+  --primary: var(--brand-traditional-blue);
+  --primary-foreground: var(--brand-white);
   --secondary: var(--brand-white);
   --secondary-foreground: var(--brand-traditional-blue);
   --accent: var(--brand-bright-green);
